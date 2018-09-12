@@ -17,6 +17,8 @@ public class Player extends Actor{
 		this.playerTexture = texture;
 		
 		this.region = new TextureRegion(playerTexture, 16, 908, 32, 52); // En el sprite sheet empieza en x = 16 y y = 908. Pj de 32x52
+		setWidth(this.region.getRegionWidth());
+		setHeight(this.region.getRegionHeight());
 	}
 	
 	@Override
