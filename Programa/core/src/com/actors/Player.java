@@ -27,16 +27,16 @@ public class Player extends Actor{
 		//
 		//
 		if(Gdx.input.isKeyPressed(Keys.W)) {
-			setY(getY()+1);
+			setY(getY()+0.5f);
 		}
 		if(Gdx.input.isKeyPressed(Keys.S)) {
-			setY(getY()-1);
+			setY(getY()-0.5f);
 		}
 		if(Gdx.input.isKeyPressed(Keys.A)) {
-			setX(getX()-1);
+			setX(getX()-0.5f);
 		}
 		if(Gdx.input.isKeyPressed(Keys.D)) {
-			setX(getX()+1);
+			setX(getX()+0.5f);
 		}
 		//
 		//
