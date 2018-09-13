@@ -10,9 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class Player extends Actor{
 	
 	private Texture playerTexture;
-	
 	private TextureRegion region;
 
+	
+	
 	public Player(Texture texture) {
 		this.playerTexture = texture;
 		

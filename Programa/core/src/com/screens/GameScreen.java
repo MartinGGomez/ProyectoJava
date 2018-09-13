@@ -131,7 +131,7 @@ public class GameScreen extends BaseScreen{
 		System.out.println("Player size: " + player.getWidth() + " , " + player.getHeight());
 		
 		
-		playerBodyDef.type = BodyType.StaticBody;
+		playerBodyDef.type = BodyType.DynamicBody;
 		playerBodyDef.position.set(player.getX() + player.getWidth() / 2, player.getY() + player.getHeight() / 2);
 		
 		playerBody = world.createBody(playerBodyDef);
