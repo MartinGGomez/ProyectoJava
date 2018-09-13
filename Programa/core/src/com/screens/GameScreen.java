@@ -2,6 +2,7 @@ package com.screens;
 
 import com.actors.Player;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
@@ -9,6 +10,8 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -25,7 +28,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.game.MainGame;
@@ -45,32 +47,41 @@ public class GameScreen extends BaseScreen{
 	//
 	private TmxMapLoader mapLoader;
 	
-	//
 	
+	//	
 	// Box2D
 	private Box2DDebugRenderer box2dRender; 
 	private World world;
-	private Vector3 position;
 	
 	
 	public GameScreen (MainGame game) {
 		super(game);
 		playerTexture = new Texture("player.png");
 		
+		
+		//Modo Pantalla completa 
+		//Graphics.DisplayMode mode = Gdx.graphics.getDisplayMode();
+		//Gdx.graphics.setFullscreenMode(mode);
 
 		stage = new Stage();
 		player = new Player(playerTexture);
-		stage.setDebugAll(true);
-		stage.addActor(player);
-		player.setPosition(50, 100);
+
 		
+		stage.setDebugAll(true);
+		
+		stage.addActor(player);
 		int vpWidth = Gdx.graphics.getWidth(), vpHeight = Gdx.graphics.getHeight();
-		camera = new OrthographicCamera(vpWidth,vpHeight);
-		position = camera.position.set(0,0,0);
-		//camera.zoom += 2;
+		camera = new OrthographicCamera(vpWidth/2,vpHeight/2);
+		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+		camera.position.set(player.getX(),player.getY(),0);
+		camera.zoom += 3;
 		camera.update();
+		
+		player.setPosition(camera.position.x*vpHeight,camera.position.y*vpWidth);
+		
 	
-		vista = new StretchViewport(840, 620, camera);
+		vista = new StretchViewport(800, 600, camera);
 		
 		manager = new AssetManager();
 		manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -81,6 +92,8 @@ public class GameScreen extends BaseScreen{
 		renderer = new OrthogonalTiledMapRenderer(map);
 	
 
+		
+		
 		// Box2D
 		box2dRender = new Box2DDebugRenderer();
 		world = new World(new Vector2(0, 0), true);
@@ -105,6 +118,7 @@ public class GameScreen extends BaseScreen{
 			body.createFixture(fixtureDef);
 		}
 		
+
 		
 		// Box2D Player 
 		// No funciona. Player position = 50, 100. Map objects 1800 - 1200
@@ -152,8 +166,9 @@ public class GameScreen extends BaseScreen{
 		if(Gdx.input.isKeyPressed(Keys.D)) {
 			camera.position.x +=2;
 		}		
+		
 		//posicion de la camara 
-		System.out.println(position);
+		//System.out.println(position);
 		
 		camera.update();
 		renderer.setView(camera);
