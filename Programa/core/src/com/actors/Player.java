@@ -11,8 +11,6 @@ public class Player extends Actor{
 	
 	private Texture playerTexture;
 	private TextureRegion region;
-
-	
 	
 	public Player(Texture texture) {
 		this.playerTexture = texture;
@@ -20,7 +18,7 @@ public class Player extends Actor{
 		this.region = new TextureRegion(playerTexture, 16, 908, 32, 52); // En el sprite sheet empieza en x = 16 y y = 908. Pj de 32x52
 		setWidth(this.region.getRegionWidth());
 		setHeight(this.region.getRegionHeight());
-	}
+		}
 	
 	@Override
 	public void act(float delta) {
@@ -45,7 +43,7 @@ public class Player extends Actor{
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		batch.draw(region, getX(), getY());
+		batch.draw(region, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 	}
 	
 	

@@ -3,6 +3,7 @@ import com.actors.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.game.MainGame;
 
@@ -44,7 +46,7 @@ public class MiPantalla implements Screen {
 	//Box 2d
 	private World world;
 	private Box2DDebugRenderer b2dr;
-	
+		
 	
 	public MiPantalla(MainGame mainGame) {
 			super();
@@ -54,11 +56,11 @@ public class MiPantalla implements Screen {
 	stage = new Stage();
 	player = new Player(playerTexture);
 	stage.addActor(player);
-	stage.setDebugAll(true);
-	
+	player.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 	//Camera setting
 	camera = new OrthographicCamera();
-	port = new FitViewport(1024,768,camera);
+	port = new FitViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),camera);
+	
 	
 	//TiledMap setting 
 	loader = new TmxMapLoader();
@@ -71,6 +73,12 @@ public class MiPantalla implements Screen {
 	world = new World(new Vector2(0,0),true);
 	b2dr = new Box2DDebugRenderer();
 	
+	System.out.println("player position x :" + player.getX() +  "y : "+ player.getY());
+	System.out.println("camera position x: " + camera.position.x + " y: "  + camera.position.y );
+	System.out.println(Gdx.graphics.getWidth());
+	System.out.println(Gdx.graphics.getHeight());
+	
+	
 	
 	//Objects from TiledMap
 	BodyDef bdef = new BodyDef();
@@ -81,15 +89,12 @@ public class MiPantalla implements Screen {
 	for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
 		
 		Rectangle rect = ((RectangleMapObject) object).getRectangle();
-		
 		bdef.type = BodyDef.BodyType.StaticBody;
 		bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
 		body = world.createBody(bdef);
-		
 		shape.setAsBox(rect.getWidth() / 2 , rect.getHeight() / 2 );
 		fdef.shape = shape;
 		body.createFixture(fdef);
-		
 	}
 	
 	//Object Player 
@@ -99,13 +104,13 @@ public class MiPantalla implements Screen {
 	Body playerBody;
 	
 	playerBodyDef.type = BodyType.DynamicBody;
-	playerBodyDef.position.set(player.getX() + player.getWidth() / 2, player.getY() + player.getHeight() / 2);
+	playerBodyDef.position.set(player.getX() + (player.getWidth() /2) ,player.getY() + (player.getHeight()/2) );
 	playerBody = world.createBody(playerBodyDef);
-	playerShape.setAsBox(player.getWidth() / 2, player.getHeight() / 2);
+	playerShape.setAsBox(player.getWidth() / 2  ,player.getHeight() /2);
 	playerFixtureDef.shape = playerShape;
 	playerBody.createFixture(playerFixtureDef);
 	
-		
+	
 	}
 
 	public void handleInput(float dt){
@@ -113,7 +118,7 @@ public class MiPantalla implements Screen {
 			camera.position.y +=1;
 			}
 		if(Gdx.input.isKeyPressed(Keys.S)) {
-			camera.position.y -=1;;
+			camera.position.y -=1;
 		}
 		if(Gdx.input.isKeyPressed(Keys.A)) {
 			camera.position.x -=1;
@@ -133,6 +138,8 @@ public class MiPantalla implements Screen {
 		
 	}
 	
+	
+	
 	@Override
 	public void show() {
 
@@ -146,17 +153,27 @@ public class MiPantalla implements Screen {
 		update(delta);
 		mapRenderer.render();
 		
-		b2dr.render(world, camera.combined);
 		
-		//world.step(delta, 6, 2);
+		b2dr.render(world, camera.combined);
+
+		
+		
 
 		stage.act();
+		
+		
+
+	world.step(delta, 6, 2);
+		
 		stage.draw();
 	}
 	
 	@Override
 	public void resize(int width, int height) {
-		port.update(width, height);		
+		
+		port.update(width, height);	
+	
+		
 	}
 
 	@Override
