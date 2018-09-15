@@ -71,7 +71,7 @@ public class Player extends Actor{
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		batch.draw(region, body.getPosition().x, body.getPosition().y);
+		batch.draw(region, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 	}
 	
 	

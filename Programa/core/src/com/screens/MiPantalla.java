@@ -1,5 +1,4 @@
 package com.screens;
-
 import com.actors.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
