@@ -36,7 +36,6 @@ public class GameScreen extends BaseScreen{
 
 	private Stage stage;
 	private Player player;
-	private Texture playerTexture;
 	
 	// Tiled Map
 	private TiledMap map;
@@ -56,15 +55,14 @@ public class GameScreen extends BaseScreen{
 	
 	public GameScreen (MainGame game) {
 		super(game);
-		playerTexture = new Texture("player.png");
-		
+		world = new World(new Vector2(0, 0), true);
 		
 		//Modo Pantalla completa 
 		//Graphics.DisplayMode mode = Gdx.graphics.getDisplayMode();
 		//Gdx.graphics.setFullscreenMode(mode);
 
 		stage = new Stage();
-		player = new Player(playerTexture);
+		player = new Player(world);
 
 		
 		stage.setDebugAll(true);
@@ -96,7 +94,7 @@ public class GameScreen extends BaseScreen{
 		
 		// Box2D
 		box2dRender = new Box2DDebugRenderer();
-		world = new World(new Vector2(0, 0), true);
+
 		
 		BodyDef bodyDef = new BodyDef();
 		PolygonShape shape = new PolygonShape();
@@ -186,7 +184,6 @@ public class GameScreen extends BaseScreen{
 	@Override
 	public void hide() {
 		stage.dispose();
-		playerTexture.dispose();
 	}
 	
 	@Override
