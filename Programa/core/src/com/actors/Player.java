@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Player extends Actor{
 	
@@ -23,18 +24,27 @@ public class Player extends Actor{
 	private Texture playerTexture;
 	private TextureRegion region;
 
+	private Viewport gameport;
 	
 	
-	public Player(World world) {
+	public Player(World world, Viewport gameport) {
 		this.playerTexture = new Texture("player.png");
 		this.world = world;
+		this.gameport = gameport;
 				
 		this.region = new TextureRegion(playerTexture, 16, 908, 32, 52); // En el sprite sheet empieza en x = 16 y y = 908. Pj de 32x52
 		setWidth(this.region.getRegionWidth());
 		setHeight(this.region.getRegionHeight());
+	
+		setPosition((Gdx.graphics.getWidth()/2) - (getWidth() / 2), (Gdx.graphics.getHeight()/2) - (getHeight() / 2));
 		
-		
+		definePlayerBody();
+
+	}
+	
+	public void definePlayerBody() {
 		BodyDef bdef = new BodyDef();
+		bdef.position.set((Gdx.graphics.getWidth()/2) - (getWidth() / 2), (Gdx.graphics.getHeight()/2) - (getHeight() / 2));
 		bdef.position.set(600 / PPM, 600 / PPM);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		
@@ -42,10 +52,9 @@ public class Player extends Actor{
 		
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 2) / PPM);
+		shape.setAsBox((getWidth() / 2) / PPM, (getHeight() / 2) / PPM);
 		fdef.shape = shape;
 		body.createFixture(fdef);
-
 	}
 	
 	@Override
@@ -71,7 +80,7 @@ public class Player extends Actor{
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		batch.draw(region, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+		batch.draw(region, (Gdx.graphics.getWidth()/2) - (getWidth() / 2), (Gdx.graphics.getHeight()/2) - (getHeight() / 2));
 	}
 	
 	
