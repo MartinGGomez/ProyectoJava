@@ -85,18 +85,22 @@ public class GameScreen extends BaseScreen {
 		if (Gdx.input.isKeyPressed(Keys.W)) {
 			player.body.setLinearVelocity(new Vector2(0, SPEED));
 			player.states = PlayerStates.BACK;
+			player.direction = PlayerStates.BACK;
 		}
 		if (Gdx.input.isKeyPressed(Keys.S)) {
 			player.body.setLinearVelocity(new Vector2(0, -SPEED));
 			player.states = PlayerStates.FRONT;
+			player.direction = PlayerStates.FRONT;
 		}
 		if (Gdx.input.isKeyPressed(Keys.A)) {
 			player.body.setLinearVelocity(new Vector2(-SPEED, 0));
 			player.states = PlayerStates.LEFT;
+			player.direction = PlayerStates.LEFT;
 		}
 		if (Gdx.input.isKeyPressed(Keys.D)) {
 			player.body.setLinearVelocity(new Vector2(SPEED, 0));
 			player.states = PlayerStates.RIGHT;
+			player.direction = PlayerStates.RIGHT;
 		}		
 
 	}
@@ -165,6 +169,7 @@ public class GameScreen extends BaseScreen {
 
 	@Override
 	public void dispose() {
+		player.dispose();
 		map.dispose();
 		world.destroyBody(body);
 		renderer.dispose();
