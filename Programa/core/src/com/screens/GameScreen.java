@@ -4,6 +4,7 @@ import static com.game.MainGame.PPM;
 import static com.game.MainGame.SPEED;
 
 import com.actors.Player;
+import com.actors.PlayerStates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -83,16 +84,20 @@ public class GameScreen extends BaseScreen {
 		player.body.setLinearVelocity(0, 0);
 		if (Gdx.input.isKeyPressed(Keys.W)) {
 			player.body.setLinearVelocity(new Vector2(0, SPEED));
+			player.states = PlayerStates.BACK;
 		}
 		if (Gdx.input.isKeyPressed(Keys.S)) {
 			player.body.setLinearVelocity(new Vector2(0, -SPEED));
+			player.states = PlayerStates.FRONT;
 		}
 		if (Gdx.input.isKeyPressed(Keys.A)) {
 			player.body.setLinearVelocity(new Vector2(-SPEED, 0));
+			player.states = PlayerStates.LEFT;
 		}
 		if (Gdx.input.isKeyPressed(Keys.D)) {
 			player.body.setLinearVelocity(new Vector2(SPEED, 0));
-		}
+			player.states = PlayerStates.RIGHT;
+		}		
 
 	}
 

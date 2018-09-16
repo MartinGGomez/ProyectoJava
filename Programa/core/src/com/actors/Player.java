@@ -3,17 +3,17 @@ package com.actors;
 import static com.game.MainGame.PPM;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Player extends Actor{
@@ -25,6 +25,18 @@ public class Player extends Actor{
 	private TextureRegion region;
 
 	private Viewport gameport;
+	
+	
+	// Animations
+	public PlayerStates states;
+	private Animation movingRight;
+	private Animation movingLeft;
+	private Animation movingBack;
+	private Animation movingFront;
+	private float stateTimer;
+	private PlayerStates currentState;
+	private PlayerStates previousState;
+	
 	
 	
 	public Player(World world, Viewport gameport) {
@@ -39,6 +51,34 @@ public class Player extends Actor{
 		setPosition((Gdx.graphics.getWidth()/2) - (getWidth() / 2), (Gdx.graphics.getHeight()/2) - (getHeight() / 2));
 		
 		definePlayerBody();
+
+		// Animation
+		currentState = PlayerStates.FRONT;
+		previousState = PlayerStates.FRONT;
+		stateTimer = 0;
+		Array<TextureRegion> frames = new Array<TextureRegion>();
+		for (int i = 0; i < 9 ; i++) {
+			frames.add(new TextureRegion(this.playerTexture, i * 32, 0, 32, 48));
+		}
+		movingBack = new Animation(0.1f, frames);
+		frames.clear();
+		for (int i = 0; i < 9 ; i++) {
+			frames.add(new TextureRegion(this.playerTexture, i * 32, 63, 32, 48));
+		}
+		movingLeft = new Animation(0.1f, frames);
+		frames.clear();
+		for (int i = 0; i < 9 ; i++) {
+			frames.add(new TextureRegion(this.playerTexture, i * 32, 125, 32, 48));
+		}
+		movingFront = new Animation(0.1f, frames);
+		frames.clear();
+		for (int i = 0; i < 9 ; i++) {
+			frames.add(new TextureRegion(this.playerTexture, i * 32, 191, 32, 48));
+		}
+		movingRight = new Animation(0.1f, frames);
+		frames.clear();
+		
+		
 
 	}
 	
@@ -76,7 +116,55 @@ public class Player extends Actor{
 //		}
 		//
 		//
+		this.region.setRegion(getFrame(delta));
+		
+		
 	}
+	
+	public TextureRegion getFrame(float delta) {
+		currentState = getState();
+		
+		TextureRegion textureRegion;
+		
+		switch (currentState) {
+		case FRONT:
+				textureRegion = (TextureRegion) movingFront.getKeyFrame(stateTimer, true);
+			break;
+		case BACK:
+			textureRegion = (TextureRegion) movingBack.getKeyFrame(stateTimer, true);
+		break;
+		case RIGHT:
+			textureRegion = (TextureRegion) movingRight.getKeyFrame(stateTimer, true);
+		break;
+		case LEFT:
+			textureRegion = (TextureRegion) movingLeft.getKeyFrame(stateTimer, true);
+		break;
+		default:
+			textureRegion = (TextureRegion) movingFront.getKeyFrame(stateTimer, true);
+			break;
+		}
+				
+		
+		stateTimer = currentState == previousState ? stateTimer + delta : 0;
+		
+		previousState = currentState;
+		
+		return textureRegion;
+	}
+	
+	public PlayerStates getState() {
+		if(body.getLinearVelocity().x > 0) {
+			return PlayerStates.RIGHT;
+		} else if(body.getLinearVelocity().x < 0) {
+			return PlayerStates.LEFT;
+		} else if(body.getLinearVelocity().y > 0) {
+			return PlayerStates.BACK;
+		} else {
+			return PlayerStates.FRONT;
+		}
+	}
+	
+	
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
