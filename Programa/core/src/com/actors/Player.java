@@ -85,9 +85,9 @@ public class Player extends Actor {
 
 	public void definePlayerBody() {
 		BodyDef bdef = new BodyDef();
-		bdef.position.set((Gdx.graphics.getWidth() / 2) - (getWidth() / 2),
-				(Gdx.graphics.getHeight() / 2) - (getHeight() / 2));
-		bdef.position.set(600 / PPM, 600 / PPM);
+		//bdef.position.set((Gdx.graphics.getWidth() / 2) - (getWidth() / 2),
+			//	(Gdx.graphics.getHeight() / 2) - (getHeight() / 2));
+		bdef.position.set(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getWidth() / PPM);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
 		body = world.createBody(bdef);
@@ -166,8 +166,9 @@ public class Player extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		batch.draw(region, (Gdx.graphics.getWidth() / 2) - (getWidth() / 2),
-				(Gdx.graphics.getHeight() / 2) - (getHeight() / 2));
+		batch.draw(region, body.getPosition().x/PPM  + getX()   , body.getPosition().y /PPM + getY()  );
+		
+		System.out.println( "x "  +getX() + "y: " + getY());
 	}
 
 	public void dispose() {
