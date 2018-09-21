@@ -1,13 +1,9 @@
 package com.screens;
 
 import static com.game.MainGame.PPM;
-import static com.game.MainGame.SPEED;
 
 import com.actors.Player;
-import com.actors.PlayerStates;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
@@ -74,39 +70,12 @@ public class GameScreen extends BaseScreen {
 
 		// Scene2D
 		stage = new Stage();
-
 		stage.addActor(player);
-
-	}
-
-	public void handleInput(float delta) {
-
-		player.body.setLinearVelocity(0, 0);
-		if (Gdx.input.isKeyPressed(Keys.W)) {
-			player.body.setLinearVelocity(new Vector2(0, SPEED));
-			player.states = PlayerStates.BACK;
-			player.direction = PlayerStates.BACK;
-		}
-		if (Gdx.input.isKeyPressed(Keys.S)) {
-			player.body.setLinearVelocity(new Vector2(0, -SPEED));
-			player.states = PlayerStates.FRONT;
-			player.direction = PlayerStates.FRONT;
-		}
-		if (Gdx.input.isKeyPressed(Keys.A)) {
-			player.body.setLinearVelocity(new Vector2(-SPEED, 0));
-			player.states = PlayerStates.LEFT;
-			player.direction = PlayerStates.LEFT;
-		}
-		if (Gdx.input.isKeyPressed(Keys.D)) {
-			player.body.setLinearVelocity(new Vector2(SPEED, 0));
-			player.states = PlayerStates.RIGHT;
-			player.direction = PlayerStates.RIGHT;
-		}		
+		
 
 	}
 
 	public void update(float delta) {
-		handleInput(delta);
 
 		world.step(1 / 60f, 6, 2);
 
@@ -161,11 +130,6 @@ public class GameScreen extends BaseScreen {
 		gameport.update(width, height);
 	}
 
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void dispose() {
