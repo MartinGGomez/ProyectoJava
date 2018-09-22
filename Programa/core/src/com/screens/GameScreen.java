@@ -2,6 +2,7 @@ package com.screens;
 
 import static com.game.MainGame.PPM;
 
+import com.actors.Enemy;
 import com.actors.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,8 +21,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.collisions.MyContactListener;
 import com.game.MainGame;
 
 public class GameScreen extends BaseScreen {
@@ -42,12 +45,18 @@ public class GameScreen extends BaseScreen {
 	private Stage stage;
 
 	private Player player;
+	
+	private Enemy enemy;
+	
+	private Array<Enemy> enemies;
 
 	Body body;
 
 	public GameScreen(MainGame game) {
 		super(game);
 
+		
+		
 		gamecam = new OrthographicCamera();
 
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
@@ -63,14 +72,20 @@ public class GameScreen extends BaseScreen {
 		world = new World(new Vector2(0, 0), true);
 		box2dRender = new Box2DDebugRenderer();
 
+		world.setContactListener(new MyContactListener());
+		
 		// Body Definitions
 		createMapObjects();
 
 		player = new Player(world, gameport);
 
+
 		// Scene2D
 		stage = new Stage();
 		stage.addActor(player);
+		for (Enemy enemy: enemies) {
+			stage.addActor(enemy);
+		}
 		
 
 	}
@@ -81,7 +96,8 @@ public class GameScreen extends BaseScreen {
 
 		gamecam.position.x = player.body.getPosition().x;
 		gamecam.position.y = player.body.getPosition().y;
-
+		
+		
 		gamecam.update();
 
 		renderer.setView(gamecam);
@@ -101,6 +117,7 @@ public class GameScreen extends BaseScreen {
 
 		box2dRender.render(world, gamecam.combined); // Box2D render.
 
+				
 		stage.draw();
 
 	}
@@ -116,13 +133,21 @@ public class GameScreen extends BaseScreen {
 
 			bdef.type = BodyDef.BodyType.StaticBody;
 			bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight() / 2) / PPM);
+			
 			body = world.createBody(bdef);
 
 			shape.setAsBox((rect.getWidth() / 2) / PPM, (rect.getHeight() / 2) / PPM);
 			fdef.shape = shape;
-			body.createFixture(fdef);
+			body.createFixture(fdef).setUserData("Objeto del mapa");;
 
 		}
+		
+		// CREATE ENEMY
+		  enemies = new Array<Enemy>();
+	        for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
+	            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+	            enemies.add(new Enemy(world, rect.getX() / PPM, rect.getY() / PPM));
+	        }
 	}
 
 	@Override
