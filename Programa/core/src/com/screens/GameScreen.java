@@ -4,9 +4,12 @@ import static com.game.MainGame.PPM;
 
 import com.actors.Enemy;
 import com.actors.Player;
+import com.actors.Player2;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -27,10 +30,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.collisions.MyContactListener;
 import com.game.MainGame;
 
-public class GameScreen extends BaseScreen {
+public class GameScreen implements Screen {
 
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
+	private MainGame game;
 
 	// Tiled Map
 	private TmxMapLoader mapLoader;
@@ -44,7 +48,7 @@ public class GameScreen extends BaseScreen {
 	// Scene2D
 	private Stage stage;
 
-	private Player player;
+	private Player2 player;
 	
 	private Enemy enemy;
 	
@@ -53,9 +57,7 @@ public class GameScreen extends BaseScreen {
 	Body body;
 
 	public GameScreen(MainGame game) {
-		super(game);
-
-		
+		this.game = game;
 		
 		gamecam = new OrthographicCamera();
 
@@ -77,22 +79,18 @@ public class GameScreen extends BaseScreen {
 		// Body Definitions
 		createMapObjects();
 
-		player = new Player(world, gameport);
-
+		player = new Player2(world, gameport);
 
 		// Scene2D
-		stage = new Stage();
-		stage.addActor(player);
-		for (Enemy enemy: enemies) {
-			stage.addActor(enemy);
-		}
-		
+//		stage = new Stage();
 
 	}
 
 	public void update(float delta) {
 
 		world.step(1 / 60f, 6, 2);
+		
+		player.update(delta);
 
 		gamecam.position.x = player.body.getPosition().x;
 		gamecam.position.y = player.body.getPosition().y;
@@ -111,15 +109,23 @@ public class GameScreen extends BaseScreen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		stage.act();
+//		stage.act();
 
 		renderer.render(); // Tiled Map renderer.
 
 		box2dRender.render(world, gamecam.combined); // Box2D render.
+		
+		game.batch.setProjectionMatrix(gamecam.combined);
+		
+		game.batch.begin();
 
-				
-		stage.draw();
+		player.draw(game.batch);
+		
+		game.batch.end();
 
+
+
+		
 	}
 
 	private void createMapObjects() {
@@ -165,6 +171,30 @@ public class GameScreen extends BaseScreen {
 		world.dispose();
 		box2dRender.dispose();
 		stage.dispose();
+	}
+
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
