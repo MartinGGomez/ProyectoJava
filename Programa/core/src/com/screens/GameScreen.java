@@ -91,6 +91,10 @@ public class GameScreen implements Screen {
 		world.step(1 / 60f, 6, 2);
 		
 		player.update(delta);
+		
+		for (Enemy enemy: enemies) {
+			enemy.update(delta);
+		}
 
 		gamecam.position.x = player.body.getPosition().x;
 		gamecam.position.y = player.body.getPosition().y;
@@ -120,6 +124,10 @@ public class GameScreen implements Screen {
 		game.batch.begin();
 
 		player.draw(game.batch);
+
+		for (Enemy enemy: enemies) {
+			enemy.draw(game.batch);
+		}
 		
 		game.batch.end();
 
