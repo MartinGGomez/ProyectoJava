@@ -3,6 +3,7 @@ package com.actors;
 import static com.game.MainGame.PPM;
 import static com.game.MainGame.SPEED;
 
+import com.actors.states.PlayerStates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
@@ -104,7 +105,7 @@ public class Player extends Actor {
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox((getWidth() / 2) / PPM, (getHeight() / 2) / PPM);
 		fdef.shape = shape;
-		body.createFixture(fdef);
+		body.createFixture(fdef).setUserData("Player");;
 	}
 
 	@Override

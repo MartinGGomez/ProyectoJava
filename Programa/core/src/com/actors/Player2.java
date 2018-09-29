@@ -1,8 +1,10 @@
 package com.actors;
 
 import static com.game.MainGame.PPM;
+
 import static com.game.MainGame.SPEED;
 
+import com.actors.states.PlayerStates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.collisions.MyContactListener;
 
 public class Player2 extends Sprite {
 
@@ -41,6 +44,8 @@ public class Player2 extends Sprite {
 	private float stateTimer;
 	private PlayerStates currentState;
 	private PlayerStates previousState;
+	
+	// 
 
 	public Player2(World world, Viewport gameport) {
 		this.playerTexture = new Texture("player.png");
@@ -50,11 +55,7 @@ public class Player2 extends Sprite {
 		this.region = new TextureRegion(playerTexture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y = 908.
 																		// Pj de 32x52
 
-		
-
 		definePlayerBody();
-
-
 
 		// Animation
 		direction = PlayerStates.FRONT;
@@ -89,16 +90,16 @@ public class Player2 extends Sprite {
 		standingTextures[1] = new TextureRegion(this.playerTexture, 0, 125, 32, 48); // STANDING_FRONT
 		standingTextures[2] = new TextureRegion(this.playerTexture, 0, 191, 32, 48); // STANDING_RIGHT
 		standingTextures[3] = new TextureRegion(this.playerTexture, 0, 63, 32, 48); // STANDING_LEFT
-		
-		setBounds(body.getPosition().x , body.getPosition().y, 32 / PPM, 48 / PPM);
+
+		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
 
 	}
 
 	public void definePlayerBody() {
-		
+
 		BodyDef bdef = new BodyDef();
-		bdef.position.set((Gdx.graphics.getWidth() / 2)  / PPM, (Gdx.graphics.getWidth() / 2) / PPM);
+		bdef.position.set((Gdx.graphics.getWidth() / 2) / PPM, (Gdx.graphics.getWidth() / 2) / PPM);
 
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
@@ -108,15 +109,13 @@ public class Player2 extends Sprite {
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 2) / PPM);
 		fdef.shape = shape;
-		body.createFixture(fdef);
+		body.createFixture(fdef).setUserData("Player");;
 	}
 
 	public void update(float delta) {
-		
-		
-		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM ,
+		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 2) / PPM);
-		
+
 		body.setLinearVelocity(0, 0);
 		if (Gdx.input.isKeyPressed(Keys.W)) {
 			body.setLinearVelocity(new Vector2(0, SPEED));
@@ -139,6 +138,14 @@ public class Player2 extends Sprite {
 			direction = PlayerStates.RIGHT;
 		}
 		setRegion(getFrame(delta));
+		
+		//
+
+		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
+			System.out.println("Hiting enemy");
+			
+		}
+
 	}
 
 	public TextureRegion getFrame(float delta) {
@@ -196,7 +203,6 @@ public class Player2 extends Sprite {
 		return PlayerStates.FRONT;
 	}
 
-
 	@Override
 	public void draw(Batch batch) {
 		super.draw(batch);
@@ -204,6 +210,11 @@ public class Player2 extends Sprite {
 
 	public void dispose() {
 		playerTexture.dispose();
+		world.destroyBody(body);
+	}
+
+	public void attack(Enemy enemy) {
+		enemy.health -= 1;
 	}
 
 }
