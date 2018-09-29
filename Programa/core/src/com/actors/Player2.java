@@ -22,6 +22,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.collisions.MyContactListener;
+import com.collisions.userdata.UserData;
+
+import constants.Constants;
 
 public class Player2 extends Sprite {
 
@@ -44,9 +47,8 @@ public class Player2 extends Sprite {
 	private float stateTimer;
 	private PlayerStates currentState;
 	private PlayerStates previousState;
-	
-	// 
 
+	//
 	public Player2(World world, Viewport gameport) {
 		this.playerTexture = new Texture("player.png");
 		this.world = world;
@@ -108,11 +110,18 @@ public class Player2 extends Sprite {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 2) / PPM);
+		fdef.filter.categoryBits = Constants.BIT_PLAYER;
+		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
 		fdef.shape = shape;
-		body.createFixture(fdef).setUserData("Player");;
+
+		UserData userData = new UserData("Player", 1);
+
+		body.createFixture(fdef).setUserData(userData);
+		;
 	}
 
 	public void update(float delta) {
+
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 2) / PPM);
 
@@ -138,12 +147,12 @@ public class Player2 extends Sprite {
 			direction = PlayerStates.RIGHT;
 		}
 		setRegion(getFrame(delta));
-		
+
 		//
 
 		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
 			System.out.println("Hiting enemy");
-			
+
 		}
 
 	}

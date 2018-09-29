@@ -28,7 +28,10 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.collisions.MyContactListener;
+import com.collisions.userdata.UserData;
 import com.game.MainGame;
+
+import constants.Constants;
 
 public class GameScreen implements Screen {
 
@@ -50,16 +53,16 @@ public class GameScreen implements Screen {
 	private Stage stage;
 
 	private Player2 player;
-	
+
 	private Enemy enemy;
-	
+
 	private Array<Enemy> enemies;
 
 	Body body;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
-		
+
 		gamecam = new OrthographicCamera();
 
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
@@ -77,38 +80,35 @@ public class GameScreen implements Screen {
 
 		contactListener = new MyContactListener();
 		world.setContactListener(contactListener);
-		
+
 		// Body Definitions
 		createMapObjects();
 
 		player = new Player2(world, gameport);
 
 		// Scene2D
-//		stage = new Stage();
+		// stage = new Stage();
 
 	}
 
 	public void update(float delta) {
 
 		world.step(1 / 60f, 6, 2);
-		
+
 		player.update(delta);
-		
-		if(contactListener.playerCanAttack()) {
+		if (contactListener.playerCanAttack()) {
 			Enemy enemy = enemies.get(contactListener.getEnemyToAttack());
-//			System.out.println("Player attack enemy " + enemy.getEnemyIndex());
 			player.attack(enemy);
 		}
-		
-		for (Enemy enemy: enemies) {
+
+		for (Enemy enemy : enemies) {
 			enemy.update(delta);
-//			System.out.println("Enemy " + enemy.getEnemyIndex() + " health " + enemy.health);
+			System.out.println("Enemy " + enemy.getEnemyIndex() + " health " + enemy.health);
 		}
-		
+
 		gamecam.position.x = player.body.getPosition().x;
 		gamecam.position.y = player.body.getPosition().y;
-		
-		
+
 		gamecam.update();
 
 		renderer.setView(gamecam);
@@ -122,27 +122,24 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-//		stage.act();
+		// stage.act();
 
 		renderer.render(); // Tiled Map renderer.
 
 		box2dRender.render(world, gamecam.combined); // Box2D render.
-		
+
 		game.batch.setProjectionMatrix(gamecam.combined);
-		
+
 		game.batch.begin();
 
 		player.draw(game.batch);
 
-		for (Enemy enemy: enemies) {
+		for (Enemy enemy : enemies) {
 			enemy.draw(game.batch);
 		}
-		
+
 		game.batch.end();
 
-
-
-		
 	}
 
 	private void createMapObjects() {
@@ -156,48 +153,45 @@ public class GameScreen implements Screen {
 
 			bdef.type = BodyDef.BodyType.StaticBody;
 			bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight() / 2) / PPM);
-			
+
 			body = world.createBody(bdef);
 
 			shape.setAsBox((rect.getWidth() / 2) / PPM, (rect.getHeight() / 2) / PPM);
 			fdef.shape = shape;
-			body.createFixture(fdef).setUserData("Objeto del mapa");;
+			fdef.filter.categoryBits = Constants.BIT_COLLISION;
+			fdef.filter.maskBits = Constants.BIT_PLAYER;
+			body.createFixture(fdef).setUserData(new UserData("Map", 0));
+			;
 
 		}
-		
+
 		// CREATE ENEMY
-		
+
 		createEnemies();
-//		  enemies = new Array<Enemy>();
-//	        for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
-//	            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-//	            enemies.add(new Enemy(world, rect.getX() / PPM, rect.getY() / PPM));
-//	        }
 	}
-	
-	public void createEnemies(){
+
+	public void createEnemies() {
 		Random random = new Random();
 		int maxEnemies = 4;
-		
+
 		enemies = new Array<Enemy>();
-        for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            
-            for (int i = 0; i < maxEnemies; i++) {
-            	float posX = random.nextInt((int) ((rect.getWidth() + rect.getX()) - rect.getX())) + rect.getX();
-                float posY = random.nextInt((int) ((rect.getHeight() + rect.getY()) - rect.getY())) + rect.getY();
-                
-                enemies.add(new Enemy(world, posX / PPM, posY / PPM, i));
+		for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+			Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+			for (int i = 0; i < maxEnemies; i++) {
+				float posX = random.nextInt((int) ((rect.getWidth() + rect.getX()) - rect.getX())) + rect.getX();
+				float posY = random.nextInt((int) ((rect.getHeight() + rect.getY()) - rect.getY())) + rect.getY();
+
+				enemies.add(new Enemy(world, posX / PPM, posY / PPM, i));
 			}
-            
-        }
+
+		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		gameport.update(width, height);
 	}
-
 
 	@Override
 	public void dispose() {
@@ -213,25 +207,25 @@ public class GameScreen implements Screen {
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

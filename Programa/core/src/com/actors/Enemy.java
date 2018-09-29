@@ -16,6 +16,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.collisions.userdata.UserData;
+
+import constants.Constants;
 
 public class Enemy extends Sprite{
 
@@ -25,7 +28,7 @@ public class Enemy extends Sprite{
 	private World world;
 	private Texture enemyTexture;
 	private TextureRegion region;
-	private Body body;
+	public Body body;
 	private OrthographicCamera camera;
 	
 	private float posX, posY;
@@ -65,7 +68,12 @@ public class Enemy extends Sprite{
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 2) / PPM);
 		fdef.shape = shape;
-		body.createFixture(fdef).setUserData("Enemy- " + enemyIndex );
+		fdef.filter.categoryBits = Constants.BIT_PLAYER;
+		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
+			
+		UserData userData = new UserData("Enemy", enemyIndex);
+		
+		body.createFixture(fdef).setUserData(userData);
 	}
 	public void update(float delta) {
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM ,
