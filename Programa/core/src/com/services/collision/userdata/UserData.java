@@ -1,4 +1,4 @@
-package com.collisions.userdata;
+package com.services.collision.userdata;
 
 public class UserData {
 

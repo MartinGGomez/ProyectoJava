@@ -1,4 +1,4 @@
-package com.collisions;
+package com.services.collision;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -6,13 +6,12 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.MassData;
-import com.collisions.userdata.UserData;
+import com.services.collision.userdata.UserData;
 
 public class MyContactListener implements ContactListener {
 
 	private boolean isColliding;
-	private boolean playerCanAttack;
-	private int enemyToAttack;
+	private int enemyCollided;
 
 	@Override
 	public void beginContact(Contact contact) {
@@ -26,14 +25,13 @@ public class MyContactListener implements ContactListener {
 		System.out.println(userDataB.type);
 		
 		//
-		isColliding = true;
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")){
-			playerCanAttack = true;
-			enemyToAttack = userDataB.index;
+			isColliding = true;
+			enemyCollided = userDataB.index;
 		}
 		if (userDataB.type.equals("Player") && userDataA.type.equals("Enemy")){
-			playerCanAttack = true;
-			enemyToAttack = userDataA.index;
+			isColliding = true;
+			enemyCollided = userDataA.index;
 		}
 	}
 
@@ -43,20 +41,16 @@ public class MyContactListener implements ContactListener {
 		UserData userDataB = (UserData) contact.getFixtureB().getUserData();
 		
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")){
-			playerCanAttack = false;
+			isColliding = false;
 		}
 		if (userDataB.type.equals("Player") && userDataA.type.equals("Enemy")){
-			playerCanAttack = false;
+			isColliding = false;
 		}
 
 	}
 
-	public int getEnemyToAttack() {
-		return enemyToAttack;
-	}
-
-	public boolean playerCanAttack() {
-		return playerCanAttack;
+	public int getEnemyCollided() {
+		return enemyCollided;
 	}
 
 	public boolean isColliding() {
