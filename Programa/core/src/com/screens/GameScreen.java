@@ -13,10 +13,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -41,8 +39,6 @@ public class GameScreen implements Screen {
 	private Box2DDebugRenderer box2dRender;
 	private MyContactListener contactListener;
 
-	// Scene2D
-	private Stage stage;
 
 	private Player player;
 
@@ -52,17 +48,20 @@ public class GameScreen implements Screen {
 	
 	// Helpers
 	private CollisionHelper collisionHelper;
-	private Combat combat;
-
-	Body body;
+	
+	// HUD
+	private Hud hud;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
 
 		gamecam = new OrthographicCamera();
-
+		
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
-
+		
+		// Hud
+		hud = new Hud();
+		
 		// Tiled Map
 		mapLoader = new TmxMapLoader();
 		map = mapLoader.load("Mapa de prueba.tmx");
@@ -84,8 +83,6 @@ public class GameScreen implements Screen {
 		
 		player = new Player(world, gameport);
 
-		// Scene2D
-		// stage = new Stage();
 
 	}
 
@@ -114,16 +111,6 @@ public class GameScreen implements Screen {
 		renderer.setView(gamecam);
 	}
 
-	private void handleAttacks(Enemy enemy) {
-		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
-				if (Combat.canAttackToEnemy(player, enemy)) {
-					player.attack(enemy);
-				}
-			}
-		}
-	}
-
 	@Override
 	public void render(float delta) {
 
@@ -148,11 +135,22 @@ public class GameScreen implements Screen {
 
 		player.draw(game.batch);
 
+		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
+		
 		game.batch.end();
 
 	}
 
-	
+	private void handleAttacks(Enemy enemy) {
+		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
+				if (Combat.canAttackToEnemy(player, enemy)) {
+					player.attack(enemy);
+				}
+			}
+		}
+	}	
 
 	@Override
 	public void resize(int width, int height) {
@@ -163,11 +161,10 @@ public class GameScreen implements Screen {
 	public void dispose() {
 		player.dispose();
 		map.dispose();
-		world.destroyBody(body);
 		renderer.dispose();
 		world.dispose();
 		box2dRender.dispose();
-		stage.dispose();
+		hud.dispose();
 	}
 
 	@Override
