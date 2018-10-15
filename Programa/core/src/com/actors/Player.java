@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.constants.Constants;
+import com.screens.Hud;
 import com.services.collision.userdata.UserData;
 
 public class Player extends Sprite {
@@ -65,7 +66,9 @@ public class Player extends Sprite {
 	public void definePlayerBody() {
 
 		BodyDef bdef = new BodyDef();
-		bdef.position.set((Gdx.graphics.getWidth() / 2) / PPM, ((Gdx.graphics.getHeight() / 2))/ PPM);
+		System.out.println(Hud.HUD_HALF_WIDTH / PPM);
+		System.out.println(Hud.HUD_HALF_WIDTH / PPM);
+		bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
 		body = world.createBody(bdef);
@@ -117,7 +120,7 @@ public class Player extends Sprite {
 
 		TextureRegion textureRegion;
 
-		switch (currentState) {
+ 		switch (currentState) {
 		case FRONT:
 			textureRegion = movingFront.getKeyFrame(stateTimer, true);
 			break;

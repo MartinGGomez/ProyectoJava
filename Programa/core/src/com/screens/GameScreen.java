@@ -64,10 +64,10 @@ public class GameScreen implements Screen {
 		
 		// Tiled Map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("Mapa de prueba.tmx");
+		map = mapLoader.load("Mapa de Prueba.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
 
-		gamecam.position.set(gameport.getWorldWidth() / 2, gameport.getWorldHeight() / 2, 0);
+//		gamecam.position.set(Hud.HUD_HALF_WIDTH, Hud.HUD_HALF_HEIGHT, 0);
 
 		// Box2D
 		world = new World(new Vector2(0, 0), true);
@@ -102,9 +102,9 @@ public class GameScreen implements Screen {
 			// System.out.println("Enemy " + enemy.getEnemyIndex() + " health " +
 			// enemy.health);
 		}
-
-		gamecam.position.x = player.body.getPosition().x;
-		gamecam.position.y = player.body.getPosition().y;
+		
+		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara 
+		gamecam.position.y = player.body.getPosition().y + 0.5f;  // Porque esta centrado con respecto al HUD
 
 		gamecam.update();
 
