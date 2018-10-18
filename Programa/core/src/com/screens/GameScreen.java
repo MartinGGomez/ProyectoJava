@@ -64,7 +64,7 @@ public class GameScreen implements Screen {
 		
 		// Tiled Map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("Mapa de Prueba.tmx");
+		map = mapLoader.load("Nuevo Mapa.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
 
 //		gamecam.position.set(Hud.HUD_HALF_WIDTH, Hud.HUD_HALF_HEIGHT, 0);
