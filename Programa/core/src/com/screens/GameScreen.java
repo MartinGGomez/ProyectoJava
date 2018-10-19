@@ -60,11 +60,11 @@ public class GameScreen implements Screen {
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
 		
 		// Hud
-		hud = new Hud();
+		hud = new Hud(this.game);
 		
 		// Tiled Map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("Nuevo Mapa.tmx");
+		map = mapLoader.load("Mapa de Prueba.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
 
 //		gamecam.position.set(Hud.HUD_HALF_WIDTH, Hud.HUD_HALF_HEIGHT, 0);
@@ -137,6 +137,7 @@ public class GameScreen implements Screen {
 
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
+        hud.stage.act();
 		
 		game.batch.end();
 
