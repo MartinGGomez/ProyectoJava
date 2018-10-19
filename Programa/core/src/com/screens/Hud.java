@@ -7,14 +7,19 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -32,6 +37,7 @@ public class Hud implements Disposable {
 	private Skin skin;
 	private List list;
 	private ScrollPane scrollPane;
+	Array items = new Array();
 
 	public Hud(MainGame game) {
 		this.game = game;
@@ -51,12 +57,20 @@ public class Hud implements Disposable {
 		image.setPosition(0, 0);
 		image.setSize(texture.getWidth(), texture.getHeight());
 		image.toBack();
+		//
 		Label player = new Label("Coxne", new LabelStyle(new BitmapFont(), Color.WHITE));
 		player.setPosition(image.getWidth() - 140, image.getHeight() - 80);
-
+		TextButton testButton = new TextButton("CLICK", skin);
+		testButton.setPosition(200, 200);
+		testButton.addListener(new ClickListener() {
+			 @Override
+			    public void clicked(InputEvent event, float x, float y) {
+			        newItem();
+			 }
+		});
 		//
 		stage.setDebugAll(true);
-		Array items = new Array();
+		
 		list = new List<String>(skin);
 		list.setFillParent(false);
 		
@@ -77,26 +91,29 @@ public class Hud implements Disposable {
 		
 		
 		scrollPane = new ScrollPane(list);
-		scrollPane.setOverscroll(true, true);
-		scrollPane.setBounds(10, 10, 400, 300);
-		scrollPane.setScrollBarPositions(false, true);
-		scrollPane.setScrollbarsOnTop(true);
-		scrollPane.setFadeScrollBars(true);
-		scrollPane.setScrollingDisabled(false, false);
-		scrollPane.setForceScroll(true, true);
-		scrollPane.scrollTo(0, 0, 0, 0);
-		scrollPane.setSmoothScrolling(true);
-		scrollPane.toFront();
-		scrollPane.setScale(0.5f);
-		scrollPane.setPosition(25, 400);
-
-
+//		scrollPane.setBounds(0, 0, 200, 500);
+        scrollPane.setSmoothScrolling(false);
+        scrollPane.setHeight(190);
+        scrollPane.setWidth(1100);
+        scrollPane.setForceScroll(true, true);
+        scrollPane.setPosition(10, Gdx.graphics.getHeight()-105);
+        scrollPane.setTransform(true);
+        scrollPane.setScale(0.5f);
+       
+        
+        Gdx.input.setInputProcessor(stage);
 		stage.addActor(image);
 		stage.addActor(scrollPane);
 		stage.addActor(player);
+		stage.addActor(testButton);
 
 	}
 
+	public void newItem() {
+		items.add("Nuevo");
+		list.setItems(items);
+	}
+	
 	@Override
 	public void dispose() {
 		stage.dispose();
