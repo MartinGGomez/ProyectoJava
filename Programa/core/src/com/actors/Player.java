@@ -18,8 +18,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.constants.Constants;
@@ -36,6 +40,11 @@ public class Player extends Sprite {
 
 	private Texture playerTexture;
 	private TextureRegion region;
+	
+	// Scene2d
+	private Label playerLabel;
+	private Actor actor;
+	public String name;
 
 	// Animations
 	public PlayerStates states;
@@ -49,10 +58,13 @@ public class Player extends Sprite {
 	private PlayerStates currentState;
 	private PlayerStates previousState;
 	//
-	public Player(MainGame game, World world) {
+	
+	public Player(MainGame game, World world, String name) {
 		this.playerTexture = new Texture("player.png");
 		this.world = world;
 		this.game = game;
+		this.name = name;
+		GameScreen.hud.player.setText(this.name);
 		
 		this.region = new TextureRegion(playerTexture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y = 908.
 																		// Pj de 32x52
@@ -62,9 +74,8 @@ public class Player extends Sprite {
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
 		
-		Label player = new Label("Coxne",GameScreen.hud.skin, "little-font", Color.WHITE);
-		player.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2)-2 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2)-8);
-		this.game.stage.addActor(player);
+		defineStageElements();
+		
 	}
 
 	public void definePlayerBody() {
@@ -86,6 +97,26 @@ public class Player extends Sprite {
 
 		body.createFixture(fdef).setUserData(userData);
 
+	}
+	
+	private void defineStageElements() {
+		// SCENE2D STAGE
+		playerLabel = new Label(this.name, GameScreen.hud.skin, "little-font", Color.WHITE);
+		playerLabel.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2) - 22 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2) - 6);
+		playerLabel.setSize(80, 12);
+		playerLabel.setAlignment(Align.center);
+		this.game.stage.addActor(playerLabel);
+		
+		actor = new Actor();
+		actor.setSize(getRegionWidth(), getRegionHeight());
+		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
+		actor.addListener(new ClickListener() {
+			 @Override
+			    public void clicked(InputEvent event, float x, float y) {
+			        GameScreen.hud.printMessage(name);
+			 }
+		});
+		this.game.stage.addActor(actor);
 	}
 
 	public void update(float delta) {

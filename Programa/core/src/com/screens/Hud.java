@@ -1,28 +1,22 @@
 package com.screens;
 
-import javax.xml.ws.handler.MessageContext.Scope;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -38,7 +32,8 @@ public class Hud implements Disposable {
 	public static final float HUD_HALF_HEIGHT = Gdx.graphics.getHeight() - 346;
 	public static final float HUD_HALF_WIDTH = 273.5f;
 	public Skin skin;
-	private List<String> list;
+	public Label player;
+	private Table table;
 	private ScrollPane scrollPane;
 	Array<String> items = new Array<String>();
 	private BitmapFont font, whiteFont, littleFont;
@@ -67,8 +62,10 @@ public class Hud implements Disposable {
 		image.setSize(texture.getWidth(), texture.getHeight());
 		image.toBack();
 		//
-		Label player = new Label("Coxne",skin, "white-font", Color.WHITE);
-		player.setPosition(image.getWidth() - 160, image.getHeight() - 80);
+		player = new Label("",skin, "white-font", Color.WHITE);
+		player.setPosition(image.getWidth() - 200, image.getHeight() - 80);
+		player.setSize(160, 24);
+		player.setAlignment(Align.center);
 		//
 		//
 		// PROVISORIO
@@ -86,20 +83,24 @@ public class Hud implements Disposable {
 			 @Override
 			    public void clicked(InputEvent event, float x, float y) {
 			        items.clear();
-			        list.setItems(items);
+			        table.clear();
 			 }
 		});
 		//
 		//
 		//
 		
-		list = new List<String>(skin);
-		list.setFillParent(false);
-		list.setItems(items);
-		list.setColor(Color.BLACK);
-		
-		
-		scrollPane = new ScrollPane(list);
+		// Console table
+		table = new Table(skin);
+		table.debug();
+		table.row().expand();
+		table.add("Prueba", "white-font", Color.WHITE).expand(true, false).left();
+		table.setPosition(10, Gdx.graphics.getHeight()-105);
+		table.setScale(0.5f);
+		table.setWidth(500);
+		table.setHeight(180);
+		scrollPane = new ScrollPane(table);
+		scrollPane.debug();
         scrollPane.setSmoothScrolling(false);
         scrollPane.setHeight(180);
         scrollPane.setWidth(1100);
@@ -109,20 +110,22 @@ public class Hud implements Disposable {
         scrollPane.setScale(0.5f);
        
         
+        // Final - Agregar actores
         Gdx.input.setInputProcessor(stage);
 		stage.addActor(image);
 		stage.addActor(scrollPane);
 		stage.addActor(player);
 		stage.addActor(testConsole);
 		stage.addActor(cleanConsole);
-
 	}
 
 	public void printMessage(String message) {
-		items.add(message);
-		list.setItems(items);
+		// Handle fonts.
+		table.row().expand();
+		table.add(message, "white-font", Color.WHITE).expand(true, false).left();
 		scrollPane.scrollTo(0, 0, 0, 0);
 	}
+	
 	
 	private void createFonts() {
 		// SE PUEDEN CREAR DISTINTAS FUENTES Y DSP IR USANDO LA QUE QUIERAS

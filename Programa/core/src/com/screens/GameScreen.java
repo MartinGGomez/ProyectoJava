@@ -84,7 +84,7 @@ public class GameScreen implements Screen {
 		
 	
 		
-		player = new Player(this.game, world);
+		player = new Player(this.game, world, "Coxne");
 
 
 	}
