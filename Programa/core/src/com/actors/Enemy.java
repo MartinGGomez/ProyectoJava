@@ -22,6 +22,7 @@ import com.services.collision.userdata.UserData;
 
 public class Enemy extends Sprite {
 
+	public String name = "Duende";
 	public int health = 100;
 
 	//

@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -50,7 +51,7 @@ public class GameScreen implements Screen {
 	private CollisionHelper collisionHelper;
 	
 	// HUD
-	private Hud hud;
+	public static Hud hud;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
@@ -59,6 +60,8 @@ public class GameScreen implements Screen {
 		
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
 		
+		this.game.stage = new Stage();
+		
 		// Hud
 		hud = new Hud(this.game);
 		
@@ -66,8 +69,6 @@ public class GameScreen implements Screen {
 		mapLoader = new TmxMapLoader();
 		map = mapLoader.load("Mapa de Prueba.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
-
-//		gamecam.position.set(Hud.HUD_HALF_WIDTH, Hud.HUD_HALF_HEIGHT, 0);
 
 		// Box2D
 		world = new World(new Vector2(0, 0), true);
@@ -81,7 +82,9 @@ public class GameScreen implements Screen {
 		collisionHelper.createMapObjects();
 		enemies = collisionHelper.createEnemies();
 		
-		player = new Player(world, gameport);
+	
+		
+		player = new Player(this.game, world);
 
 
 	}
@@ -151,7 +154,8 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
-	}	
+	}
+	
 
 	@Override
 	public void resize(int width, int height) {

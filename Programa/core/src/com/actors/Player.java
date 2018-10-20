@@ -6,6 +6,7 @@ import static com.constants.Constants.SPEED;
 import com.actors.states.PlayerStates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -15,12 +16,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.constants.Constants;
+import com.game.MainGame;
+import com.screens.GameScreen;
 import com.screens.Hud;
 import com.services.collision.userdata.UserData;
 
@@ -28,11 +32,10 @@ public class Player extends Sprite {
 
 	public World world;
 	public Body body;
+	private MainGame game;
 
 	private Texture playerTexture;
 	private TextureRegion region;
-
-	private Viewport gameport;
 
 	// Animations
 	public PlayerStates states;
@@ -45,29 +48,28 @@ public class Player extends Sprite {
 	private float stateTimer;
 	private PlayerStates currentState;
 	private PlayerStates previousState;
-
 	//
-	public Player(World world, Viewport gameport) {
+	public Player(MainGame game, World world) {
 		this.playerTexture = new Texture("player.png");
 		this.world = world;
-		this.gameport = gameport;
-
+		this.game = game;
+		
 		this.region = new TextureRegion(playerTexture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y = 908.
 																		// Pj de 32x52
-
 		definePlayerBody();
 		createAnimations();
 
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
-
+		
+		Label player = new Label("Coxne",GameScreen.hud.skin, "little-font", Color.WHITE);
+		player.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2)-2 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2)-8);
+		this.game.stage.addActor(player);
 	}
 
 	public void definePlayerBody() {
 
 		BodyDef bdef = new BodyDef();
-		System.out.println(Hud.HUD_HALF_WIDTH / PPM);
-		System.out.println(Hud.HUD_HALF_WIDTH / PPM);
 		bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
@@ -218,8 +220,8 @@ public class Player extends Sprite {
 	}
 
 	public void attack(Enemy enemy) {
-		System.out.println("Player ataco al enemigo!!!");
-		enemy.health -= 1;
+		GameScreen.hud.printMessage("Atacaste a " + enemy.name);
+//		enemy.health -= 1;
 	}
 
 }

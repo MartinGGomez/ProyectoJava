@@ -21,9 +21,6 @@ public class MyContactListener implements ContactListener {
 		UserData userDataA = (UserData) fixtureA.getUserData();
 		UserData userDataB = (UserData) fixtureB.getUserData();
 		
-		System.out.println(userDataA.type);
-		System.out.println(userDataB.type);
-		
 		//
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")){
 			isColliding = true;
