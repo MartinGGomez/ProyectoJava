@@ -40,16 +40,15 @@ public class GameScreen implements Screen {
 	private Box2DDebugRenderer box2dRender;
 	private MyContactListener contactListener;
 
-
 	private Player player;
 
 	private Enemy enemy;
 
 	private Array<Enemy> enemies;
-	
+
 	// Helpers
 	private CollisionHelper collisionHelper;
-	
+
 	// HUD
 	public static Hud hud;
 
@@ -57,14 +56,11 @@ public class GameScreen implements Screen {
 		this.game = game;
 
 		gamecam = new OrthographicCamera();
-		
+
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
-		
+
 		this.game.stage = new Stage();
-		
-		// Hud
-		hud = new Hud(this.game);
-		
+
 		// Tiled Map
 		mapLoader = new TmxMapLoader();
 		map = mapLoader.load("Mapa de Prueba.tmx");
@@ -81,11 +77,12 @@ public class GameScreen implements Screen {
 		collisionHelper = new CollisionHelper(map, world);
 		collisionHelper.createMapObjects();
 		enemies = collisionHelper.createEnemies();
-		
-	
-		
+
 		player = new Player(this.game, world, "Coxne");
 
+		// Hud
+		hud = new Hud(this.game, this.player);
+		player.defineStageElements();
 
 	}
 
@@ -97,7 +94,7 @@ public class GameScreen implements Screen {
 
 		Enemy enemyCollided = enemies.get(contactListener.getEnemyCollided());
 		enemyCollided.preventMove = true;
-		
+
 		handleAttacks(enemyCollided);
 
 		for (Enemy enemy : enemies) {
@@ -105,9 +102,9 @@ public class GameScreen implements Screen {
 			// System.out.println("Enemy " + enemy.getEnemyIndex() + " health " +
 			// enemy.health);
 		}
-		
-		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara 
-		gamecam.position.y = player.body.getPosition().y + 0.5f;  // Porque esta centrado con respecto al HUD
+
+		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
+		gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
 
 		gamecam.update();
 
@@ -139,9 +136,9 @@ public class GameScreen implements Screen {
 		player.draw(game.batch);
 
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.stage.draw();
-        hud.stage.act();
-		
+		hud.stage.draw();
+		hud.stage.act();
+
 		game.batch.end();
 
 	}
@@ -155,7 +152,6 @@ public class GameScreen implements Screen {
 			}
 		}
 	}
-	
 
 	@Override
 	public void resize(int width, int height) {

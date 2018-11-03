@@ -34,6 +34,14 @@ import com.services.collision.userdata.UserData;
 
 public class Player extends Sprite {
 
+	// Player properties
+	public int health = 100;
+	public int maxHealth = 100;
+	public int mana = 700;
+	public int maxMana = 700;
+	public int energy = 500;
+	public int maxEnergy = 500;
+	
 	public World world;
 	public Body body;
 	private MainGame game;
@@ -64,7 +72,6 @@ public class Player extends Sprite {
 		this.world = world;
 		this.game = game;
 		this.name = name;
-		GameScreen.hud.player.setText(this.name);
 		
 		this.region = new TextureRegion(playerTexture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y = 908.
 																		// Pj de 32x52
@@ -73,9 +80,7 @@ public class Player extends Sprite {
 
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
-		
-		defineStageElements();
-		
+			
 	}
 
 	public void definePlayerBody() {
@@ -99,7 +104,7 @@ public class Player extends Sprite {
 
 	}
 	
-	private void defineStageElements() {
+	public void defineStageElements() {
 		// SCENE2D STAGE
 		playerLabel = new Label(this.name, GameScreen.hud.skin, "little-font", Color.WHITE);
 		playerLabel.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2) - 22 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2) - 6);
@@ -109,6 +114,7 @@ public class Player extends Sprite {
 		
 		actor = new Actor();
 		actor.setSize(getRegionWidth(), getRegionHeight());
+		actor.debug();
 		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
 		actor.addListener(new ClickListener() {
 			 @Override
@@ -116,7 +122,7 @@ public class Player extends Sprite {
 			        GameScreen.hud.printMessage(name);
 			 }
 		});
-		this.game.stage.addActor(actor);
+		this.game.stage.addActor(actor);	
 	}
 
 	public void update(float delta) {
@@ -252,6 +258,8 @@ public class Player extends Sprite {
 
 	public void attack(Enemy enemy) {
 		GameScreen.hud.printMessage("Atacaste a " + enemy.name);
+		mana -= 10;
+		GameScreen.hud.updateStats(this);
 //		enemy.health -= 1;
 	}
 
