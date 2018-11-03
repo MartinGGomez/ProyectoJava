@@ -40,7 +40,7 @@ public class Hud implements Disposable {
 	public static final float HUD_HALF_HEIGHT = Gdx.graphics.getHeight() - 346;
 	public static final float HUD_HALF_WIDTH = 273.5f;
 	public static Skin skin;
-	public Label playerName, health, mana, energy;
+	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef;
 	public Player player;
 	private Table table;
 	private ScrollPane scrollPane;
@@ -83,6 +83,10 @@ public class Hud implements Disposable {
 		this.healthBar.setValue(healthValue);
 		this.manaBar.setValue(manaValue);
 		this.healthBar.setValue(energyValue);
+		this.armorDef.setText(String.format("%s / %s", this.player.minArmorDef, this.player.minArmorDef));
+		this.helmetDef.setText(String.format("%s / %s", this.player.minHelmetDef, this.player.maxHelmetDef));
+		this.shieldDef.setText(String.format("%s / %s", this.player.minShieldDef, this.player.maxShieldDef));
+		this.attackDamage.setText(String.format("%s / %s", this.player.minAttackDamage, this.player.maxAttackDamage));
 		
 	}
 	
@@ -94,16 +98,30 @@ public class Hud implements Disposable {
 		playerName.setSize(160, 24);
 		playerName.setAlignment(Align.center);
 		//
+		
+		armorDef = new Label("", skin, "little-font", Color.WHITE);
+		armorDef.setSize(50, 20);
+		armorDef.setPosition(80, 30 - armorDef.getHeight());
+		armorDef.setAlignment(Align.center);
+		
+		helmetDef = new Label("", skin, "little-font", Color.WHITE);
+		helmetDef.setSize(50, 20);
+		helmetDef.setPosition(198, 30 - helmetDef.getHeight());
+		helmetDef.setAlignment(Align.center);
+
+		shieldDef = new Label("", skin, "little-font", Color.WHITE);
+		shieldDef.setSize(50, 20);
+		shieldDef.setPosition(342, 30 - shieldDef.getHeight());
+		shieldDef.setAlignment(Align.center);
+		
+
+		attackDamage = new Label("", skin, "little-font", Color.WHITE);
+		attackDamage.setSize(50, 20);
+		attackDamage.setPosition(465, 30 - attackDamage.getHeight());
+		attackDamage.setAlignment(Align.center);
+		
 		//
 		// PROVISORIO
-		TextButton testConsole = new TextButton("Test Console", skin);
-		testConsole.setPosition(Gdx.graphics.getWidth() - testConsole.getWidth() - 30, 210);
-		testConsole.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				printMessage("New message");
-			}
-		});
 		TextButton cleanConsole = new TextButton("Clean Console", skin);
 		cleanConsole.setPosition(Gdx.graphics.getWidth() - cleanConsole.getWidth() - 30, 260);
 		cleanConsole.addListener(new ClickListener() {
@@ -149,18 +167,20 @@ public class Hud implements Disposable {
 		// Final - Agregar actores
 		Gdx.input.setInputProcessor(stage);
 		stage.addActor(image);
+		stage.addActor(cleanConsole);
+		stage.addActor(testProgress);
 		stage.addActor(scrollPane);
 		stage.addActor(playerName);
-		stage.addActor(testConsole);
-		stage.addActor(cleanConsole);
-		//
-		stage.addActor(testProgress);
 		stage.addActor(healthBar);
 		stage.addActor(manaBar);
 		stage.addActor(energyBar);
 		stage.addActor(health);
 		stage.addActor(mana);
 		stage.addActor(energy);
+		stage.addActor(armorDef);
+		stage.addActor(helmetDef);
+		stage.addActor(attackDamage);
+		stage.addActor(shieldDef);	
 	}
 
 	private void createProgressBars() {
@@ -193,7 +213,7 @@ public class Hud implements Disposable {
 		healthBar.setAnimateDuration(0.2f);
 		healthBar.setPosition(Gdx.graphics.getWidth() - 229, 148 - healthBar.getHeight());
 
-		health = new Label(String.format("HP: %s / %s", this.player.health, this.player.maxHealth), skin, "mini-font", Color.WHITE);
+		health = new Label("", skin, "mini-font", Color.WHITE);
 		health.setPosition(Gdx.graphics.getWidth() - 229, Gdx.graphics.getHeight() - 452 - healthBar.getHeight());
 		health.setSize(90, 10);
 		health.setAlignment(Align.center);
@@ -226,7 +246,7 @@ public class Hud implements Disposable {
 		manaBar.setAnimateDuration(0.2f);
 		manaBar.setPosition(Gdx.graphics.getWidth() - 229, 125 - manaBar.getHeight());
 
-		mana = new Label("MP: 100 / 100", skin, "mini-font", Color.WHITE);
+		mana = new Label("", skin, "mini-font", Color.WHITE);
 		mana.setPosition(Gdx.graphics.getWidth() - 229, Gdx.graphics.getHeight() - 475 - healthBar.getHeight());
 		mana.setSize(90, 10);
 		mana.setAlignment(Align.center);
@@ -260,7 +280,7 @@ public class Hud implements Disposable {
 		energyBar.setAnimateDuration(1f);
 		energyBar.setPosition(Gdx.graphics.getWidth() - 229, 102 - energyBar.getHeight());
 
-		energy = new Label("SP: 100 / 100", skin, "mini-font", Color.WHITE);
+		energy = new Label("", skin, "mini-font", Color.WHITE);
 		energy.setPosition(Gdx.graphics.getWidth() - 229, Gdx.graphics.getHeight() - 498 - healthBar.getHeight());
 		energy.setSize(90, 10);
 		energy.setAlignment(Align.center);

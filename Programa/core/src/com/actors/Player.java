@@ -41,6 +41,15 @@ public class Player extends Sprite {
 	public int maxMana = 700;
 	public int energy = 500;
 	public int maxEnergy = 500;
+	public int minArmorDef = 20;
+	public int maxArmorDef = 25;
+	public int minHelmetDef = 10;
+	public int maxHelmetDef = 15;
+	public int minShieldDef = 2;
+	public int maxShieldDef = 5;
+	public int minAttackDamage = 50;
+	public int maxAttackDamage = 70;
+	
 	
 	public World world;
 	public Body body;
@@ -114,7 +123,6 @@ public class Player extends Sprite {
 		
 		actor = new Actor();
 		actor.setSize(getRegionWidth(), getRegionHeight());
-		actor.debug();
 		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
 		actor.addListener(new ClickListener() {
 			 @Override
