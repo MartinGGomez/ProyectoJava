@@ -3,6 +3,7 @@ package com.actors;
 import static com.constants.Constants.PPM;
 import static com.constants.Constants.SPEED;
 
+import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,6 +25,9 @@ public class Enemy extends Sprite {
 
 	public String name = "Duende";
 	public int health = 100;
+	
+	public boolean isBeingAttacked = false;
+	public Attack attack;
 
 	//
 	private World world;

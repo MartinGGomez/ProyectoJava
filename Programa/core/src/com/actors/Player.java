@@ -4,6 +4,7 @@ import static com.constants.Constants.PPM;
 import static com.constants.Constants.SPEED;
 
 import com.actors.states.PlayerStates;
+import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -20,12 +21,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.constants.Constants;
 import com.game.MainGame;
 import com.screens.GameScreen;
@@ -49,6 +48,9 @@ public class Player extends Sprite {
 	public int maxShieldDef = 5;
 	public int minAttackDamage = 50;
 	public int maxAttackDamage = 70;
+	
+	public boolean isBeingAttacked = false;
+	public Attack attack;
 	
 	
 	public World world;
@@ -264,10 +266,12 @@ public class Player extends Sprite {
 		world.destroyBody(body);
 	}
 
-	public void attack(Enemy enemy) {
+	public void attack(Enemy enemy, float delta) {
 		GameScreen.hud.printMessage("Atacaste a " + enemy.name);
 		mana -= 10;
 		GameScreen.hud.updateStats(this);
+		enemy.attack = new Attack(enemy);
+		enemy.isBeingAttacked = true;
 //		enemy.health -= 1;
 	}
 

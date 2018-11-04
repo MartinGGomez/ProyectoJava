@@ -4,6 +4,7 @@ import static com.constants.Constants.PPM;
 
 import com.actors.Enemy;
 import com.actors.Player;
+import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
@@ -51,6 +52,8 @@ public class GameScreen implements Screen {
 
 	// HUD
 	public static Hud hud;
+	
+	private Attack attack;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
@@ -83,7 +86,7 @@ public class GameScreen implements Screen {
 		// Hud
 		hud = new Hud(this.game, this.player);
 		player.defineStageElements();
-
+		
 	}
 
 	public void update(float delta) {
@@ -95,7 +98,7 @@ public class GameScreen implements Screen {
 		Enemy enemyCollided = enemies.get(contactListener.getEnemyCollided());
 		enemyCollided.preventMove = true;
 
-		handleAttacks(enemyCollided);
+		handleAttacks(enemyCollided, delta);
 
 		for (Enemy enemy : enemies) {
 			enemy.update(delta);
@@ -131,10 +134,21 @@ public class GameScreen implements Screen {
 
 		for (Enemy enemy : enemies) {
 			enemy.draw(game.batch);
+			if(enemy.isBeingAttacked) {
+				enemy.attack.update(delta);
+				enemy.attack.draw(game.batch);	
+			}
 		}
-
+		
+		
 		player.draw(game.batch);
-
+		
+		if(player.isBeingAttacked) {
+			player.attack.update(delta);
+			player.attack.draw(game.batch);	
+		}
+		
+		
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 		hud.stage.draw();
 		hud.stage.act();
@@ -143,11 +157,11 @@ public class GameScreen implements Screen {
 
 	}
 
-	private void handleAttacks(Enemy enemy) {
+	private void handleAttacks(Enemy enemy, float delta) {
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
 			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
 				if (Combat.canAttackToEnemy(player, enemy)) {
-					player.attack(enemy);
+					player.attack(enemy, delta);
 				}
 			}
 		}
