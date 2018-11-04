@@ -131,6 +131,8 @@ public class GameScreen implements Screen {
 		game.batch.setProjectionMatrix(gamecam.combined);
 
 		game.batch.begin();
+		
+		
 
 		for (Enemy enemy : enemies) {
 			enemy.draw(game.batch);

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
@@ -22,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -47,6 +50,9 @@ public class Hud implements Disposable {
 	Array<String> items = new Array<String>();
 	private BitmapFont font, whiteFont, littleFont, miniFont;
 	private ProgressBar healthBar, manaBar, energyBar;
+	
+	public TextureRegion attack1;
+	private Texture attack;
 
 	public Hud(MainGame game, Player player) {
 		this.game = game;
@@ -68,9 +74,13 @@ public class Hud implements Disposable {
 		image.setSize(texture.getWidth(), texture.getHeight());
 		image.toBack();
 		
+		
 		defineHudElements();
 		updateStats(player);
+		
 	}
+	
+
 	
 	public void updateStats(Player player) {
 		this.player = player;
@@ -120,7 +130,24 @@ public class Hud implements Disposable {
 		attackDamage.setPosition(465, 30 - attackDamage.getHeight());
 		attackDamage.setAlignment(Align.center);
 		
+		//Boton para los hechizos 
+		attack = new Texture("fireAttack.png"); //Buscar otra imagen mejor o tratar de escalarla
+		Drawable drawable = new TextureRegionDrawable(new TextureRegion(attack, 595, 1, 114, 135));
+		ImageButton attackButton = new ImageButton(drawable);
+		attackButton.setPosition((HUD_HALF_WIDTH*2) + 35 , (HUD_HALF_HEIGHT*2) -105 );
+		attackButton.setDebug(true);
+		attackButton.setSize(40, 40);
+		attackButton.addListener(new ClickListener(){
+			//Para probar que anda como boton 
+			public void clicked(InputEvent event, float x, float y) {
+				items.clear();
+				table.clear();
+			}
+			
+		});
 		//
+		
+		
 		// PROVISORIO
 		TextButton cleanConsole = new TextButton("Clean Console", skin);
 		cleanConsole.setPosition(Gdx.graphics.getWidth() - cleanConsole.getWidth() - 30, 260);
@@ -181,6 +208,8 @@ public class Hud implements Disposable {
 		stage.addActor(helmetDef);
 		stage.addActor(attackDamage);
 		stage.addActor(shieldDef);	
+		stage.addActor(attackButton);
+		
 	}
 
 	private void createProgressBars() {
