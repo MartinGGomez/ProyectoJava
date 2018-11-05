@@ -43,7 +43,7 @@ public class Hud implements Disposable {
 	public static final float HUD_HALF_HEIGHT = Gdx.graphics.getHeight() - 346;
 	public static final float HUD_HALF_WIDTH = 273.5f;
 	public static Skin skin;
-	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef;
+	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, nameAttack;
 	public Player player;
 	private Table table;
 	private ScrollPane scrollPane;
@@ -51,9 +51,10 @@ public class Hud implements Disposable {
 	private BitmapFont font, whiteFont, littleFont, miniFont;
 	private ProgressBar healthBar, manaBar, energyBar;
 	
-	public TextureRegion attack1;
-	private Texture attack;
-
+	private Texture attack,  attack1 ,  attack2 , attack3, attack4, attack5, attack6, attack7, attack8;
+	public ImageButton boton1; 
+	
+	
 	public Hud(MainGame game, Player player) {
 		this.game = game;
 		this.player = player;
@@ -130,43 +131,66 @@ public class Hud implements Disposable {
 		attackDamage.setPosition(465, 30 - attackDamage.getHeight());
 		attackDamage.setAlignment(Align.center);
 		
-		//Boton para los hechizos 
-		attack = new Texture("fireAttack.png"); //Buscar otra imagen mejor o tratar de escalarla
-		Drawable drawable = new TextureRegionDrawable(new TextureRegion(attack, 595, 1, 114, 135));
-		ImageButton attackButton = new ImageButton(drawable);
-		attackButton.setPosition((HUD_HALF_WIDTH*2) + 35 , (HUD_HALF_HEIGHT*2) -105 );
-		attackButton.setDebug(true);
-		attackButton.setSize(40, 40);
-		attackButton.addListener(new ClickListener(){
-			//Para probar que anda como boton 
-			public void clicked(InputEvent event, float x, float y) {
-				items.clear();
-				table.clear();
-			}
-			
-		});
+		powersDef = new Label("Hechizos", skin, "white-font", Color.BLUE);
+		powersDef.setPosition(image.getWidth() - 205, image.getHeight() - 160);
+		powersDef.setSize(160, 24);
+		powersDef.setAlignment(Align.center);
+		
+		//Botones para los hechizos 
+		
+		attack = new Texture("fireAttack.png");
+		boton1 = createAttackButtons(attack, 35, 120, new TextureRegion(attack, 595, 1, 114, 135));
+		nameAttack = createNamesAttack("FireAttack", nameAttack, 30, 140);
+		
+		attack1 = new Texture("pink.png");
+		ImageButton boton2 = createAttackButtons(attack, 110, 120, new TextureRegion(attack1, 210, 588, 164, 176));
+		
+		attack2 = new Texture("shotBlue.png");
+		ImageButton boton3 = createAttackButtons(attack, 185, 120, new TextureRegion(attack2, 782, 220, 149, 157));
+		
+		
+		attack3 = new Texture("vulcan.png");
+		ImageButton boton4 = createAttackButtons(attack, 35, 200, new TextureRegion(attack3, 232, 53, 110, 113));
+		
+		attack4 = new Texture("dogFire.png");
+		ImageButton boton5 = createAttackButtons(attack, 110, 200, new TextureRegion(attack4, 771, 13, 150, 178));
+		
+		attack5 = new Texture("health.png");
+		ImageButton boton6 = createAttackButtons(attack, 185, 200, new TextureRegion(attack5, 439, 57, 81, 83));
+		
+		
+		attack6 = new Texture("blueCircle.png");
+		ImageButton boton7 = createAttackButtons(attack, 35, 280, new TextureRegion(attack6, 627, 797, 114, 140));
+		
+		attack7 = new Texture("blueStar.png");
+		ImageButton boton8 = createAttackButtons(attack, 110, 280, new TextureRegion(attack7, 383, 577, 194, 190));
+		
+		attack8 = new Texture("fireAttack.png");
+		ImageButton boton9 = createAttackButtons(attack, 185, 280, new TextureRegion(attack8, 595, 1, 114, 135));
+		
+		
 		//
 		
 		
-		// PROVISORIO
-		TextButton cleanConsole = new TextButton("Clean Console", skin);
-		cleanConsole.setPosition(Gdx.graphics.getWidth() - cleanConsole.getWidth() - 30, 260);
-		cleanConsole.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				items.clear();
-				table.clear();
-			}
-		});
-		TextButton testProgress = new TextButton("Progress Bar", skin);
-		testProgress.setPosition(Gdx.graphics.getWidth() - testProgress.getWidth() - 30, 310);
-		testProgress.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				testProgressBar();
-			}
-		});
-		//
+//		// PROVISORIO
+//		TextButton cleanConsole = new TextButton("Clean Console", skin);
+//		cleanConsole.setPosition(Gdx.graphics.getWidth() - cleanConsole.getWidth() - 30, 260);
+//		cleanConsole.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				items.clear();
+//				table.clear();
+//			}
+//		});
+//		TextButton testProgress = new TextButton("Progress Bar", skin);
+//		testProgress.setPosition(Gdx.graphics.getWidth() - testProgress.getWidth() - 30, 310);
+//		testProgress.addListener(new ClickListener() {
+//			@Override
+//			public void clicked(InputEvent event, float x, float y) {
+//				testProgressBar();
+//			}
+//		});
+//		//
 		//
 
 		//
@@ -194,8 +218,8 @@ public class Hud implements Disposable {
 		// Final - Agregar actores
 		Gdx.input.setInputProcessor(stage);
 		stage.addActor(image);
-		stage.addActor(cleanConsole);
-		stage.addActor(testProgress);
+		//stage.addActor(cleanConsole);
+		//stage.addActor(testProgress);
 		stage.addActor(scrollPane);
 		stage.addActor(playerName);
 		stage.addActor(healthBar);
@@ -208,9 +232,52 @@ public class Hud implements Disposable {
 		stage.addActor(helmetDef);
 		stage.addActor(attackDamage);
 		stage.addActor(shieldDef);	
-		stage.addActor(attackButton);
+		stage.addActor(boton1);
+		stage.addActor(boton2);
+		stage.addActor(boton3);
+		stage.addActor(boton4);
+		stage.addActor(boton5);
+		stage.addActor(boton6);
+		stage.addActor(boton7);
+		stage.addActor(boton8);
+		stage.addActor(boton9);
+		stage.addActor(powersDef);
+		stage.addActor(nameAttack);
 		
 	}
+
+private Label createNamesAttack(String name, Label attack, int x, int y ) {
+	attack = new Label(name, skin, "mini-font", Color.RED);
+	attack.setSize(50, 20);
+	attack.setPosition((HUD_HALF_WIDTH*2) + x , (HUD_HALF_HEIGHT*2) -y );
+	attack.setAlignment(Align.center);
+		return attack;
+	}
+
+
+
+private ImageButton createAttackButtons(Texture texture, int x, int y, TextureRegion region ) {
+	 //Buscar otra imagen mejor o tratar de escalarla
+	Drawable drawable = new TextureRegionDrawable(region);
+	ImageButton attackButton = new ImageButton(drawable);
+	attackButton.setPosition((HUD_HALF_WIDTH*2) + x , (HUD_HALF_HEIGHT*2) -y );
+	attackButton.setSize(40, 40);
+	attackButton.addListener(new ClickListener(){
+		//Para probar que anda como boton 
+		public void clicked(InputEvent event, float x, float y) {
+			items.clear();
+			table.clear();
+			
+			testProgressBar();
+		}
+		
+	});
+	
+	return attackButton;
+		
+	}
+
+
 
 	private void createProgressBars() {
 		// HEALTH BAR

@@ -2,10 +2,13 @@ package com.screens;
 
 import static com.constants.Constants.PPM;
 
+import java.awt.Point;
+
 import com.actors.Enemy;
 import com.actors.Player;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,6 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,6 +31,8 @@ import com.services.combat.Combat;
 
 public class GameScreen implements Screen {
 
+	private int cont=0;
+	private boolean estaAtacando=false;
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
 	private MainGame game;
@@ -117,6 +123,19 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 
+		if(!hud.boton1.isVisible()){
+
+			estaAtacando = true; 
+			cont++;
+			
+			if (cont==120){
+					hud.boton1.setVisible(true);
+					cont=0;
+			}
+		}else{
+			estaAtacando = false;	
+		}
+		
 		update(delta);
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -158,12 +177,20 @@ public class GameScreen implements Screen {
 		game.batch.end();
 
 	}
+	
+	
 
 	private void handleAttacks(Enemy enemy, float delta) {
-		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+		
+		
+		
+		if (hud.boton1.isPressed()){
 			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
-				if (Combat.canAttackToEnemy(player, enemy)) {
+				if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
 					player.attack(enemy, delta);
+					hud.boton1.setVisible(false);
+					
+					
 				}
 			}
 		}
