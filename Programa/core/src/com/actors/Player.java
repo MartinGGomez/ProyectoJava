@@ -51,6 +51,7 @@ public class Player extends Sprite {
 	
 	public boolean isBeingAttacked = false;
 	public Attack attack;
+	public Attack selectedAttack;
 	
 	
 	public World world;
@@ -270,7 +271,7 @@ public class Player extends Sprite {
 		GameScreen.hud.printMessage("Atacaste a " + enemy.name);
 		mana -= 10;
 		GameScreen.hud.updateStats(this);
-		enemy.attack = new Attack(enemy);
+		enemy.attack = new Attack();
 		enemy.isBeingAttacked = true;
 //		enemy.health -= 1;
 	}

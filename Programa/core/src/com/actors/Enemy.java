@@ -6,6 +6,7 @@ import static com.constants.Constants.SPEED;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,7 +19,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.constants.Constants;
+import com.game.MainGame;
+import com.screens.GameScreen;
 import com.services.collision.userdata.UserData;
 
 public class Enemy extends Sprite {
@@ -30,6 +39,7 @@ public class Enemy extends Sprite {
 	public Attack attack;
 
 	//
+	private MainGame game;
 	private World world;
 	private Texture enemyTexture;
 	private TextureRegion region;
@@ -40,8 +50,13 @@ public class Enemy extends Sprite {
 	private int enemyIndex;
 
 	public boolean preventMove;
+	
+	
+	private Label enemyLabel;
+	private Actor actor;
 
-	public Enemy(World world, float posX, float posY, int enemyIndex) {
+	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
+		this.game = game;
 		this.world = world;
 		this.enemyTexture = new Texture("goblin.png");
 		this.posX = posX;
@@ -64,7 +79,6 @@ public class Enemy extends Sprite {
 	public void defineEnemyBody() {
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(this.posX, this.posY);
-
 		bdef.type = BodyDef.BodyType.DynamicBody;
 //		MassData mass = new MassData();
 //		mass.mass = 100000;
@@ -77,19 +91,51 @@ public class Enemy extends Sprite {
 		fdef.shape = shape;
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
+		
 
 		UserData userData = new UserData("Enemy", enemyIndex);
 
 		body.createFixture(fdef).setUserData(userData);
 	}
+	
+	
+	public void defineStageElements() {
+		// SCENE2D STAGE
+		System.out.println("Define stage elements");
+		enemyLabel = new Label(this.name, GameScreen.hud.skin, "little-font", Color.WHITE);
+		enemyLabel.debug();
+		enemyLabel.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2) - 22 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2) - 6);
+		enemyLabel.setSize(80, 12);
+		enemyLabel.setAlignment(Align.center);
+		this.game.stage.addActor(enemyLabel);
+		
+		actor = new Actor();
+		actor.debug();
+		System.out.println(this.region.getRegionWidth());
+		actor.setSize(this.region.getRegionWidth(), this.region.getRegionHeight());
+		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
+		actor.addListener(new ClickListener() {
+			 @Override
+			    public void clicked(InputEvent event, float x, float y) {
+			        GameScreen.hud.printMessage(name);
+			 }
+		});
+		this.game.stage.addActor(actor);	
+	}
+	
 
 	public void update(float delta) {
+
 		if(preventMove) {
 			MassData mass = new MassData();
 			mass.mass = 100000;
 			body.setMassData(mass);
 		} else {
 			body.resetMassData();
+		}
+		
+		if(isBeingAttacked) {
+			attack.begin(this);
 		}
 		
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,

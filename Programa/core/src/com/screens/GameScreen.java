@@ -2,15 +2,12 @@ package com.screens;
 
 import static com.constants.Constants.PPM;
 
-import java.awt.Point;
-
 import com.actors.Enemy;
 import com.actors.Player;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -20,7 +17,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -31,8 +27,8 @@ import com.services.combat.Combat;
 
 public class GameScreen implements Screen {
 
-	private int cont=0;
-	private boolean estaAtacando=false;
+	private int cont = 0;
+	private boolean estaAtacando = false;
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
 	private MainGame game;
@@ -58,7 +54,7 @@ public class GameScreen implements Screen {
 
 	// HUD
 	public static Hud hud;
-	
+
 	private Attack attack;
 
 	public GameScreen(MainGame game) {
@@ -85,14 +81,18 @@ public class GameScreen implements Screen {
 		// Body Definitions
 		collisionHelper = new CollisionHelper(map, world);
 		collisionHelper.createMapObjects();
-		enemies = collisionHelper.createEnemies();
+		enemies = collisionHelper.createEnemies(this.game);
+
 
 		player = new Player(this.game, world, "Coxne");
 
 		// Hud
 		hud = new Hud(this.game, this.player);
 		player.defineStageElements();
-		
+		for (Enemy enemy: enemies) {
+			enemy.defineStageElements();
+		}
+
 	}
 
 	public void update(float delta) {
@@ -123,25 +123,23 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 
-		if(!hud.boton1.isVisible()){
+		//// if(!hud.boton1.isVisible()){
+		//
+		// estaAtacando = true;
+		// cont++;
+		//
+		// if (cont==120){
+		// hud.boton1.setVisible(true);
+		// cont=0;
+		// }
+		// }else{
+		// estaAtacando = false;
+		// }
 
-			estaAtacando = true; 
-			cont++;
-			
-			if (cont==120){
-					hud.boton1.setVisible(true);
-					cont=0;
-			}
-		}else{
-			estaAtacando = false;	
-		}
-		
 		update(delta);
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		// stage.act();
 
 		renderer.render(); // Tiled Map renderer.
 
@@ -150,26 +148,22 @@ public class GameScreen implements Screen {
 		game.batch.setProjectionMatrix(gamecam.combined);
 
 		game.batch.begin();
-		
-		
 
 		for (Enemy enemy : enemies) {
 			enemy.draw(game.batch);
-			if(enemy.isBeingAttacked) {
+			if (enemy.isBeingAttacked) {
 				enemy.attack.update(delta);
-				enemy.attack.draw(game.batch);	
+				enemy.attack.draw(game.batch);
 			}
 		}
-		
-		
+
 		player.draw(game.batch);
-		
-		if(player.isBeingAttacked) {
+
+		if (player.isBeingAttacked) {
 			player.attack.update(delta);
-			player.attack.draw(game.batch);	
+			player.attack.draw(game.batch);
 		}
-		
-		
+
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 		hud.stage.draw();
 		hud.stage.act();
@@ -177,20 +171,14 @@ public class GameScreen implements Screen {
 		game.batch.end();
 
 	}
-	
-	
 
 	private void handleAttacks(Enemy enemy, float delta) {
-		
-		
-		
-		if (hud.boton1.isPressed()){
+		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+
 			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
 				if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
 					player.attack(enemy, delta);
-					hud.boton1.setVisible(false);
-					
-					
+					// hud.boton1.setVisible(false);
 				}
 			}
 		}

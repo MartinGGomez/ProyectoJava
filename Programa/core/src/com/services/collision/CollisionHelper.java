@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.constants.Constants;
+import com.game.MainGame;
 import com.services.collision.userdata.UserData;
 
 public class CollisionHelper {
@@ -51,7 +52,7 @@ public class CollisionHelper {
 		}
 	}
 
-	public Array<Enemy> createEnemies() {
+	public Array<Enemy> createEnemies(MainGame game) {
 		Random random = new Random();
 		int maxEnemies = 3;
 
@@ -63,7 +64,7 @@ public class CollisionHelper {
 				float posX = random.nextInt((int) ((rect.getWidth() + rect.getX()) - rect.getX())) + rect.getX();
 				float posY = random.nextInt((int) ((rect.getHeight() + rect.getY()) - rect.getY())) + rect.getY();
 
-				enemies.add(new Enemy(world, posX / PPM, posY / PPM, i));
+				enemies.add(new Enemy(game, world, posX / PPM, posY / PPM, i));
 			}
 
 		}
