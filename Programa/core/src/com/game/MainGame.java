@@ -7,9 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.screens.GameScreen;
 
-
-
-
 public class MainGame extends Game {
 	
 	public GameScreen gameScreen;

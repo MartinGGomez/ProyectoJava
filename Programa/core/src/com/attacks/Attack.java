@@ -3,7 +3,6 @@ package com.attacks;
 import static com.constants.Constants.PPM;
 
 import com.actors.Enemy;
-import com.actors.Player;
 import com.actors.states.PlayerStates;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -14,7 +13,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class Attack extends Sprite{
 
-	public String name;
+	public String name = "Prueba de Ataque";
 	private float duration = 2;
 	
 	private Texture texture;
@@ -29,17 +28,16 @@ public class Attack extends Sprite{
 
 	private Enemy enemy;
 	
-	public Attack(Enemy enemy) {
-		this.enemy = enemy;
+	public Attack() {
 		this.texture = new Texture("fireAttack.png");
-		
 		this.region = new TextureRegion(texture, 34, 7, 123, 115); 
 		createAnimations();
-		
 		setScale(1.5f);
+	}
+	
+	public void begin(Enemy enemy) {
+		this.enemy = enemy;
 		setBounds(enemy.body.getPosition().x , enemy.body.getPosition().y, 32 / PPM, 48 / PPM);
-		System.out.println(getX() + " - " + getY());
-			
 	}
 	
 	public void update(float delta) {

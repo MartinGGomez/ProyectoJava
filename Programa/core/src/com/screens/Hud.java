@@ -1,7 +1,10 @@
 package com.screens;
 
+import com.actors.Enemy;
 import com.actors.Player;
+import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -50,18 +53,18 @@ public class Hud implements Disposable {
 	Array<String> items = new Array<String>();
 	private BitmapFont font, whiteFont, littleFont, miniFont;
 	private ProgressBar healthBar, manaBar, energyBar;
-	
-	private Texture attack,  attack1 ,  attack2 , attack3, attack4, attack5, attack6, attack7, attack8;
-	public ImageButton boton1; 
-	
-	
+
+	private Texture attack, attack1, attack2, attack3, attack4, attack5, attack6, attack7, attack8;
+	public ImageButton btnAttack1, btnAttack2, btnAttack3, btnAttack4, btnAttack5, btnAttack6, btnAttack7, btnAttack8,
+			btnAttack9;
+
 	public Hud(MainGame game, Player player) {
 		this.game = game;
 		this.player = player;
-		
+
 		viewport = new FitViewport(800, 600, new OrthographicCamera());
 		texture = new Texture("hud.png");
-		
+
 		// Skin and fonts
 		this.skin = new Skin();
 		this.skin.addRegions(this.game.assetManager.get("ui/uiskin.atlas", TextureAtlas.class));
@@ -74,15 +77,12 @@ public class Hud implements Disposable {
 		image.setPosition(0, 0);
 		image.setSize(texture.getWidth(), texture.getHeight());
 		image.toBack();
-		
-		
+
 		defineHudElements();
 		updateStats(player);
-		
-	}
-	
 
-	
+	}
+
 	public void updateStats(Player player) {
 		this.player = player;
 		this.health.setText(String.format("HP: %s / %s", this.player.health, this.player.maxHealth));
@@ -98,23 +98,23 @@ public class Hud implements Disposable {
 		this.helmetDef.setText(String.format("%s / %s", this.player.minHelmetDef, this.player.maxHelmetDef));
 		this.shieldDef.setText(String.format("%s / %s", this.player.minShieldDef, this.player.maxShieldDef));
 		this.attackDamage.setText(String.format("%s / %s", this.player.minAttackDamage, this.player.maxAttackDamage));
-		
+
 	}
-	
+
 	public void defineHudElements() {
 		stage = this.game.stage;
-		
+
 		playerName = new Label(this.player.name, skin, "white-font", Color.WHITE);
 		playerName.setPosition(image.getWidth() - 205, image.getHeight() - 80);
 		playerName.setSize(160, 24);
 		playerName.setAlignment(Align.center);
 		//
-		
+
 		armorDef = new Label("", skin, "little-font", Color.WHITE);
 		armorDef.setSize(50, 20);
 		armorDef.setPosition(80, 30 - armorDef.getHeight());
 		armorDef.setAlignment(Align.center);
-		
+
 		helmetDef = new Label("", skin, "little-font", Color.WHITE);
 		helmetDef.setSize(50, 20);
 		helmetDef.setPosition(198, 30 - helmetDef.getHeight());
@@ -124,73 +124,42 @@ public class Hud implements Disposable {
 		shieldDef.setSize(50, 20);
 		shieldDef.setPosition(342, 30 - shieldDef.getHeight());
 		shieldDef.setAlignment(Align.center);
-		
 
 		attackDamage = new Label("", skin, "little-font", Color.WHITE);
 		attackDamage.setSize(50, 20);
 		attackDamage.setPosition(465, 30 - attackDamage.getHeight());
 		attackDamage.setAlignment(Align.center);
-		
+
 		powersDef = new Label("Hechizos", skin, "white-font", Color.BLUE);
 		powersDef.setPosition(image.getWidth() - 205, image.getHeight() - 160);
 		powersDef.setSize(160, 24);
 		powersDef.setAlignment(Align.center);
-		
-		//Botones para los hechizos 
-		
-		attack = new Texture("fireAttack.png");
-		boton1 = createAttackButtons(attack, 35, 120, new TextureRegion(attack, 595, 1, 114, 135));
-		nameAttack = createNamesAttack("FireAttack", nameAttack, 30, 140);
-		
-		attack1 = new Texture("pink.png");
-		ImageButton boton2 = createAttackButtons(attack, 110, 120, new TextureRegion(attack1, 210, 588, 164, 176));
-		
-		attack2 = new Texture("shotBlue.png");
-		ImageButton boton3 = createAttackButtons(attack, 185, 120, new TextureRegion(attack2, 782, 220, 149, 157));
-		
-		
-		attack3 = new Texture("vulcan.png");
-		ImageButton boton4 = createAttackButtons(attack, 35, 200, new TextureRegion(attack3, 232, 53, 110, 113));
-		
-		attack4 = new Texture("dogFire.png");
-		ImageButton boton5 = createAttackButtons(attack, 110, 200, new TextureRegion(attack4, 771, 13, 150, 178));
-		
-		attack5 = new Texture("health.png");
-		ImageButton boton6 = createAttackButtons(attack, 185, 200, new TextureRegion(attack5, 439, 57, 81, 83));
-		
-		
-		attack6 = new Texture("blueCircle.png");
-		ImageButton boton7 = createAttackButtons(attack, 35, 280, new TextureRegion(attack6, 627, 797, 114, 140));
-		
-		attack7 = new Texture("blueStar.png");
-		ImageButton boton8 = createAttackButtons(attack, 110, 280, new TextureRegion(attack7, 383, 577, 194, 190));
-		
-		attack8 = new Texture("fireAttack.png");
-		ImageButton boton9 = createAttackButtons(attack, 185, 280, new TextureRegion(attack8, 595, 1, 114, 135));
-		
-		
-		//
-		
-		
-//		// PROVISORIO
-//		TextButton cleanConsole = new TextButton("Clean Console", skin);
-//		cleanConsole.setPosition(Gdx.graphics.getWidth() - cleanConsole.getWidth() - 30, 260);
-//		cleanConsole.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				items.clear();
-//				table.clear();
-//			}
-//		});
-//		TextButton testProgress = new TextButton("Progress Bar", skin);
-//		testProgress.setPosition(Gdx.graphics.getWidth() - testProgress.getWidth() - 30, 310);
-//		testProgress.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				testProgressBar();
-//			}
-//		});
-//		//
+
+		// Botones para los hechizos
+
+		createAttacksButtons();
+
+		// // PROVISORIO
+		// TextButton cleanConsole = new TextButton("Clean Console", skin);
+		// cleanConsole.setPosition(Gdx.graphics.getWidth() - cleanConsole.getWidth() -
+		// 30, 260);
+		// cleanConsole.addListener(new ClickListener() {
+		// @Override
+		// public void clicked(InputEvent event, float x, float y) {
+		// items.clear();
+		// table.clear();
+		// }
+		// });
+		// TextButton testProgress = new TextButton("Progress Bar", skin);
+		// testProgress.setPosition(Gdx.graphics.getWidth() - testProgress.getWidth() -
+		// 30, 310);
+		// testProgress.addListener(new ClickListener() {
+		// @Override
+		// public void clicked(InputEvent event, float x, float y) {
+		// testProgressBar();
+		// }
+		// });
+		// //
 		//
 
 		//
@@ -218,8 +187,8 @@ public class Hud implements Disposable {
 		// Final - Agregar actores
 		Gdx.input.setInputProcessor(stage);
 		stage.addActor(image);
-		//stage.addActor(cleanConsole);
-		//stage.addActor(testProgress);
+		// stage.addActor(cleanConsole);
+		// stage.addActor(testProgress);
 		stage.addActor(scrollPane);
 		stage.addActor(playerName);
 		stage.addActor(healthBar);
@@ -231,53 +200,153 @@ public class Hud implements Disposable {
 		stage.addActor(armorDef);
 		stage.addActor(helmetDef);
 		stage.addActor(attackDamage);
-		stage.addActor(shieldDef);	
-		stage.addActor(boton1);
-		stage.addActor(boton2);
-		stage.addActor(boton3);
-		stage.addActor(boton4);
-		stage.addActor(boton5);
-		stage.addActor(boton6);
-		stage.addActor(boton7);
-		stage.addActor(boton8);
-		stage.addActor(boton9);
+		stage.addActor(shieldDef);
+		stage.addActor(btnAttack1);
+		stage.addActor(btnAttack2);
+		stage.addActor(btnAttack3);
+		stage.addActor(btnAttack4);
+		stage.addActor(btnAttack5);
+		stage.addActor(btnAttack6);
+		stage.addActor(btnAttack7);
+		stage.addActor(btnAttack8);
+		stage.addActor(btnAttack9);
 		stage.addActor(powersDef);
 		stage.addActor(nameAttack);
-		
+
 	}
 
-private Label createNamesAttack(String name, Label attack, int x, int y ) {
-	attack = new Label(name, skin, "mini-font", Color.RED);
-	attack.setSize(50, 20);
-	attack.setPosition((HUD_HALF_WIDTH*2) + x , (HUD_HALF_HEIGHT*2) -y );
-	attack.setAlignment(Align.center);
+	private void createAttacksButtons() {
+
+		attack = new Texture("fireAttack.png");
+		nameAttack = createNamesAttack("FireAttack", nameAttack, 30, 140);
+
+		Drawable drawable = new TextureRegionDrawable(new TextureRegion(attack, 595, 1, 114, 135));
+		btnAttack1 = new ImageButton(drawable);
+		btnAttack1.setPosition((HUD_HALF_WIDTH * 2) + 35, (HUD_HALF_HEIGHT * 2) - 120);
+		btnAttack1.setSize(40, 40);
+		btnAttack1.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		attack1 = new Texture("pink.png");	
+		drawable = new TextureRegionDrawable(new TextureRegion(attack1, 210, 588, 164, 176));
+		btnAttack2 = new ImageButton(drawable);
+		btnAttack2.setPosition((HUD_HALF_WIDTH * 2) + 110, (HUD_HALF_HEIGHT * 2) - 120);
+		btnAttack2.setSize(40, 40);
+		btnAttack2.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		attack2 = new Texture("shotBlue.png");
+		drawable = new TextureRegionDrawable(new TextureRegion(attack2, 782, 220, 149, 157));
+		btnAttack3 = new ImageButton(drawable);
+		btnAttack3.setPosition((HUD_HALF_WIDTH * 2) + 185, (HUD_HALF_HEIGHT * 2) - 120);
+		btnAttack3.setSize(40, 40);
+		btnAttack3.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		attack3 = new Texture("vulcan.png");
+		drawable = new TextureRegionDrawable(new TextureRegion(attack3, 232, 53, 110, 113));
+		btnAttack4 = new ImageButton(drawable);
+		btnAttack4.setPosition((HUD_HALF_WIDTH * 2) + 35, (HUD_HALF_HEIGHT * 2) - 200);
+		btnAttack4.setSize(40, 40);
+		btnAttack4.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		attack4 = new Texture("dogFire.png");
+		drawable = new TextureRegionDrawable(new TextureRegion(attack4, 771, 13, 150, 178));
+		btnAttack5 = new ImageButton(drawable);
+		btnAttack5.setPosition((HUD_HALF_WIDTH * 2) + 110, (HUD_HALF_HEIGHT * 2) - 200);
+		btnAttack5.setSize(40, 40);
+		btnAttack5.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+
+		attack5 = new Texture("health.png");
+		drawable = new TextureRegionDrawable(new TextureRegion(attack5, 439, 57, 81, 83));
+		btnAttack6 = new ImageButton(drawable);
+		btnAttack6.setPosition((HUD_HALF_WIDTH * 2) + 185, (HUD_HALF_HEIGHT * 2) - 200);
+		btnAttack6.setSize(40, 40);
+		btnAttack6.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		attack6 = new Texture("blueCircle.png");
+		drawable = new TextureRegionDrawable(new TextureRegion(attack6, 627, 797, 114, 140));
+		btnAttack7 = new ImageButton(drawable);
+		btnAttack7.setPosition((HUD_HALF_WIDTH * 2) + 35, (HUD_HALF_HEIGHT * 2) - 280);
+		btnAttack7.setSize(40, 40);
+		btnAttack7.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		attack7 = new Texture("blueStar.png");
+		drawable = new TextureRegionDrawable(new TextureRegion(attack7, 383, 577, 194, 190));
+		btnAttack8 = new ImageButton(drawable);
+		btnAttack8.setPosition((HUD_HALF_WIDTH * 2) + 110, (HUD_HALF_HEIGHT * 2) - 280);
+		btnAttack8.setSize(40, 40);
+		btnAttack8.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		attack8 = new Texture("fireAttack.png");
+		drawable = new TextureRegionDrawable(new TextureRegion(attack8, 595, 1, 114, 135));
+		btnAttack9 = new ImageButton(drawable);
+		btnAttack9.setPosition((HUD_HALF_WIDTH * 2) + 185, (HUD_HALF_HEIGHT * 2) - 280);
+		btnAttack9.setSize(40, 40);
+		btnAttack9.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				onAttackClick(new Attack());
+			}
+		});
+
+		//
+	}
+
+	private Label createNamesAttack(String name, Label attack, int x, int y) {
+		attack = new Label(name, skin, "mini-font", Color.RED);
+		attack.setSize(50, 20);
+		attack.setPosition((HUD_HALF_WIDTH * 2) + x, (HUD_HALF_HEIGHT * 2) - y);
+		attack.setAlignment(Align.center);
 		return attack;
 	}
 
+	private ImageButton createAttackButtons(Texture texture, int x, int y, TextureRegion region) {
+		// Buscar otra imagen mejor o tratar de escalarla
+		Drawable drawable = new TextureRegionDrawable(region);
+		ImageButton attackButton = new ImageButton(drawable);
+		attackButton.setPosition((HUD_HALF_WIDTH * 2) + x, (HUD_HALF_HEIGHT * 2) - y);
+		attackButton.setSize(40, 40);
+		attackButton.addListener(new ClickListener() {
+			// Para probar que anda como boton
+			public void clicked(InputEvent event, float x, float y) {
+				testProgressBar();
+			}
 
+		});
 
-private ImageButton createAttackButtons(Texture texture, int x, int y, TextureRegion region ) {
-	 //Buscar otra imagen mejor o tratar de escalarla
-	Drawable drawable = new TextureRegionDrawable(region);
-	ImageButton attackButton = new ImageButton(drawable);
-	attackButton.setPosition((HUD_HALF_WIDTH*2) + x , (HUD_HALF_HEIGHT*2) -y );
-	attackButton.setSize(40, 40);
-	attackButton.addListener(new ClickListener(){
-		//Para probar que anda como boton 
-		public void clicked(InputEvent event, float x, float y) {
-			items.clear();
-			table.clear();
-			
-			testProgressBar();
-		}
-		
-	});
-	
-	return attackButton;
-		
+		return attackButton;
+
 	}
-
-
 
 	private void createProgressBars() {
 		// HEALTH BAR
@@ -313,7 +382,7 @@ private ImageButton createAttackButtons(Texture texture, int x, int y, TextureRe
 		health.setPosition(Gdx.graphics.getWidth() - 229, Gdx.graphics.getHeight() - 452 - healthBar.getHeight());
 		health.setSize(90, 10);
 		health.setAlignment(Align.center);
-		
+
 		// MANA BAR
 		drawable = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("manaBar.png"))));
 
@@ -346,8 +415,7 @@ private ImageButton createAttackButtons(Texture texture, int x, int y, TextureRe
 		mana.setPosition(Gdx.graphics.getWidth() - 229, Gdx.graphics.getHeight() - 475 - healthBar.getHeight());
 		mana.setSize(90, 10);
 		mana.setAlignment(Align.center);
-		
-		
+
 		// ENERGY BAR
 		drawable = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("energyBar.png"))));
 
@@ -380,10 +448,9 @@ private ImageButton createAttackButtons(Texture texture, int x, int y, TextureRe
 		energy.setPosition(Gdx.graphics.getWidth() - 229, Gdx.graphics.getHeight() - 498 - healthBar.getHeight());
 		energy.setSize(90, 10);
 		energy.setAlignment(Align.center);
-		
-		
+
 	}
-	
+
 	public void testProgressBar() {
 		this.player.mana = this.player.mana + 10;
 		this.updateStats(this.player);
@@ -412,12 +479,19 @@ private ImageButton createAttackButtons(Texture texture, int x, int y, TextureRe
 		params.color = Color.WHITE;
 		params.size = 8;
 		miniFont = generator.generateFont(params);
-		
+
 		this.skin.add("default-font", this.font); // Dependen del uiskin.json
 		this.skin.add("white-font", this.whiteFont);
 		this.skin.add("little-font", this.littleFont);
 		this.skin.add("mini-font", this.miniFont);
 	}
+
+
+	private void onAttackClick(Attack attack) {
+		this.player.selectedAttack = attack;
+	}
+	
+	
 
 	@Override
 	public void dispose() {
