@@ -53,7 +53,11 @@ public class Enemy extends Sprite {
 	
 	
 	private Label enemyLabel;
+<<<<<<< HEAD
 	public Actor actor;
+=======
+	private Actor actor;
+>>>>>>> 4bb6ede123bdb50d5b007123a14ca3485f21770a
 
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		this.game = game;
@@ -114,7 +118,10 @@ public class Enemy extends Sprite {
 		System.out.println(this.region.getRegionWidth());
 		actor.setSize(this.region.getRegionWidth(), this.region.getRegionHeight());
 		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
+<<<<<<< HEAD
 		//actor.setPosition(400, 150);
+=======
+>>>>>>> 4bb6ede123bdb50d5b007123a14ca3485f21770a
 		actor.addListener(new ClickListener() {
 			 @Override
 			    public void clicked(InputEvent event, float x, float y) {
