@@ -61,9 +61,11 @@ public class Player extends Sprite {
 	private Texture playerTexture;
 	private TextureRegion region;
 	
+	
+	
 	// Scene2d
 	private Label playerLabel;
-	private Actor actor;
+	public Actor actor;
 	public String name;
 
 	// Animations

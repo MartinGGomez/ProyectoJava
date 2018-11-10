@@ -2,19 +2,23 @@ package com.screens;
 
 import static com.constants.Constants.PPM;
 
+import java.rmi.server.SocketSecurityException;
+
 import com.actors.Enemy;
 import com.actors.Player;
 import com.actors.states.PlayerStates;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,8 +30,8 @@ import com.services.collision.CollisionHelper;
 import com.services.collision.MyContactListener;
 import com.services.combat.Combat;
 
-public class GameScreen implements Screen {
-	
+public class GameScreen implements Screen, InputProcessor {
+
 	boolean izquierda = false, derecha = false, arriba = false, abajo = false;
 
 	private int cont = 0;
@@ -51,7 +55,7 @@ public class GameScreen implements Screen {
 	private Enemy enemy;
 
 	private Array<Enemy> enemies;
-	
+
 	private int iteraciones = 0;
 
 	// Helpers
@@ -61,12 +65,16 @@ public class GameScreen implements Screen {
 	public static Hud hud;
 
 	private Attack attack;
+	
+	private float cameraInitialPositionX;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
 
 		gamecam = new OrthographicCamera();
 
+		System.out.println(this.cameraInitialPositionX);
+		
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
 
 		this.game.stage = new Stage();
@@ -88,15 +96,16 @@ public class GameScreen implements Screen {
 		collisionHelper.createMapObjects();
 		enemies = collisionHelper.createEnemies(this.game);
 
-
 		player = new Player(this.game, world, "Coxne");
 
 		// Hud
 		hud = new Hud(this.game, this.player);
 		player.defineStageElements();
-		for (Enemy enemy: enemies) {
+		for (Enemy enemy : enemies) {
 			enemy.defineStageElements();
 		}
+
+		Gdx.input.setInputProcessor(this);
 
 	}
 
@@ -120,48 +129,47 @@ public class GameScreen implements Screen {
 		float auxX = gamecam.position.x;
 		float auxY = gamecam.position.y;
 		
+
 		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
 		gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
 
-		if(auxX != gamecam.position.x){
-			for(int i = 0; i < enemies.size; i++) {
-				if((player.direction.equals(PlayerStates.RIGHT)) || (player.direction.equals(PlayerStates.LEFT)))  {
-					
-						enemies.get(i).actor.setPosition(enemies.get(i).actor.getX() - ((gamecam.position.x - auxX)*PPM), enemies.get(i).actor.getY());
+		if(iteraciones==0) {
+			this.cameraInitialPositionX = gamecam.position.x;
+		}
+
+		
+		if (auxX != gamecam.position.x) {
+			for (int i = 0; i < enemies.size; i++) {
+				if ((player.direction.equals(PlayerStates.RIGHT)) || (player.direction.equals(PlayerStates.LEFT))) {
+
+					enemies.get(i).actor.setPosition(enemies.get(i).actor.getX() - ((gamecam.position.x - auxX) * PPM),
+							enemies.get(i).actor.getY());
 				}
 			}
 		}
-			
-		if(auxY != gamecam.position.y) {
-		if((player.direction.equals(PlayerStates.BACK)) || (player.direction.equals(PlayerStates.FRONT))){
-					iteraciones++;
-					if(iteraciones>enemies.size) {
-						for(int i = 0; i < enemies.size; i++) {
-							enemies.get(i).actor.setPosition(enemies.get(i).actor.getX(), enemies.get(i).actor.getY() - ((gamecam.position.y - auxY)*PPM));
-						}
+
+		if (auxY != gamecam.position.y) {
+			if ((player.direction.equals(PlayerStates.BACK)) || (player.direction.equals(PlayerStates.FRONT))) {
+				iteraciones++;
+				if (iteraciones > enemies.size) {
+					for (int i = 0; i < enemies.size; i++) {
+						enemies.get(i).actor.setPosition(enemies.get(i).actor.getX(),
+								enemies.get(i).actor.getY() - ((gamecam.position.y - auxY) * PPM));
 					}
-				}			
+				}
 			}
-		
-		if(Gdx.input.isKeyJustPressed(Keys.A)) {
-			izquierda = true;
 		}
-		
 		// detectar cuando suelta
-		//izquierda false
-		
+		// izquierda false
+
 		// detectar lo mismo para derecha, arriba, abajo
-		
+
 		// boleano - cambio = false;
-		//if(cambio==false)
-		//if(derecha==true)&&(arriba==true){
+		// if(cambio==false)
+		// if(derecha==true)&&(arriba==true){
 		// actor moves izq (x)
 		// cambio = true
-		
-		
-		
-		
-		
+
 		gamecam.update();
 
 		renderer.setView(gamecam);
@@ -268,6 +276,85 @@ public class GameScreen implements Screen {
 	public void hide() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		if (keycode == Keys.W) {
+			arriba = true;
+		}
+		if (keycode == Keys.S) {
+			abajo = true;
+		}
+		if (keycode == Keys.D) {
+			derecha = true;
+		}
+		if (keycode == Keys.A) {
+			izquierda = true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		if (keycode == Keys.W) {
+			arriba = false;
+		}
+		if (keycode == Keys.S) {
+			abajo = false;
+		}
+		if (keycode == Keys.D) {
+			derecha = false;
+		}
+		if (keycode == Keys.A) {
+			izquierda = false;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		float distancia = gamecam.position.x - this.cameraInitialPositionX;
+		float posX = screenX / PPM + distancia;
+		float posY = Gdx.graphics.getHeight() / PPM - screenY / PPM;
+		
+		if ( (posX > (player.getX()) && posX < player.getX() + player.getWidth())
+				&& (posY > player.getY() && posY < player.getY() + player.getHeight()) ) {
+			System.err.println("Clickeaste al jugador");
+		}
+	
+		
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -105,7 +105,6 @@ public class Enemy extends Sprite {
 	
 	public void defineStageElements() {
 		// SCENE2D STAGE
-		System.out.println("Define stage elements");
 		enemyLabel = new Label(this.name, GameScreen.hud.skin, "little-font", Color.WHITE);
 		enemyLabel.debug();
 		enemyLabel.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2) - 22 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2) - 6);
@@ -115,7 +114,6 @@ public class Enemy extends Sprite {
 		
 		actor = new Actor();
 		actor.debug();
-		System.out.println(this.region.getRegionWidth());
 		actor.setSize(this.region.getRegionWidth(), this.region.getRegionHeight());
 		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
 
