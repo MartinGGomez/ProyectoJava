@@ -10,6 +10,7 @@ import com.actors.states.PlayerStates;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -31,8 +32,6 @@ import com.services.collision.MyContactListener;
 import com.services.combat.Combat;
 
 public class GameScreen implements Screen, InputProcessor {
-
-	boolean izquierda = false, derecha = false, arriba = false, abajo = false;
 
 	private int cont = 0;
 	private boolean estaAtacando = false;
@@ -65,16 +64,15 @@ public class GameScreen implements Screen, InputProcessor {
 	public static Hud hud;
 
 	private Attack attack;
-	
+
 	private float cameraInitialPositionX;
+	private float cameraInitialPositionY;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
 
 		gamecam = new OrthographicCamera();
 
-		System.out.println(this.cameraInitialPositionX);
-		
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
 
 		this.game.stage = new Stage();
@@ -101,11 +99,12 @@ public class GameScreen implements Screen, InputProcessor {
 		// Hud
 		hud = new Hud(this.game, this.player);
 		player.defineStageElements();
-		for (Enemy enemy : enemies) {
-			enemy.defineStageElements();
-		}
-
-		Gdx.input.setInputProcessor(this);
+		
+		
+		InputMultiplexer processors = new InputMultiplexer();
+		processors.addProcessor(this);
+		processors.addProcessor(this.game.stage);
+		Gdx.input.setInputProcessor(processors);
 
 	}
 
@@ -128,47 +127,16 @@ public class GameScreen implements Screen, InputProcessor {
 
 		float auxX = gamecam.position.x;
 		float auxY = gamecam.position.y;
-		
 
 		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
 		gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
 
-		if(iteraciones==0) {
+		if (iteraciones == 0) {
 			this.cameraInitialPositionX = gamecam.position.x;
+			this.cameraInitialPositionY = gamecam.position.y;
 		}
+		iteraciones++;
 
-		
-		if (auxX != gamecam.position.x) {
-			for (int i = 0; i < enemies.size; i++) {
-				if ((player.direction.equals(PlayerStates.RIGHT)) || (player.direction.equals(PlayerStates.LEFT))) {
-
-					enemies.get(i).actor.setPosition(enemies.get(i).actor.getX() - ((gamecam.position.x - auxX) * PPM),
-							enemies.get(i).actor.getY());
-				}
-			}
-		}
-
-		if (auxY != gamecam.position.y) {
-			if ((player.direction.equals(PlayerStates.BACK)) || (player.direction.equals(PlayerStates.FRONT))) {
-				iteraciones++;
-				if (iteraciones > enemies.size) {
-					for (int i = 0; i < enemies.size; i++) {
-						enemies.get(i).actor.setPosition(enemies.get(i).actor.getX(),
-								enemies.get(i).actor.getY() - ((gamecam.position.y - auxY) * PPM));
-					}
-				}
-			}
-		}
-		// detectar cuando suelta
-		// izquierda false
-
-		// detectar lo mismo para derecha, arriba, abajo
-
-		// boleano - cambio = false;
-		// if(cambio==false)
-		// if(derecha==true)&&(arriba==true){
-		// actor moves izq (x)
-		// cambio = true
 
 		gamecam.update();
 
@@ -280,35 +248,11 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.W) {
-			arriba = true;
-		}
-		if (keycode == Keys.S) {
-			abajo = true;
-		}
-		if (keycode == Keys.D) {
-			derecha = true;
-		}
-		if (keycode == Keys.A) {
-			izquierda = true;
-		}
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		if (keycode == Keys.W) {
-			arriba = false;
-		}
-		if (keycode == Keys.S) {
-			abajo = false;
-		}
-		if (keycode == Keys.D) {
-			derecha = false;
-		}
-		if (keycode == Keys.A) {
-			izquierda = false;
-		}
 		return false;
 	}
 
@@ -320,16 +264,24 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		float distancia = gamecam.position.x - this.cameraInitialPositionX;
-		float posX = screenX / PPM + distancia;
-		float posY = Gdx.graphics.getHeight() / PPM - screenY / PPM;
-		
-		if ( (posX > (player.getX()) && posX < player.getX() + player.getWidth())
-				&& (posY > player.getY() && posY < player.getY() + player.getHeight()) ) {
-			System.err.println("Clickeaste al jugador");
+		float distanciaX = gamecam.position.x - this.cameraInitialPositionX;
+		float distanciaY = gamecam.position.y - this.cameraInitialPositionY;
+		float posX = screenX / PPM + distanciaX;
+		float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
+
+		if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
+				&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
+			hud.printMessage("Clickeaste al jugador");
 		}
-	
-		
+
+		for (Enemy enemy : enemies) {
+			if ((posX > (enemy.getX()) && posX < enemy.getX() + enemy.getWidth())
+					&& (posY > enemy.getY() && posY < enemy.getY() + enemy.getHeight())) {
+				hud.printMessage("Clickeaste a " + enemy.name);
+			}
+
+		}
+
 		return false;
 	}
 

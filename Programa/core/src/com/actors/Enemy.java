@@ -52,7 +52,7 @@ public class Enemy extends Sprite {
 	public boolean preventMove;
 	
 	
-	private Label enemyLabel;
+	public Label enemyLabel;
 
 	public Actor actor;
 
@@ -101,33 +101,6 @@ public class Enemy extends Sprite {
 
 		body.createFixture(fdef).setUserData(userData);
 	}
-	
-	
-	public void defineStageElements() {
-		// SCENE2D STAGE
-		enemyLabel = new Label(this.name, GameScreen.hud.skin, "little-font", Color.WHITE);
-		enemyLabel.debug();
-		enemyLabel.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2) - 22 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2) - 6);
-		enemyLabel.setSize(80, 12);
-		enemyLabel.setAlignment(Align.center);
-		this.game.stage.addActor(enemyLabel);
-		
-		actor = new Actor();
-		actor.debug();
-		actor.setSize(this.region.getRegionWidth(), this.region.getRegionHeight());
-		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
-
-		//actor.setPosition(400, 150);
-
-		actor.addListener(new ClickListener() {
-			 @Override
-			    public void clicked(InputEvent event, float x, float y) {
-			        GameScreen.hud.printMessage(name);
-			 }
-		});
-		this.game.stage.addActor(actor);	
-	}
-	
 
 	public void update(float delta) {
 

@@ -126,22 +126,23 @@ public class Player extends Sprite {
 		playerLabel.setAlignment(Align.center);
 		this.game.stage.addActor(playerLabel);
 		
-		actor = new Actor();
-		actor.setSize(getRegionWidth(), getRegionHeight());
-		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
-		actor.addListener(new ClickListener() {
-			 @Override
-			    public void clicked(InputEvent event, float x, float y) {
-			        GameScreen.hud.printMessage(name);
-			 }
-		});
-		this.game.stage.addActor(actor);	
+//		actor = new Actor();
+//		actor.setSize(getRegionWidth(), getRegionHeight());
+//		actor.setPosition((this.body.getPosition().x * PPM) - 12, (this.body.getPosition().y * PPM)-17);
+//		actor.addListener(new ClickListener() {
+//			 @Override
+//			    public void clicked(InputEvent event, float x, float y) {
+//			        GameScreen.hud.printMessage(name);
+//			 }
+//		});
+//		this.game.stage.addActor(actor);	
 	}
 
 	public void update(float delta) {
 
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
+		
 
 		body.setLinearVelocity(0, 0);
 		if (Gdx.input.isKeyPressed(Keys.W)) {
