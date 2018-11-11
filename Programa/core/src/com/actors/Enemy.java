@@ -3,14 +3,13 @@ package com.actors;
 import static com.constants.Constants.PPM;
 import static com.constants.Constants.SPEED;
 
-import com.attacks.Attack;
+import com.actors.states.PlayerStates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -20,59 +19,39 @@ import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.constants.Constants;
 import com.game.MainGame;
-import com.screens.GameScreen;
 import com.services.collision.userdata.UserData;
 
-public class Enemy extends Sprite {
+public class Enemy extends Character {
 
-	public String name = "Duende";
+	public static String name = "Monstruo";
 	public int health = 100;
-	
-	public boolean isBeingAttacked = false;
-	public Attack attack;
-
-	//
-	private MainGame game;
-	private World world;
-	private Texture enemyTexture;
-	private TextureRegion region;
-	public Body body;
-	private OrthographicCamera camera;
 
 	private float posX, posY;
 	private int enemyIndex;
 
 	public boolean preventMove;
-	
-	
+
 	public Label enemyLabel;
 
-	public Actor actor;
-
-	
-
-
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
-		this.game = game;
-		this.world = world;
-		this.enemyTexture = new Texture("goblin.png");
+		super(game, world, name);
+		super.texture = new Texture("monster.png");
+		super.region = new TextureRegion(super.texture, 18, 0, 29, 55);
+		
 		this.posX = posX;
 		this.posY = posY;
 		this.enemyIndex = enemyIndex;
-
-		this.region = new TextureRegion(enemyTexture, 18, 0, 29, 55);
+		
 
 		defineEnemyBody();
-
+		createAnimations();
+		
 		setBounds(body.getPosition().x, body.getPosition().y, 29 / PPM, 55 / PPM);
-		setRegion(enemyTexture);
+		setRegion(standingTextures[0]);
 
 	}
 
@@ -84,10 +63,8 @@ public class Enemy extends Sprite {
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(this.posX, this.posY);
 		bdef.type = BodyDef.BodyType.DynamicBody;
-//		MassData mass = new MassData();
-//		mass.mass = 100000;
-		body = world.createBody(bdef);
-//		body.setMassData(mass);
+
+		super.body = super.world.createBody(bdef);
 
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
@@ -95,52 +72,48 @@ public class Enemy extends Sprite {
 		fdef.shape = shape;
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		
 
 		UserData userData = new UserData("Enemy", enemyIndex);
 
-		body.createFixture(fdef).setUserData(userData);
+		super.body.createFixture(fdef).setUserData(userData);
 	}
 
 	public void update(float delta) {
+		super.update(delta);
 
-		if(preventMove) {
+		if (preventMove) {
 			MassData mass = new MassData();
 			mass.mass = 100000;
 			body.setMassData(mass);
 		} else {
 			body.resetMassData();
 		}
-		
-		if(isBeingAttacked) {
-			attack.begin(this);
-		}
-		
+
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
 
 		body.setLinearVelocity(0, 0);
 		if (Gdx.input.isKeyPressed(Keys.UP)) {
-			body.setLinearVelocity(new Vector2(0, SPEED));
-			// states = PlayerStates.BACK;
-			// direction = PlayerStates.BACK;
+			body.setLinearVelocity(new Vector2(0, (float) (SPEED*0.55)));
+			 states = PlayerStates.BACK;
+			 direction = PlayerStates.BACK;
 		}
 		if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-			body.setLinearVelocity(new Vector2(0, -SPEED));
-			// states = PlayerStates.FRONT;
-			// direction = PlayerStates.FRONT;
+			body.setLinearVelocity(new Vector2(0, -(float) (SPEED*0.55)));
+			 states = PlayerStates.FRONT;
+			 direction = PlayerStates.FRONT;
 		}
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-			body.setLinearVelocity(new Vector2(-SPEED, 0));
-			// states = PlayerStates.LEFT;
-			// direction = PlayerStates.LEFT;
+			body.setLinearVelocity(new Vector2(-(float) (SPEED*0.55), 0));
+			 states = PlayerStates.LEFT;
+			 direction = PlayerStates.LEFT;
 		}
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-			body.setLinearVelocity(new Vector2(SPEED, 0));
-			// states = PlayerStates.RIGHT;
-			// direction = PlayerStates.RIGHT;
+			body.setLinearVelocity(new Vector2((float) (SPEED*0.55), 0));
+			 states = PlayerStates.RIGHT;
+			 direction = PlayerStates.RIGHT;
 		}
-		setRegion(this.region);
+		super.setRegion(getFrame(delta));
 
 	}
 
@@ -150,8 +123,44 @@ public class Enemy extends Sprite {
 	} // if (1==2) { no se dibuja } => Respawn??
 
 	public void dispose() {
-		enemyTexture.dispose();
 		world.destroyBody(body);
 	}
 
+	
+	public void createAnimations() {
+		// Animation
+		direction = PlayerStates.FRONT;
+		currentState = PlayerStates.FRONT;
+		previousState = PlayerStates.FRONT;
+		stateTimer = 0;
+		Array<TextureRegion> frames = new Array<TextureRegion>();
+		frames.add(new TextureRegion(super.texture, 292, 291, 44, 91));
+		frames.add(new TextureRegion(super.texture, 337, 291, 44, 91));
+		frames.add(new TextureRegion(super.texture, 384, 291, 44, 91));
+		movingBack = new Animation<TextureRegion>(0.1f, frames);
+		frames.clear();
+		frames.add(new TextureRegion(super.texture, 288, 99, 44, 91));
+		frames.add(new TextureRegion(super.texture, 348, 99, 44, 91));
+		frames.add(new TextureRegion(super.texture, 384, 99, 44, 91));
+		movingLeft = new Animation<TextureRegion>(0.1f, frames);
+		frames.clear();
+		frames.add(new TextureRegion(super.texture, 290, 3, 46, 91));
+		frames.add(new TextureRegion(super.texture, 337, 3, 46, 91));
+		frames.add(new TextureRegion(super.texture, 384, 3, 46, 91));
+		movingFront = new Animation<TextureRegion>(0.1f, frames);
+		frames.clear();
+		frames.add(new TextureRegion(super.texture, 295, 195, 46, 91));
+		frames.add(new TextureRegion(super.texture, 345, 195, 46, 91));
+		frames.add(new TextureRegion(super.texture, 387, 195, 46, 91));
+		movingRight = new Animation<TextureRegion>(0.1f, frames);
+		frames.clear();
+
+		standingTextures = new TextureRegion[4];
+		standingTextures[0] = new TextureRegion(super.texture, 292, 291, 44, 91); // STANDING_BACK
+		standingTextures[1] = new TextureRegion(super.texture, 290, 3, 46, 91); // STANDING_FRONT
+		standingTextures[2] = new TextureRegion(super.texture, 295, 195, 46, 91); // STANDING_RIGHT
+		standingTextures[3] = new TextureRegion(super.texture, 288, 99, 44, 91); // STANDING_LEFT
+
+	}
+	
 }

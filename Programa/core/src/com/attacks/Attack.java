@@ -2,12 +2,14 @@ package com.attacks;
 
 import static com.constants.Constants.PPM;
 
+import com.actors.Character;
 import com.actors.Enemy;
 import com.actors.states.PlayerStates;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
@@ -26,7 +28,9 @@ public class Attack extends Sprite{
 	private PlayerStates currentState;
 	private PlayerStates previousState;
 
-	private Enemy enemy;
+	private Character characterToAttack;
+	
+	public boolean started = false;
 	
 	public Attack() {
 		this.texture = new Texture("fireAttack.png");
@@ -35,20 +39,19 @@ public class Attack extends Sprite{
 		setScale(1.5f);
 	}
 	
-	public void begin(Enemy enemy) {
-		this.enemy = enemy;
-		setBounds(enemy.body.getPosition().x , enemy.body.getPosition().y, 32 / PPM, 48 / PPM);
+	public void begin(Character characterToAttack) {
+		this.characterToAttack = characterToAttack;
+		setBounds(characterToAttack.body.getPosition().x , characterToAttack.body.getPosition().y, 32 / PPM, 48 / PPM);
 	}
 	
 	public void update(float delta) {
-		currentDuration += delta;
-		if(currentDuration < duration) {
-			setPosition(enemy.body.getPosition().x, enemy.body.getPosition().y);
-			setRegion(getFrame(delta));			
-		} else {
-			enemy.isBeingAttacked = false;
-		}
-
+			currentDuration += delta;
+			if(currentDuration < duration) {
+				setPosition(characterToAttack.body.getPosition().x, characterToAttack.body.getPosition().y);
+				setRegion(getFrame(delta));			
+			} else {
+				characterToAttack.isBeingAttacked = false;
+			}
 	}
 	
 	@Override

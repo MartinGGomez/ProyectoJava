@@ -103,7 +103,6 @@ public class Hud implements Disposable {
 
 	public void defineHudElements() {
 		stage = this.game.stage;
-
 		playerName = new Label(this.player.name, skin, "white-font", Color.WHITE);
 		playerName.setPosition(image.getWidth() - 205, image.getHeight() - 80);
 		playerName.setSize(160, 24);
