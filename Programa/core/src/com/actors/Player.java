@@ -4,6 +4,7 @@ import static com.constants.Constants.PPM;
 import static com.constants.Constants.SPEED;
 
 import com.actors.states.PlayerStates;
+import com.ai.SteeringEntity;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -52,6 +53,8 @@ public class Player extends Character {
 	// Scene2d
 	private Label playerLabel;
 	public Actor actor;
+	
+	public SteeringEntity steeringEntity;
 
 	public Player(MainGame game, World world, String name) {
 		super(game, world, name);
@@ -64,6 +67,8 @@ public class Player extends Character {
 
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
+		
+		steeringEntity = new SteeringEntity(this.body, 10);
 			
 	}
 

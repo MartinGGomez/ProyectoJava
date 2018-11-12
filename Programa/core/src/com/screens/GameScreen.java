@@ -49,7 +49,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private Box2DDebugRenderer box2dRender;
 	private MyContactListener contactListener;
 
-	private Player player;
+	public static Player player;
 
 	private Enemy enemy;
 
@@ -89,12 +89,14 @@ public class GameScreen implements Screen, InputProcessor {
 		contactListener = new MyContactListener();
 		world.setContactListener(contactListener);
 
+		player = new Player(this.game, world, "Coxne");
+		
 		// Body Definitions
 		collisionHelper = new CollisionHelper(map, world);
 		collisionHelper.createMapObjects();
 		enemies = collisionHelper.createEnemies(this.game);
 
-		player = new Player(this.game, world, "Coxne");
+		
 
 		// Hud
 		hud = new Hud(this.game, this.player);
@@ -124,9 +126,6 @@ public class GameScreen implements Screen, InputProcessor {
 			// System.out.println("Enemy " + enemy.getEnemyIndex() + " health " +
 			// enemy.health);
 		}
-
-		float auxX = gamecam.position.x;
-		float auxY = gamecam.position.y;
 
 		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
 		gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
