@@ -47,7 +47,7 @@ public class GameScreen implements Screen, InputProcessor {
 	// Box2D
 	private World world;
 	private Box2DDebugRenderer box2dRender;
-	private MyContactListener contactListener;
+	public static MyContactListener contactListener;
 
 	public static Player player;
 
@@ -115,11 +115,15 @@ public class GameScreen implements Screen, InputProcessor {
 		world.step(1 / 60f, 6, 2);
 
 		player.update(delta);
-
-		Enemy enemyCollided = enemies.get(contactListener.getEnemyCollided());
-		enemyCollided.preventMove = true;
-
-		handleAttacks(enemyCollided, delta);
+		
+		if(contactListener.isColliding()) {
+			enemies.get(contactListener.getEnemyCollided()).preventMove = true;	
+		} else {
+			enemies.get(contactListener.getEnemyCollided()).preventMove = false;
+		}
+		
+		
+		handleAttacks(enemies.get(contactListener.getEnemyCollided()), delta);
 
 		for (Enemy enemy : enemies) {
 			enemy.update(delta);

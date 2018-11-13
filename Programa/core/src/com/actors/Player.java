@@ -87,7 +87,7 @@ public class Player extends Character {
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
 		fdef.shape = shape;
 
-		UserData userData = new UserData("Player", 1);
+		UserData userData = new UserData("Player", 1, false);
 
 		super.body.createFixture(fdef).setUserData(userData);
 

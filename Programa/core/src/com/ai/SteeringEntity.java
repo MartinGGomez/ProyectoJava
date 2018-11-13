@@ -3,10 +3,10 @@ package com.ai;
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringAcceleration;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
-import com.badlogic.gdx.ai.steer.behaviors.FollowPath;
 import com.badlogic.gdx.ai.utils.Location;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.services.collision.userdata.UserData;
 
 public class SteeringEntity implements Steerable<Vector2> {
 
@@ -27,7 +27,9 @@ public class SteeringEntity implements Steerable<Vector2> {
 		this.maxAngularSpeed = 0;
 		this.maxAngularAcceleration = 0;
 		
-		this.tagged = false;
+		UserData data = (UserData) body.getFixtureList().get(0).getUserData();
+		
+		this.tagged = true;
 		
 		this.steeringOutput = new SteeringAcceleration<Vector2>(new Vector2());
 

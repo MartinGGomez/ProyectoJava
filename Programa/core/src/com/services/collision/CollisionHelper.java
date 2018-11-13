@@ -47,7 +47,7 @@ public class CollisionHelper {
 			fdef.shape = shape;
 			fdef.filter.categoryBits = Constants.BIT_COLLISION;
 			fdef.filter.maskBits = Constants.BIT_PLAYER;
-			body.createFixture(fdef).setUserData(new UserData("Map", 0));
+			body.createFixture(fdef).setUserData(new UserData("Map", 0, false));
 
 		}
 	}
