@@ -116,13 +116,14 @@ public class GameScreen implements Screen, InputProcessor {
 
 		player.update(delta);
 		
-		if(contactListener.isColliding()) {
-			enemies.get(contactListener.getEnemyCollided()).preventMove = true;	
-		} else {
-			enemies.get(contactListener.getEnemyCollided()).preventMove = false;
+		for(int i = 0; i < contactListener.enemiesColliding.size(); i++) {
+			if(enemies.get(i).getEnemyIndex() == contactListener.enemiesColliding.get(i).index) {
+				enemies.get(i).preventMove = true;
+			}
 		}
 		
-		
+		System.out.println("Enemigo colisionado: " + contactListener.getEnemyCollided());
+
 		handleAttacks(enemies.get(contactListener.getEnemyCollided()), delta);
 
 		for (Enemy enemy : enemies) {
@@ -202,6 +203,7 @@ public class GameScreen implements Screen, InputProcessor {
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
 
 			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
+				System.out.println("Puede atacar");
 				if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
 					player.attack(enemy, delta);
 					// hud.boton1.setVisible(false);

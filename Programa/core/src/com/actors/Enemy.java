@@ -105,34 +105,39 @@ public class Enemy extends Character {
 
 		super.body.createFixture(fdef).setUserData(userData);
 
+		
 		// Collision sensor
 		// Bottom
 		shape.setAsBox(((this.region.getRegionWidth()) / 4) / PPM, 2 / PPM, new Vector2(0, -11 / PPM), 0);
 		fdef.shape = shape;
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		super.body.createFixture(fdef).setUserData(new UserData("Bottom", enemyIndex, true));
+		userData.sensorDirection = "Bottom";
+		super.body.createFixture(fdef).setUserData(userData);
 
 		// Top
 		shape.setAsBox(((this.region.getRegionWidth()) / 4) / PPM, 2 / PPM, new Vector2(0, 11 / PPM), 0);
 		fdef.shape = shape;
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		super.body.createFixture(fdef).setUserData(new UserData("Top", enemyIndex, true));
+		userData.sensorDirection = "Top";
+		super.body.createFixture(fdef).setUserData(userData);
 
 		// Right
 		shape.setAsBox(2 / PPM, (this.region.getRegionHeight() / 5) / PPM, new Vector2(0.12f, 0), 0);
 		fdef.shape = shape;
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		super.body.createFixture(fdef).setUserData(new UserData("Right", enemyIndex, true));
+		userData.sensorDirection = "Right";
+		super.body.createFixture(fdef).setUserData(userData);
 
 		// Left
 		shape.setAsBox(2 / PPM, (this.region.getRegionHeight() / 5) / PPM, new Vector2(-0.12f, 0), 0);
 		fdef.shape = shape;
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		super.body.createFixture(fdef).setUserData(new UserData("Left", enemyIndex, true));
+		userData.sensorDirection = "Left";
+		super.body.createFixture(fdef).setUserData(userData);
 
 	}
 
@@ -157,7 +162,7 @@ public class Enemy extends Character {
 		// TEST AUTOMATIC MOVEMENT
 		float activeDistance = 2f;
 		Player player = GameScreen.player;
-
+		
 		if (!preventMove) {
 
 			if (((super.body.getPosition().x - player.body.getPosition().x) < activeDistance) // SIGUE A LA

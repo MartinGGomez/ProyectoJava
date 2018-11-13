@@ -6,10 +6,8 @@ public class CollisionMovement {
 	public String enemyCollidingTo;
 	public boolean enemyColliding;
 	
-	public CollisionMovement(int index, String enemyCollidingTo, boolean enemyColliding) {
+	public CollisionMovement(int index) {
 		this.index = index;
-		this.enemyCollidingTo = enemyCollidingTo;
-		this.enemyColliding = enemyColliding;
 	}
 	
 }
