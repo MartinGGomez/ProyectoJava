@@ -199,6 +199,7 @@ public class Enemy extends Character {
 			if (found && isColliding) {
 				String direction = collisionDirection;
 				time += delta;
+				int cont;
 				if (direction.equals("Top")) {
 //					System.out.println("should move bot");
 					body.setLinearVelocity(0, (float) -(SPEED * 1));
