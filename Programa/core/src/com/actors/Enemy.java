@@ -51,7 +51,8 @@ public class Enemy extends Character {
 
 	private float time;
 	private float maxTime = 3f;
-	private boolean avoidCollision = false;
+	public boolean changePath = false;
+	public String collidingTo;
 
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
@@ -113,6 +114,7 @@ public class Enemy extends Character {
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
 		userData.sensorDirection = "Bottom";
+		userData.sensor = true;
 		super.body.createFixture(fdef).setUserData(userData);
 
 		// Top
@@ -190,39 +192,12 @@ public class Enemy extends Character {
 				}
 			}
 			
-			boolean found = false, isColliding = false;
-			String collisionDirection = "";
-			
-			for (CollisionMovement c: contactListener.enemiesColliding) {
-				if(c.index == this.enemyIndex && !found) {
-					found = true;
-					isColliding = c.enemyColliding;
-					collisionDirection = c.enemyCollidingTo;
-				}
-			}
-			
-			if (found && isColliding) {
-				String direction = collisionDirection;
-				time += delta;
-				int cont;
-				if (direction.equals("Top")) {
-//					System.out.println("should move bot");
-					body.setLinearVelocity(0, (float) -(SPEED * 1));
-				}
-				if (direction.equals("Bottom")) {
-//					System.out.println("should move top");
-					body.setLinearVelocity(new Vector2(0, (float) (SPEED * 1)));
-				}
-				if (direction.equals("Right")) {
-//					System.out.println("should move left");
-					body.setLinearVelocity(new Vector2((float) -(SPEED * 1), 0));
-				}
-				if (direction.equals("Left")) {
-//					System.out.println("should move right");
-					body.setLinearVelocity(new Vector2((float) (SPEED * 1), 0));
-				}
 
+			if(changePath) {
+				// 
+//				System.err.println("Enemy " + this.enemyIndex + " should be colliding to " + this.collidingTo);
 			}
+			
 
 		}
 

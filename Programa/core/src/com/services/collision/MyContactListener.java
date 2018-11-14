@@ -18,12 +18,13 @@ public class MyContactListener implements ContactListener {
 	private String enemyCollidingTo;
 
 	public ArrayList<CollisionMovement> enemiesColliding = new ArrayList<CollisionMovement>();
+	public ArrayList<CollisionMovement> enemiesCollidingWithPlayer = new ArrayList<CollisionMovement>();
+	public ArrayList<Integer> enemiesStopCollidingWithPlayer = new ArrayList<Integer>();
 
 	@Override
 	public void beginContact(Contact contact) {
 		Fixture fixtureA = contact.getFixtureA();
-		Fixture fixtureB = contact.getFixtureB();
-
+		Fixture fixtureB = contact.getFixtureB(); 
 		UserData userDataA = (UserData) fixtureA.getUserData();
 		UserData userDataB = (UserData) fixtureB.getUserData();
 
@@ -32,21 +33,78 @@ public class MyContactListener implements ContactListener {
 			isColliding = true;
 			enemyCollided = userDataB.index;
 			enemyColliding = true;
-			CollisionMovement c = new CollisionMovement(userDataB.index);
-			enemiesColliding.add(c);
+			boolean existe = false;
+			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
+				if(enemiesCollidingWithPlayer.get(i).index == userDataB.index) {
+					existe = true;
+				}
+			}
+			if (!existe) {
+				CollisionMovement c = new CollisionMovement(userDataB.index);
+				enemiesCollidingWithPlayer.add(c);	
+			}
+			
+			for (int i = 0; i < enemiesStopCollidingWithPlayer.size(); i++) {
+				if(userDataB.index == enemiesStopCollidingWithPlayer.get(i)) {
+					enemiesStopCollidingWithPlayer.remove(i);
+				}
+			}
 		}
 		if (userDataB.type.equals("Player") && userDataA.type.equals("Enemy")) {
 			isColliding = true;
 			enemyCollided = userDataA.index;
 			enemyColliding = true;
-			CollisionMovement c = new CollisionMovement(userDataA.index);
-			enemiesColliding.add(c);
+			boolean existe = false;
+			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
+				if(enemiesCollidingWithPlayer.get(i).index == userDataA.index) {
+					existe = true;
+				}
+			}
+			if (!existe) {
+				CollisionMovement c = new CollisionMovement(userDataA.index);
+				enemiesCollidingWithPlayer.add(c);	
+			}
+			
+			for (int i = 0; i < enemiesStopCollidingWithPlayer.size(); i++) {
+				if(userDataA.index == enemiesStopCollidingWithPlayer.get(i)) {
+					enemiesStopCollidingWithPlayer.remove(i);
+				}
+			}
 		}
 
-		if (userDataA.type.equals("Enemy") && userDataA.sensor && !userDataB.type.equals("Player")) {
-			// Chocando contra algo que no es un jugador
+		
+		if(userDataA.sensor || userDataB.sensor) {
+			if(userDataA.type.equals("Enemy") && !userDataB.type.equals("Player")) {
+				boolean existe = false;
+				for (int i = 0; i < enemiesColliding.size(); i++) {
+					if(enemiesColliding.get(i).index == userDataA.index) {
+						existe = true;
+					}
+				}
+				if (!existe) {
+					CollisionMovement c = new CollisionMovement(userDataA.index);
+					c.enemyCollidingTo = userDataA.sensorDirection;
+					System.out.println("Colliding to " + userDataA.sensorDirection);
+					enemiesColliding.add(c);	
+				}
 			
+			}
+			if(userDataB.type.equals("Enemy") && !userDataA.type.equals("Player")) {
+				boolean existe = false;
+				for (int i = 0; i < enemiesColliding.size(); i++) {
+					if(enemiesColliding.get(i).index == userDataB.index) {
+						existe = true;
+					}
+				}
+				if (!existe) {
+					CollisionMovement c = new CollisionMovement(userDataB.index);
+					c.enemyCollidingTo = userDataB.sensorDirection;
+					System.out.println("Colliding to " + userDataB.sensorDirection);
+					enemiesColliding.add(c);	
+				}
+			}
 		}
+
 
 	}
 
@@ -58,15 +116,71 @@ public class MyContactListener implements ContactListener {
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
 			enemyColliding = false;
 			isColliding = false;
-			// Buscar index del array cuando el contenido sea igual a userDataB.index
-//			enemiesColliding.remove(userDataB.index);
+			
+			boolean remove = false;
+			int toRemove = 0;
+			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
+				if(enemiesCollidingWithPlayer.get(i).index == userDataB.index) {
+					remove = true;
+					toRemove = i;
+				}
+			}
+			if (remove) {
+				enemiesCollidingWithPlayer.remove(toRemove);	
+			}
+			enemiesStopCollidingWithPlayer.add(userDataB.index);
 
 		}
 		if (userDataB.type.equals("Player") && userDataA.type.equals("Enemy")) {
 			isColliding = false;
 			enemyColliding = false;
-			// Buscar index del array cuando el contenido sea igual a userDataB.index
-//			enemiesColliding.remove(userDataB.index);
+			
+			boolean remove = false;
+			int toRemove = 0;
+			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
+				if(enemiesCollidingWithPlayer.get(i).index == userDataA.index) {
+					remove = true;
+					toRemove = i;
+				}
+			}
+			if (remove) {
+				enemiesCollidingWithPlayer.remove(toRemove);	
+			}
+
+			enemiesStopCollidingWithPlayer.add(userDataA.index);
+
+			
+		}
+		
+		if(userDataA.sensor || userDataB.sensor) {
+			if(userDataA.type.equals("Enemy") && !userDataB.type.equals("Player")) {
+				boolean remove = false;
+				int toRemove = 0;
+				for (int i = 0; i < enemiesColliding.size(); i++) {
+					if(enemiesColliding.get(i).index == userDataA.index) {
+						remove = true;
+						toRemove = i;
+					}
+				}
+				if (remove) {
+					enemiesColliding.remove(toRemove);	
+				}
+			
+			}
+			if(userDataB.type.equals("Enemy") && !userDataA.type.equals("Player")) {
+				boolean remove = false;
+				int toRemove = 0;
+				for (int i = 0; i < enemiesColliding.size(); i++) {
+					if(enemiesColliding.get(i).index == userDataB.index) {
+						remove = true;
+						toRemove = i;
+					}
+				}
+				if (remove) {
+					enemiesColliding.remove(toRemove);	
+				}
+			
+			}
 		}
 
 

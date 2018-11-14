@@ -116,13 +116,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 		player.update(delta);
 		
-		for(int i = 0; i < contactListener.enemiesColliding.size(); i++) {
-			if(enemies.get(i).getEnemyIndex() == contactListener.enemiesColliding.get(i).index) {
-				enemies.get(i).preventMove = true;
-			}
-		}
+		resolveEnemyCollisions();
 		
-		System.out.println("Enemigo colisionado: " + contactListener.getEnemyCollided());
+		
 
 		handleAttacks(enemies.get(contactListener.getEnemyCollided()), delta);
 
@@ -145,6 +141,37 @@ public class GameScreen implements Screen, InputProcessor {
 		gamecam.update();
 
 		renderer.setView(gamecam);
+	}
+
+	private void resolveEnemyCollisions() {
+		boolean changePathFound = false;
+		for (int i = 0; i < contactListener.enemiesColliding.size(); i++) {
+			for (Enemy enemy: enemies) {
+				if(enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
+					enemy.changePath = true;
+					enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
+					changePathFound = true;
+				}
+			}
+		}
+	
+		
+		boolean found = false;
+		for (int i = 0; i < contactListener.enemiesCollidingWithPlayer.size(); i++) {
+			found = false;
+			for (Enemy enemy: enemies) {
+				if(enemy.getEnemyIndex() == contactListener.enemiesCollidingWithPlayer.get(i).index && !found) {
+					enemy.preventMove = true;
+					found = true;
+				}
+			}
+			
+		}
+		
+		for (int i = 0; i < contactListener.enemiesStopCollidingWithPlayer.size(); i++) {
+			enemies.get(contactListener.enemiesStopCollidingWithPlayer.get(i)).preventMove = false;
+		}
+		
 	}
 
 	@Override
