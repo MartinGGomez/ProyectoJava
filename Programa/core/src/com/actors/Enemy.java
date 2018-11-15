@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -100,6 +101,7 @@ public class Enemy extends Character {
 		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 4) / PPM);
 		fdef.shape = shape;
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
+		fdef.isSensor = false;
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
 
 		UserData userData = new UserData("Enemy", enemyIndex, false);
@@ -108,38 +110,53 @@ public class Enemy extends Character {
 
 		
 		// Collision sensor
+		UserData sensorData = new UserData("EnemyS", enemyIndex, true);
 		// Bottom
-		shape.setAsBox(((this.region.getRegionWidth()) / 4) / PPM, 2 / PPM, new Vector2(0, -11 / PPM), 0);
+		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, -12f / PPM), 0);
 		fdef.shape = shape;
-		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		userData.sensorDirection = "Bottom";
-		userData.sensor = true;
-		super.body.createFixture(fdef).setUserData(userData);
+		sensorData.sensorDirection = "Bottom";
+		fdef.isSensor = true;
+		body.createFixture(fdef);
+		super.body.getFixtureList().get(1).setUserData(sensorData);
 
 		// Top
-		shape.setAsBox(((this.region.getRegionWidth()) / 4) / PPM, 2 / PPM, new Vector2(0, 11 / PPM), 0);
+		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, 12f / PPM), 0);
 		fdef.shape = shape;
-		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		userData.sensorDirection = "Top";
-		super.body.createFixture(fdef).setUserData(userData);
+		fdef.isSensor = true;
+		sensorData.sensorDirection = "Top";
+		body.createFixture(fdef);
+		super.body.getFixtureList().get(2).setUserData(sensorData);
 
+	
+		
+		// PROBANDO USER DATA DE LAS FIXTURES. SIEMPRE EL MISMO USER DATA ERROR!!!
+		System.out.println(super.body.getFixtureList().size);
+		for (int i = 0; i < super.body.getFixtureList().size; i++) {
+			if(((UserData) super.body.getFixtureList().get(i).getUserData()).type.equals("EnemyS")) {
+			System.out.println("------------------------------");
+			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).type);
+			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).index);
+			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).sensor);
+			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).sensorDirection);
+			System.out.println("------------------------------");
+			}
+		}
+		
 		// Right
-		shape.setAsBox(2 / PPM, (this.region.getRegionHeight() / 5) / PPM, new Vector2(0.12f, 0), 0);
-		fdef.shape = shape;
-		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		userData.sensorDirection = "Right";
-		super.body.createFixture(fdef).setUserData(userData);
+//		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(0.15f, 0), 0);
+//		fdef.shape = shape;
+//		fdef.filter.categoryBits = Constants.BIT_PLAYER;
+//		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
+//		userData.sensorDirection = "Right";
+//		super.body.createFixture(fdef).setUserData(userData);
 
 		// Left
-		shape.setAsBox(2 / PPM, (this.region.getRegionHeight() / 5) / PPM, new Vector2(-0.12f, 0), 0);
-		fdef.shape = shape;
-		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-		userData.sensorDirection = "Left";
-		super.body.createFixture(fdef).setUserData(userData);
+//		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(-0.15f, 0), 0);
+//		fdef.shape = shape;
+//		fdef.filter.categoryBits = Constants.BIT_PLAYER;
+//		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
+//		userData.sensorDirection = "Left";
+//		super.body.createFixture(fdef).setUserData(userData);
 
 	}
 

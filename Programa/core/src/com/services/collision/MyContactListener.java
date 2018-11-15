@@ -28,6 +28,13 @@ public class MyContactListener implements ContactListener {
 		UserData userDataA = (UserData) fixtureA.getUserData();
 		UserData userDataB = (UserData) fixtureB.getUserData();
 
+		if(userDataA!=null  && userDataA.sensor) {
+			System.out.println("Toco con un sensor a: " + userDataA.sensorDirection);
+		}
+		if(userDataB!=null  && userDataB.sensor) {
+			System.out.println("Toco con un sensor a: " + userDataB.sensorDirection);
+		}
+		
 		//
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
 			isColliding = true;
