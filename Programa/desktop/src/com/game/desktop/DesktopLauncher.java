@@ -10,6 +10,7 @@ public class DesktopLauncher {
 		config.title = "Imperium AO";
 		config.width = 800;
 		config.height = 600;
+		config.resizable=false;
 		new LwjglApplication(new MainGame(), config);
 	}
 }

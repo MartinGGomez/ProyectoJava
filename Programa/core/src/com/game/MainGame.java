@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.screens.GameScreen;
+import com.screens.ScreenCharge;
 
 public class MainGame extends Game {
 	
@@ -14,6 +15,8 @@ public class MainGame extends Game {
 	public AssetManager assetManager;
 	public Stage stage;
 	
+	public ScreenCharge screenCharge;
+	
 	@Override
 	public void create() {
 		assetManager = new AssetManager();
@@ -21,7 +24,8 @@ public class MainGame extends Game {
 		assetManager.finishLoading();
 		batch = new SpriteBatch();
 		gameScreen = new GameScreen(this);
-		setScreen(gameScreen);
+		screenCharge = new ScreenCharge(this);
+		setScreen(screenCharge);
 	}
 
 	
