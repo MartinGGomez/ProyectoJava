@@ -21,16 +21,12 @@ public class ScreenCharge implements Screen {
 	
 	private float alpha;
 	
-	private GameScreen gameScreen;
 	private Color c;
 	
 	Music start;
 	
-	public ScreenCharge(MainGame game) {
+	public ScreenCharge(MainGame game ) {
 		this.game = game;
-
-		
-		gameScreen = new GameScreen(game);
 		menu = new ScreenMenu(game);
 	
 

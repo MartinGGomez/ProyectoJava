@@ -16,18 +16,19 @@ import com.game.MainGame;
 
 public class ScreenMenu implements Screen, InputProcessor{
 
-	MainGame game;
-	GameScreen gameScreen;
+	 private MainGame game;
+
 	
-	Texture menu;
+	 private Texture menu;
 	
-	ProgressBar barMenu;
+	 private ProgressBar barMenu;
+	 
+	 private int cont =0;
+	 
 	
 	public ScreenMenu(MainGame game) {
 		
 		this.game = game;
-		gameScreen = new GameScreen(game);
-		
 		menu = new Texture("menuPrincipal.png");
 		
 
@@ -96,10 +97,16 @@ public class ScreenMenu implements Screen, InputProcessor{
 		
 		
 		
+		System.out.println(cont);
+		
 	}
 
 	private void update(float delta) {
-
+		cont++;
+		if (cont==120){
+			game.setScreen(game.gameScreen);
+		}
+		
 		game.batch.begin();
 		game.batch.draw(menu, 0, 0, 800, 600);
 		game.batch.end();
