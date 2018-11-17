@@ -13,10 +13,10 @@ import com.services.collision.userdata.UserData;
 public class MyContactListener implements ContactListener {
 
 	private boolean isColliding;
-	private int enemyCollided, enemyIndex;
+	private int  enemyIndex;
 	private boolean enemyColliding;
 	private String enemyCollidingTo;
-
+	
 	public ArrayList<CollisionMovement> enemiesColliding = new ArrayList<CollisionMovement>();
 	public ArrayList<Integer> enemiesStopColliding = new ArrayList<Integer>();
 	public ArrayList<CollisionMovement> enemiesCollidingWithPlayer = new ArrayList<CollisionMovement>();
@@ -29,16 +29,9 @@ public class MyContactListener implements ContactListener {
 		UserData userDataA = (UserData) fixtureA.getUserData();
 		UserData userDataB = (UserData) fixtureB.getUserData();
 
-		// System.err.println("UserData A: " + userDataA.type + " R- " +
-		// fixtureA.getRestitution());
-		// System.err.println("UserData A: " + userDataB.type + " R- " +
-		// fixtureB.getRestitution());
-		//
-
 		//
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
 			isColliding = true;
-			enemyCollided = userDataB.index;
 			enemyColliding = true;
 			boolean existe = false;
 			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
@@ -60,7 +53,6 @@ public class MyContactListener implements ContactListener {
 		}
 		if (userDataB.type.equals("Player") && userDataA.type.equals("Enemy")) {
 			isColliding = true;
-			enemyCollided = userDataA.index;
 			enemyColliding = true;
 			boolean existe = false;
 			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
@@ -107,7 +99,7 @@ public class MyContactListener implements ContactListener {
 				if (!existe) {
 					CollisionMovement c = new CollisionMovement(userDataA.index);
 					c.enemyCollidingTo = restitutionToDirection(fixtureA.getRestitution());
-					System.out.println("Colliding to " + c.enemyCollidingTo);
+//					System.out.println("Colliding to " + c.enemyCollidingTo);
 					enemiesColliding.add(c);
 				}
 
@@ -122,7 +114,7 @@ public class MyContactListener implements ContactListener {
 				if (!existe) {
 					CollisionMovement c = new CollisionMovement(userDataB.index);
 					c.enemyCollidingTo = restitutionToDirection(fixtureB.getRestitution());
-					System.out.println("Colliding to " + c.enemyCollidingTo);
+//					System.out.println("Colliding to " + c.enemyCollidingTo);
 					enemiesColliding.add(c);
 				}
 			}
@@ -231,10 +223,6 @@ public class MyContactListener implements ContactListener {
 			break;
 		}
 		return direction;
-	}
-
-	public int getEnemyCollided() {
-		return enemyCollided;
 	}
 
 	public int getEnemyIndex() {

@@ -159,7 +159,6 @@ public class Enemy extends Character {
 			if (changePath) {
 				//
 				moveTo = changeDirectionTo(this.collidingTo);
-				System.out.println("Should change path to " + moveTo);
 				if (moveTo.equals("Top")) {
 					body.setLinearVelocity(new Vector2(0, (float) (SPEED * 0.55)));
 				} else if (moveTo.equals("Bot")) {

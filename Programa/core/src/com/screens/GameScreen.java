@@ -3,6 +3,7 @@ package com.screens;
 import static com.constants.Constants.PPM;
 
 import java.rmi.server.SocketSecurityException;
+import java.util.ArrayList;
 
 import com.actors.Enemy;
 import com.actors.Player;
@@ -29,6 +30,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.game.MainGame;
 import com.services.collision.CollisionHelper;
 import com.services.collision.MyContactListener;
+import com.services.collision.userdata.CollisionMovement;
 import com.services.combat.Combat;
 
 public class GameScreen implements Screen, InputProcessor {
@@ -120,7 +122,7 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		
 
-		handleAttacks(enemies.get(contactListener.getEnemyCollided()), delta);
+		handleAttacks(contactListener.enemiesCollidingWithPlayer, delta);
 
 		for (Enemy enemy : enemies) {
 			enemy.update(delta);
@@ -150,7 +152,7 @@ public class GameScreen implements Screen, InputProcessor {
 				if(enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
 					enemy.changePath = true;
 					enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
-					System.err.println("Colliding to " + enemy.collidingTo);
+//					System.err.println("Colliding to " + enemy.collidingTo);
 					changePathFound = true;
 				}
 			}
@@ -231,15 +233,19 @@ public class GameScreen implements Screen, InputProcessor {
 
 	}
 
-	private void handleAttacks(Enemy enemy, float delta) {
+	private void handleAttacks(ArrayList<CollisionMovement> enemiesColliding, float delta) {
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-
 			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
-				System.out.println("Puede atacar");
-				if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
-					player.attack(enemy, delta);
-					// hud.boton1.setVisible(false);
+//				System.out.println("Puede atacar");
+				for (CollisionMovement enemyC: enemiesColliding) {
+					Enemy enemy = enemies.get(enemyC.index);
+					if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
+						player.attack(enemy, delta);
+						// hud.boton1.setVisible(false);
+					}
 				}
+				
+				
 			}
 		}
 	}

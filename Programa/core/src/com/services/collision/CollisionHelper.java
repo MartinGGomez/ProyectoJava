@@ -54,7 +54,7 @@ public class CollisionHelper {
 
 	public Array<Enemy> createEnemies(MainGame game) {
 		Random random = new Random();
-		int maxEnemies = 1;
+		int maxEnemies = 2;
 
 		Array<Enemy> enemies = new Array<Enemy>();
 		for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
