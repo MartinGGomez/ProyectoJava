@@ -150,6 +150,7 @@ public class GameScreen implements Screen, InputProcessor {
 				if(enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
 					enemy.changePath = true;
 					enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
+					System.err.println("Colliding to " + enemy.collidingTo);
 					changePathFound = true;
 				}
 			}
@@ -170,6 +171,10 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		for (int i = 0; i < contactListener.enemiesStopCollidingWithPlayer.size(); i++) {
 			enemies.get(contactListener.enemiesStopCollidingWithPlayer.get(i)).preventMove = false;
+		}
+		
+		for (int i = 0; i < contactListener.enemiesStopColliding.size(); i++) {
+			enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
 		}
 		
 	}

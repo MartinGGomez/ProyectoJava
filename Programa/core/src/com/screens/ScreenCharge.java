@@ -28,10 +28,12 @@ public class ScreenCharge implements Screen {
 	
 	public ScreenCharge(MainGame game) {
 		this.game = game;
+
 		
 		gameScreen = new GameScreen(game);
 		menu = new ScreenMenu(game);
 	
+
 		logo = new Texture("logoGame.png");
 		sLogo = new Sprite(logo);
 	}

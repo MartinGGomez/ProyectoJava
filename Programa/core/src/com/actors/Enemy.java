@@ -3,35 +3,22 @@ package com.actors;
 import static com.constants.Constants.PPM;
 import static com.constants.Constants.SPEED;
 
-import java.io.SequenceInputStream;
-
 import com.actors.states.PlayerStates;
-import com.ai.SteeringEntity;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.ai.steer.behaviors.Arrive;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.constants.Constants;
 import com.game.MainGame;
 import com.screens.GameScreen;
-import com.services.collision.MyContactListener;
-import com.services.collision.userdata.CollisionMovement;
 import com.services.collision.userdata.UserData;
 
 public class Enemy extends Character {
@@ -46,14 +33,9 @@ public class Enemy extends Character {
 
 	public Label enemyLabel;
 
-	public SteeringEntity steeringEntity;
-
-	private MyContactListener contactListener;
-
-	private float time;
-	private float maxTime = 3f;
 	public boolean changePath = false;
 	public String collidingTo;
+	private String moveTo;
 
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
@@ -64,24 +46,12 @@ public class Enemy extends Character {
 		this.posY = posY;
 		this.enemyIndex = enemyIndex;
 
-		this.contactListener = GameScreen.contactListener;
 
 		defineEnemyBody();
 		createAnimations();
 
 		setBounds(body.getPosition().x, body.getPosition().y, 29 / PPM, 55 / PPM);
 		setRegion(standingTextures[0]);
-
-		steeringEntity = new SteeringEntity(super.body, 1f);
-
-		// Arrive<Vector2> arriveSB = new Arrive<Vector2>(steeringEntity,
-		// GameScreen.player.steeringEntity)
-		// .setTimeToTarget(0.1f)
-		// .setArrivalTolerance(0.5f)
-		// .setDecelerationRadius(0);
-		//
-		//
-		// steeringEntity.setBehaviour(arriveSB);
 
 	}
 
@@ -108,66 +78,43 @@ public class Enemy extends Character {
 
 		super.body.createFixture(fdef).setUserData(userData);
 
-		
 		// Collision sensor
-		UserData sensorData = new UserData("EnemyS", enemyIndex, true);
 		// Bottom
 		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, -12f / PPM), 0);
 		fdef.shape = shape;
-		sensorData.sensorDirection = "Bottom";
 		fdef.isSensor = true;
-		body.createFixture(fdef);
-		super.body.getFixtureList().get(1).setUserData(sensorData);
+		fdef.restitution = 1;
+		super.body.createFixture(fdef).setUserData(userData);
 
 		// Top
 		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, 12f / PPM), 0);
 		fdef.shape = shape;
 		fdef.isSensor = true;
-		sensorData.sensorDirection = "Top";
-		body.createFixture(fdef);
-		super.body.getFixtureList().get(2).setUserData(sensorData);
+		fdef.restitution = 2f;
+		super.body.createFixture(fdef).setUserData(userData);
 
-	
-		
-		// PROBANDO USER DATA DE LAS FIXTURES. SIEMPRE EL MISMO USER DATA ERROR!!!
-		System.out.println(super.body.getFixtureList().size);
-		for (int i = 0; i < super.body.getFixtureList().size; i++) {
-			if(((UserData) super.body.getFixtureList().get(i).getUserData()).type.equals("EnemyS")) {
-			System.out.println("------------------------------");
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).type);
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).index);
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).sensor);
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).sensorDirection);
-			System.out.println("------------------------------");
-			}
-		}
-		
 		// Right
-//		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(0.15f, 0), 0);
-//		fdef.shape = shape;
-//		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-//		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-//		userData.sensorDirection = "Right";
-//		super.body.createFixture(fdef).setUserData(userData);
+		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4.2f)) / PPM, new Vector2(0.15f, 0), 0);
+		fdef.shape = shape;
+		fdef.restitution = 3f;
+		fdef.isSensor = true;
+		super.body.createFixture(fdef).setUserData(userData);
 
 		// Left
-//		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(-0.15f, 0), 0);
-//		fdef.shape = shape;
-//		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-//		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-//		userData.sensorDirection = "Left";
-//		super.body.createFixture(fdef).setUserData(userData);
+		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4.2f)) / PPM, new Vector2(-0.15f, 0), 0);
+		fdef.shape = shape;
+		fdef.isSensor = true;
+		fdef.restitution = 4f;
+		super.body.createFixture(fdef).setUserData(userData);
 
 	}
 
 	public void update(float delta) {
 		super.update(delta);
 
-		// steeringEntity.update(delta);
-
 		if (preventMove) {
 			MassData mass = new MassData();
-			mass.mass = 100000;
+			mass.mass = 999999;
 			body.setMassData(mass);
 		} else {
 			body.resetMassData();
@@ -178,10 +125,10 @@ public class Enemy extends Character {
 
 		body.setLinearVelocity(0, 0);
 
-		// TEST AUTOMATIC MOVEMENT
+		// Movimiento automatico
 		float activeDistance = 2f;
 		Player player = GameScreen.player;
-		
+
 		if (!preventMove) {
 
 			if (((super.body.getPosition().x - player.body.getPosition().x) < activeDistance) // SIGUE A LA
@@ -208,40 +155,59 @@ public class Enemy extends Character {
 					body.setLinearVelocity(new Vector2(0, (float) -(SPEED * 0.55)));
 				}
 			}
-			
 
-			if(changePath) {
-				// 
-//				System.err.println("Enemy " + this.enemyIndex + " should be colliding to " + this.collidingTo);
+			if (changePath) {
+				//
+				moveTo = changeDirectionTo(this.collidingTo);
+				System.out.println("Should change path to " + moveTo);
+				if (moveTo.equals("Top")) {
+					body.setLinearVelocity(new Vector2(0, (float) (SPEED * 0.55)));
+				} else if (moveTo.equals("Bot")) {
+					body.setLinearVelocity(new Vector2(0, (float) -(SPEED * 0.55)));
+				} else if (moveTo.equals("Right")) {
+					body.setLinearVelocity(new Vector2((float) (SPEED * 0.55), 0));
+				} else {
+					body.setLinearVelocity(new Vector2((float) -(SPEED * 0.55), 0));
+				}
 			}
-			
 
 		}
 
-		//
-
-		if (Gdx.input.isKeyPressed(Keys.UP) || body.getLinearVelocity().y > 0) {
-			body.setLinearVelocity(new Vector2(0, (float) (SPEED * 0.55)));
+		if (body.getLinearVelocity().y > 0) {
 			states = PlayerStates.BACK;
 			direction = PlayerStates.BACK;
 		}
-		if (Gdx.input.isKeyPressed(Keys.DOWN) || body.getLinearVelocity().y < 0) {
-			body.setLinearVelocity(new Vector2(0, -(float) (SPEED * 0.55)));
+		if (body.getLinearVelocity().y < 0) {
 			states = PlayerStates.FRONT;
 			direction = PlayerStates.FRONT;
 		}
-		if (Gdx.input.isKeyPressed(Keys.LEFT) || body.getLinearVelocity().x < 0) {
-			body.setLinearVelocity(new Vector2(-(float) (SPEED * 0.55), 0));
+		if (body.getLinearVelocity().x < 0) {
 			states = PlayerStates.LEFT;
 			direction = PlayerStates.LEFT;
 		}
-		if (Gdx.input.isKeyPressed(Keys.RIGHT) || body.getLinearVelocity().x > 0) {
-			body.setLinearVelocity(new Vector2((float) (SPEED * 0.55), 0));
+		if (body.getLinearVelocity().x > 0) {
 			states = PlayerStates.RIGHT;
 			direction = PlayerStates.RIGHT;
 		}
 		super.setRegion(getFrame(delta));
 
+	}
+
+	private String changeDirectionTo(String collidingTo) {
+		String moveTo = "";
+		if (collidingTo.equals("Top")) {
+			moveTo = "Right";
+		}
+		if (collidingTo.equals("Bot")) {
+			moveTo = "Left";
+		}
+		if (collidingTo.equals("Right")) {
+			moveTo = "Bot";
+		}
+		if (collidingTo.equals("Left")) {
+			moveTo = "Top";
+		}
+		return moveTo;
 	}
 
 	@Override

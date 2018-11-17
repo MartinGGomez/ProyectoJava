@@ -1,5 +1,7 @@
 package com.game;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,7 +27,8 @@ public class MainGame extends Game {
 		batch = new SpriteBatch();
 		gameScreen = new GameScreen(this);
 		screenCharge = new ScreenCharge(this);
-		setScreen(screenCharge);
+	setScreen(screenCharge);
+		//setScreen(gameScreen);
 	}
 
 	
