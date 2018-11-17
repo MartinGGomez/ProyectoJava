@@ -14,6 +14,8 @@ public class ScreenCharge implements Screen {
 
 	private MainGame game;
 	
+	private ScreenMenu menu;
+	
 	private Texture logo;
 	private Sprite sLogo;
 	
@@ -28,7 +30,7 @@ public class ScreenCharge implements Screen {
 		this.game = game;
 		
 		gameScreen = new GameScreen(game);
-		
+		menu = new ScreenMenu(game);
 	
 		logo = new Texture("logoGame.png");
 		sLogo = new Sprite(logo);
@@ -70,7 +72,7 @@ public class ScreenCharge implements Screen {
 			
 			if (alpha>3){
 
-				game.setScreen(gameScreen);
+				game.setScreen(menu);
 				//Parar la musica 
 	
 			}
