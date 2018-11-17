@@ -4,7 +4,6 @@ import static com.constants.Constants.PPM;
 import static com.constants.Constants.SPEED;
 
 import com.actors.states.PlayerStates;
-import com.ai.SteeringEntity;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -12,18 +11,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.constants.Constants;
@@ -53,8 +48,6 @@ public class Player extends Character {
 	// Scene2d
 	private Label playerLabel;
 	public Actor actor;
-	
-	public SteeringEntity steeringEntity;
 
 	public Player(MainGame game, World world, String name) {
 		super(game, world, name);
@@ -68,7 +61,6 @@ public class Player extends Character {
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
 		
-		steeringEntity = new SteeringEntity(this.body, 10);
 			
 	}
 
