@@ -28,6 +28,7 @@ public class ScreenMenu implements Screen, InputProcessor{
 	
 	public ScreenMenu(MainGame game) {
 		
+		Gdx.input.setInputProcessor(this);
 		this.game = game;
 		menu = new Texture("menuPrincipal.png");
 		
@@ -54,7 +55,14 @@ public class ScreenMenu implements Screen, InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		
+		System.out.println(screenX);
+		System.out.println(screenY);
+		
+		if (((screenX > 724) && (screenY > 530 )) && ((screenX < 765) && (screenY < 585))){
+			game.setScreen(game.gameScreen);
+		}
+		
 		return false;
 	}
 
@@ -97,16 +105,16 @@ public class ScreenMenu implements Screen, InputProcessor{
 		
 		
 		
-		System.out.println(cont);
+		//System.out.println(cont);
 		
 	}
 
 	private void update(float delta) {
-		cont++;
-		if (cont==120){
-			game.setScreen(game.gameScreen);
-		}
-		
+//		cont++;
+//		if (cont==120){
+//			game.setScreen(game.gameScreen);
+//		}
+//		
 		game.batch.begin();
 		game.batch.draw(menu, 0, 0, 800, 600);
 		game.batch.end();
