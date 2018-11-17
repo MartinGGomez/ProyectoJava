@@ -1,11 +1,18 @@
 package com.screens;
 
+
+
+
+
+
 import com.actors.Enemy;
 import com.actors.Player;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -225,7 +232,15 @@ public class Hud implements Disposable {
 		btnAttack1.setSize(40, 40);
 		btnAttack1.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				
+				System.out.println("tocaste el poder ");
 				onAttackClick(new Attack());
+				
+			
+//				Cursor customCursor = Gdx.graphics.newCursor(new Pixmap(Gdx.files.internal("cursor.png"));
+//				Gdx.graphics.setCursor(customCursor);
+				
+			
 			}
 		});
 
