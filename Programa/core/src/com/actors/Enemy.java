@@ -110,53 +110,34 @@ public class Enemy extends Character {
 
 		
 		// Collision sensor
-		UserData sensorData = new UserData("EnemyS", enemyIndex, true);
 		// Bottom
 		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, -12f / PPM), 0);
 		fdef.shape = shape;
-		sensorData.sensorDirection = "Bottom";
 		fdef.isSensor = true;
-		body.createFixture(fdef);
-		super.body.getFixtureList().get(1).setUserData(sensorData);
+		fdef.restitution = 1;
+		super.body.createFixture(fdef);
 
 		// Top
 		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, 12f / PPM), 0);
 		fdef.shape = shape;
 		fdef.isSensor = true;
-		sensorData.sensorDirection = "Top";
-		body.createFixture(fdef);
-		super.body.getFixtureList().get(2).setUserData(sensorData);
-
-	
-		
-		// PROBANDO USER DATA DE LAS FIXTURES. SIEMPRE EL MISMO USER DATA ERROR!!!
-		System.out.println(super.body.getFixtureList().size);
-		for (int i = 0; i < super.body.getFixtureList().size; i++) {
-			if(((UserData) super.body.getFixtureList().get(i).getUserData()).type.equals("EnemyS")) {
-			System.out.println("------------------------------");
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).type);
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).index);
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).sensor);
-			System.out.println(((UserData) super.body.getFixtureList().get(i).getUserData()).sensorDirection);
-			System.out.println("------------------------------");
-			}
-		}
+		fdef.restitution = 2f;
+		super.body.createFixture(fdef);
 		
 		// Right
-//		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(0.15f, 0), 0);
-//		fdef.shape = shape;
-//		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-//		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-//		userData.sensorDirection = "Right";
-//		super.body.createFixture(fdef).setUserData(userData);
+		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(0.15f, 0), 0);
+		fdef.shape = shape;
+		fdef.restitution = 3f;
+		fdef.isSensor = true;
+		
+		super.body.createFixture(fdef);
 
 		// Left
-//		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(-0.15f, 0), 0);
-//		fdef.shape = shape;
-//		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-//		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-//		userData.sensorDirection = "Left";
-//		super.body.createFixture(fdef).setUserData(userData);
+		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4)) / PPM, new Vector2(-0.15f, 0), 0);
+		fdef.shape = shape;
+		fdef.isSensor = true;
+		fdef.restitution = 4f;
+		super.body.createFixture(fdef);
 
 	}
 

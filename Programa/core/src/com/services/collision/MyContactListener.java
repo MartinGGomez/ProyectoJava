@@ -27,15 +27,15 @@ public class MyContactListener implements ContactListener {
 		Fixture fixtureB = contact.getFixtureB(); 
 		UserData userDataA = (UserData) fixtureA.getUserData();
 		UserData userDataB = (UserData) fixtureB.getUserData();
-
-		if(userDataA!=null  && userDataA.sensor) {
-			System.out.println("Toco con un sensor a: " + userDataA.sensorDirection);
-		}
-		if(userDataB!=null  && userDataB.sensor) {
-			System.out.println("Toco con un sensor a: " + userDataB.sensorDirection);
-		}
+		
+		// Usamos Restitution para identificar de que lado colisiona. Es un dato interno. (UserData no anda en diferentes fixtures) 
+		// No tiene nada que ver con la propiedad restitution en si.
+		// Restitution: 1-Bot 2-Top 3-Right 4-Left
+		System.out.println("Restitution of fixture A: " + fixtureA.getRestitution());
+		System.out.println("Restitution of fixture B: " + fixtureB.getRestitution());
 		
 		//
+		if(fixtureA.getRestitution() == 0 && fixtureB.getRestitution() == 0) {
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
 			isColliding = true;
 			enemyCollided = userDataB.index;
@@ -90,7 +90,7 @@ public class MyContactListener implements ContactListener {
 				}
 				if (!existe) {
 					CollisionMovement c = new CollisionMovement(userDataA.index);
-					c.enemyCollidingTo = userDataA.sensorDirection;
+//					c.enemyCollidingTo = userDataA.sensorDirection;
 					System.out.println("Colliding to " + userDataA.sensorDirection);
 					enemiesColliding.add(c);	
 				}
@@ -105,11 +105,12 @@ public class MyContactListener implements ContactListener {
 				}
 				if (!existe) {
 					CollisionMovement c = new CollisionMovement(userDataB.index);
-					c.enemyCollidingTo = userDataB.sensorDirection;
+//					c.enemyCollidingTo = userDataB.sensorDirection;
 					System.out.println("Colliding to " + userDataB.sensorDirection);
 					enemiesColliding.add(c);	
 				}
 			}
+		}
 		}
 
 
