@@ -261,8 +261,12 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 
+		InputMultiplexer processors = new InputMultiplexer();
+		processors.addProcessor(this);
+		processors.addProcessor(this.game.stage);
+		Gdx.input.setInputProcessor(processors);
+		
 	}
 
 	@Override
