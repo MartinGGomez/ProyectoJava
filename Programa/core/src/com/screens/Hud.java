@@ -116,7 +116,7 @@ public class Hud implements Disposable {
 		int energyValue = 100 - (this.player.energy * 100) / this.player.maxEnergy;
 		this.healthBar.setValue(healthValue);
 		this.manaBar.setValue(manaValue);
-		this.healthBar.setValue(energyValue);
+		this.energyBar.setValue(energyValue);
 		this.armorDef.setText(String.format("%s / %s", this.player.minArmorDef, this.player.minArmorDef));
 		this.helmetDef.setText(String.format("%s / %s", this.player.minHelmetDef, this.player.maxHelmetDef));
 		this.shieldDef.setText(String.format("%s / %s", this.player.minShieldDef, this.player.maxShieldDef));

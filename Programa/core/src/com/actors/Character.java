@@ -14,6 +14,11 @@ import com.game.MainGame;
 public class Character extends Sprite{
 	
 	public String name;
+	public int health;
+	public int mana;
+	public int energy;
+	
+	public boolean alive = true;
 	
 	public boolean isBeingAttacked = false;
 	public Attack attack;
@@ -51,6 +56,9 @@ public class Character extends Sprite{
 	public void update(float delta) {
 		if(isBeingAttacked) {
 			attack.begin(this, this.attackedBy);
+		}
+		if(health <= 0) {
+			alive = false;
 		}
 		setRegion(getFrame(delta));
 	}

@@ -26,7 +26,7 @@ import com.services.collision.userdata.UserData;
 public class Enemy extends Character {
 
 	public static String name = "Monstruo";
-	public int health = 100;
+	// Health is in Character class.
 
 	private float posX, posY;
 	private int enemyIndex;
@@ -46,7 +46,10 @@ public class Enemy extends Character {
 		super(game, world, name);
 		super.texture = new Texture("monster.png");
 		super.region = new TextureRegion(super.texture, 18, 0, 29, 55);
-		super.attackDamage = 5;
+		super.attackDamage = 20;
+		super.health = 100;
+		super.mana = 0;
+		super.energy = 0;
 
 		this.posX = posX;
 		this.posY = posY;
@@ -190,8 +193,12 @@ public class Enemy extends Character {
 
 	@Override
 	public void draw(Batch batch) {
-		super.draw(batch); // SE PUEDE PONER UN IF
-	} // if (1==2) { no se dibuja } => Respawn??
+		if(alive) {
+			super.draw(batch); // SE PUEDE PONER UN IF
+			// if (1==2) { no se dibuja } => Respawn??
+		}
+		
+	} 
 
 	public void dispose() {
 		world.destroyBody(body);
