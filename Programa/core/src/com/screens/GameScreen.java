@@ -27,6 +27,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.constants.Constants;
+import com.constants.MessageType;
 import com.game.MainGame;
 import com.services.collision.CollisionHelper;
 import com.services.collision.MyContactListener;
@@ -70,6 +72,8 @@ public class GameScreen implements Screen, InputProcessor {
 	private float cameraInitialPositionX;
 	private float cameraInitialPositionY;
 
+	private float time = 0f;
+
 	public GameScreen(MainGame game) {
 		this.game = game;
 
@@ -92,19 +96,16 @@ public class GameScreen implements Screen, InputProcessor {
 		world.setContactListener(contactListener);
 
 		player = new Player(this.game, world, "Coxne");
-		
+
 		// Body Definitions
 		collisionHelper = new CollisionHelper(map, world);
 		collisionHelper.createMapObjects();
 		enemies = collisionHelper.createEnemies(this.game);
 
-		
-
 		// Hud
 		hud = new Hud(this.game, this.player);
 		player.defineStageElements();
-		
-		
+
 		InputMultiplexer processors = new InputMultiplexer();
 		processors.addProcessor(this);
 		processors.addProcessor(this.game.stage);
@@ -117,10 +118,8 @@ public class GameScreen implements Screen, InputProcessor {
 		world.step(1 / 60f, 6, 2);
 
 		player.update(delta);
-		
+
 		resolveEnemyCollisions();
-		
-		
 
 		handleAttacks(contactListener.enemiesCollidingWithPlayer, delta);
 
@@ -139,7 +138,6 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		iteraciones++;
 
-
 		gamecam.update();
 
 		renderer.setView(gamecam);
@@ -148,37 +146,37 @@ public class GameScreen implements Screen, InputProcessor {
 	private void resolveEnemyCollisions() {
 		boolean changePathFound = false;
 		for (int i = 0; i < contactListener.enemiesColliding.size(); i++) {
-			for (Enemy enemy: enemies) {
-				if(enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
+			for (Enemy enemy : enemies) {
+				if (enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
 					enemy.changePath = true;
 					enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
-//					System.err.println("Colliding to " + enemy.collidingTo);
+					// System.err.println("Colliding to " + enemy.collidingTo);
 					changePathFound = true;
 				}
 			}
 		}
-	
-		
+
 		boolean found = false;
 		for (int i = 0; i < contactListener.enemiesCollidingWithPlayer.size(); i++) {
 			found = false;
-			for (Enemy enemy: enemies) {
-				if(enemy.getEnemyIndex() == contactListener.enemiesCollidingWithPlayer.get(i).index && !found) {
+			for (Enemy enemy : enemies) {
+				if (enemy.getEnemyIndex() == contactListener.enemiesCollidingWithPlayer.get(i).index && !found) {
 					enemy.preventMove = true;
+					enemy.collidingWith = this.player;
 					found = true;
 				}
 			}
-			
+
 		}
-		
+
 		for (int i = 0; i < contactListener.enemiesStopCollidingWithPlayer.size(); i++) {
 			enemies.get(contactListener.enemiesStopCollidingWithPlayer.get(i)).preventMove = false;
 		}
-		
+
 		for (int i = 0; i < contactListener.enemiesStopColliding.size(); i++) {
 			enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
 		}
-		
+
 	}
 
 	@Override
@@ -234,18 +232,25 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	private void handleAttacks(ArrayList<CollisionMovement> enemiesColliding, float delta) {
+		time += delta;
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-			if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
-//				System.out.println("Puede atacar");
-				for (CollisionMovement enemyC: enemiesColliding) {
-					Enemy enemy = enemies.get(enemyC.index);
-					if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
-						player.attack(enemy, delta);
-						// hud.boton1.setVisible(false);
+			if (!player.doingAttack) {
+				if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
+					for (CollisionMovement enemyC : enemiesColliding) {
+						Enemy enemy = enemies.get(enemyC.index);
+						if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
+							player.attack(enemy, delta);
+							// hud.boton1.setVisible(false);
+						}
 					}
+
 				}
-				
-				
+			} else {
+				// Controla velocidad de ataque.
+				if (time > Constants.ATTACK_SPEED) {
+					player.doingAttack = false;
+					time = 0f;
+				}
 			}
 		}
 	}
@@ -272,7 +277,7 @@ public class GameScreen implements Screen, InputProcessor {
 		processors.addProcessor(this);
 		processors.addProcessor(this.game.stage);
 		Gdx.input.setInputProcessor(processors);
-		
+
 	}
 
 	@Override
@@ -318,13 +323,13 @@ public class GameScreen implements Screen, InputProcessor {
 
 		if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
 				&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
-			hud.printMessage("Clickeaste al jugador");
+			Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
 		}
 
 		for (Enemy enemy : enemies) {
 			if ((posX > (enemy.getX()) && posX < enemy.getX() + enemy.getWidth())
 					&& (posY > enemy.getY() && posY < enemy.getY() + enemy.getHeight())) {
-				hud.printMessage("Clickeaste a " + enemy.name);
+				Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);
 			}
 
 		}

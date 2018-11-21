@@ -1,7 +1,5 @@
 package com.actors;
 
-import static com.constants.Constants.PPM;
-
 import com.actors.states.PlayerStates;
 import com.attacks.Attack;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,6 +18,9 @@ public class Character extends Sprite{
 	public boolean isBeingAttacked = false;
 	public Attack attack;
 	public Attack selectedAttack;
+	public boolean doingAttack = false;
+	public Character attackedBy;
+	protected int attackDamage;
 	
 	public World world;
 	public Body body;
@@ -49,7 +50,7 @@ public class Character extends Sprite{
 
 	public void update(float delta) {
 		if(isBeingAttacked) {
-			attack.begin(this);
+			attack.begin(this, this.attackedBy);
 		}
 		setRegion(getFrame(delta));
 	}

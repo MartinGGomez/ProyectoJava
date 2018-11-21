@@ -29,6 +29,7 @@ public class Attack extends Sprite{
 	private PlayerStates previousState;
 
 	private Character characterToAttack;
+	private Character attacker;
 	
 	public boolean started = false;
 	
@@ -39,8 +40,9 @@ public class Attack extends Sprite{
 		setScale(1.5f);
 	}
 	
-	public void begin(Character characterToAttack) {
+	public void begin(Character characterToAttack, Character attacker) {
 		this.characterToAttack = characterToAttack;
+		this.attacker = attacker;
 		setBounds(characterToAttack.body.getPosition().x , characterToAttack.body.getPosition().y, 32 / PPM, 48 / PPM);
 	}
 	
@@ -51,6 +53,7 @@ public class Attack extends Sprite{
 				setRegion(getFrame(delta));			
 			} else {
 				characterToAttack.isBeingAttacked = false;
+				attacker.doingAttack = false;
 			}
 	}
 	

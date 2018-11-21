@@ -17,8 +17,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.constants.Constants;
+import com.constants.MessageType;
 import com.game.MainGame;
 import com.screens.GameScreen;
+import com.screens.Hud;
 import com.services.collision.userdata.UserData;
 
 public class Enemy extends Character {
@@ -36,11 +38,15 @@ public class Enemy extends Character {
 	public boolean changePath = false;
 	public String collidingTo;
 	private String moveTo;
+	
+	public Player collidingWith;
+	private float time = 0f;
 
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
 		super.texture = new Texture("monster.png");
 		super.region = new TextureRegion(super.texture, 18, 0, 29, 55);
+		super.attackDamage = 5;
 
 		this.posX = posX;
 		this.posY = posY;
@@ -59,55 +65,7 @@ public class Enemy extends Character {
 		return enemyIndex;
 	}
 
-	public void defineEnemyBody() {
-		BodyDef bdef = new BodyDef();
-		bdef.position.set(this.posX, this.posY);
-		bdef.type = BodyDef.BodyType.DynamicBody;
-
-		super.body = super.world.createBody(bdef);
-
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 4) / PPM);
-		fdef.shape = shape;
-		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-		fdef.isSensor = false;
-		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
-
-		UserData userData = new UserData("Enemy", enemyIndex, false);
-
-		super.body.createFixture(fdef).setUserData(userData);
-
-		// Collision sensor
-		// Bottom
-		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, -12f / PPM), 0);
-		fdef.shape = shape;
-		fdef.isSensor = true;
-		fdef.restitution = 1;
-		super.body.createFixture(fdef).setUserData(userData);
-
-		// Top
-		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, 12f / PPM), 0);
-		fdef.shape = shape;
-		fdef.isSensor = true;
-		fdef.restitution = 2f;
-		super.body.createFixture(fdef).setUserData(userData);
-
-		// Right
-		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4.2f)) / PPM, new Vector2(0.15f, 0), 0);
-		fdef.shape = shape;
-		fdef.restitution = 3f;
-		fdef.isSensor = true;
-		super.body.createFixture(fdef).setUserData(userData);
-
-		// Left
-		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4.2f)) / PPM, new Vector2(-0.15f, 0), 0);
-		fdef.shape = shape;
-		fdef.isSensor = true;
-		fdef.restitution = 4f;
-		super.body.createFixture(fdef).setUserData(userData);
-
-	}
+	
 
 	public void update(float delta) {
 		super.update(delta);
@@ -116,6 +74,9 @@ public class Enemy extends Character {
 			MassData mass = new MassData();
 			mass.mass = 999999;
 			body.setMassData(mass);
+			
+			handleAttackToPlayer(delta);
+			
 		} else {
 			body.resetMassData();
 		}
@@ -192,6 +153,24 @@ public class Enemy extends Character {
 
 	}
 
+	private void handleAttackToPlayer(float delta) {
+		Player playerToAttack = this.collidingWith;
+		time += delta;
+		
+		if (time > Constants.ENEMY_ATTACK_SPEED) {
+			this.doingAttack = false;
+			time = 0f;
+		}
+		
+		if(!this.doingAttack) {
+			this.doingAttack = true;
+			playerToAttack.health -= this.attackDamage;
+			Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida", MessageType.COMBAT);
+			GameScreen.hud.updateStats(playerToAttack);
+		}
+		
+	}
+
 	private String changeDirectionTo(String collidingTo) {
 		String moveTo = "";
 		if (collidingTo.equals("Top")) {
@@ -216,6 +195,56 @@ public class Enemy extends Character {
 
 	public void dispose() {
 		world.destroyBody(body);
+	}
+	
+	public void defineEnemyBody() {
+		BodyDef bdef = new BodyDef();
+		bdef.position.set(this.posX, this.posY);
+		bdef.type = BodyDef.BodyType.DynamicBody;
+
+		super.body = super.world.createBody(bdef);
+
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 4) / PPM);
+		fdef.shape = shape;
+		fdef.filter.categoryBits = Constants.BIT_PLAYER;
+		fdef.isSensor = false;
+		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
+
+		UserData userData = new UserData("Enemy", enemyIndex, false);
+
+		super.body.createFixture(fdef).setUserData(userData);
+
+		// Collision sensor
+		// Bottom
+		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, -12f / PPM), 0);
+		fdef.shape = shape;
+		fdef.isSensor = true;
+		fdef.restitution = 1;
+		super.body.createFixture(fdef).setUserData(userData);
+
+		// Top
+		shape.setAsBox((((this.region.getRegionWidth()) / 2.5f)) / PPM, 2 / PPM, new Vector2(0, 12f / PPM), 0);
+		fdef.shape = shape;
+		fdef.isSensor = true;
+		fdef.restitution = 2f;
+		super.body.createFixture(fdef).setUserData(userData);
+
+		// Right
+		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4.2f)) / PPM, new Vector2(0.15f, 0), 0);
+		fdef.shape = shape;
+		fdef.restitution = 3f;
+		fdef.isSensor = true;
+		super.body.createFixture(fdef).setUserData(userData);
+
+		// Left
+		shape.setAsBox(2 / PPM, ((this.region.getRegionHeight() / 4.2f)) / PPM, new Vector2(-0.15f, 0), 0);
+		fdef.shape = shape;
+		fdef.isSensor = true;
+		fdef.restitution = 4f;
+		super.body.createFixture(fdef).setUserData(userData);
+
 	}
 
 	public void createAnimations() {

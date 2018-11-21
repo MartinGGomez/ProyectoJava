@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.constants.Constants;
+import com.constants.MessageType;
 import com.game.MainGame;
 import com.screens.GameScreen;
 import com.screens.Hud;
@@ -54,14 +55,14 @@ public class Player extends Character {
 		
 		super.texture = new Texture("player.png");
 		super.region = new TextureRegion(super.texture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y = 908.
-																		// Pj de 32x52
+		super.attackDamage = 10;															
+		
 		definePlayerBody();
 		createAnimations();
 
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
-		
-			
+
 	}
 
 	public void definePlayerBody() {
@@ -87,7 +88,7 @@ public class Player extends Character {
 	
 	public void defineStageElements() {
 		// SCENE2D STAGE
-		playerLabel = new Label(this.name, GameScreen.hud.skin, "little-font", Color.WHITE);
+		playerLabel = new Label(this.name, Hud.skin, "little-font", Color.WHITE);
 		playerLabel.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2) - 22 , (body.getPosition().y * PPM)- (this.region.getRegionHeight() / 2) - 6);
 		playerLabel.setSize(80, 12);
 		playerLabel.setAlignment(Align.center);
@@ -174,12 +175,16 @@ public class Player extends Character {
 	}
 
 	public void attack(Enemy enemy, float delta) {
-		GameScreen.hud.printMessage("Atacaste a " + enemy.name);
+		Hud.printMessage("Le has causado " + this.attackDamage + " a " + enemy.name, MessageType.COMBAT);
 		mana -= 10;
-		enemy.attack = new Attack();
-		enemy.isBeingAttacked = true;
+		// Esto es para hechizos:
+		//enemy.attack = new Attack();
+		//enemy.isBeingAttacked = true;
+		//enemy.attackedBy = this;
 		
-//		enemy.health -= 1;
+		enemy.health -= 10;
+		this.doingAttack = true;
+	
 	}
 
 }
