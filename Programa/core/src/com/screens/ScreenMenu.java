@@ -1,8 +1,10 @@
 package com.screens;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -68,6 +70,12 @@ public class ScreenMenu implements Screen, InputProcessor{
 		System.out.println(screenY);
 		
 		if (((screenX > 724) && (screenY > 530 )) && ((screenX < 765) && (screenY < 585))){
+			
+			Sound click;
+			
+			click = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/click.ogg", FileType.Internal));
+			click.play();
+			
 			game.setScreen(game.gameScreen);
 		}
 		

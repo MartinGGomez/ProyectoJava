@@ -191,6 +191,7 @@ public class Player extends Character {
 
 	public void attack(Enemy enemy, float delta) {
 
+		if (enemy.alive){
 		// Esto es para hechizos:
 		enemy.attack = new BasicAttack();
 		enemy.isBeingAttacked = true;
@@ -199,7 +200,10 @@ public class Player extends Character {
 		Hud.printMessage("Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
 				MessageType.COMBAT);
 		GameScreen.hud.updateStats(this);
-
+		}else{
+			Hud.printMessage("Enemigo Muerto", MessageType.COMBAT);
+		}
+		
 	}
 
 }

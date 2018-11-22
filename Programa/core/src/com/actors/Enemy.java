@@ -4,6 +4,9 @@ import static com.constants.Constants.PPM;
 import static com.constants.Constants.SPEED;
 
 import com.actors.states.PlayerStates;
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -41,6 +44,8 @@ public class Enemy extends Character {
 	
 	public Player collidingWith;
 	private float time = 0f;
+	
+	private int cont=0;
 
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
@@ -72,7 +77,7 @@ public class Enemy extends Character {
 
 	public void update(float delta) {
 		super.update(delta);
-
+if(alive){
 		if (preventMove) {
 			MassData mass = new MassData();
 			mass.mass = 999999;
@@ -153,7 +158,7 @@ public class Enemy extends Character {
 			direction = PlayerStates.RIGHT;
 		}
 		super.setRegion(getFrame(delta));
-
+}
 	}
 
 	private void handleAttackToPlayer(float delta) {
@@ -193,10 +198,17 @@ public class Enemy extends Character {
 
 	@Override
 	public void draw(Batch batch) {
+		
 		if(alive) {
 			super.draw(batch); // SE PUEDE PONER UN IF
 			// if (1==2) { no se dibuja } => Respawn??
 		}
+//		else if (!alive && cont==0){
+//			cont=1;
+//			Sound enemyKill;
+//			enemyKill = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/enemyKill.wav", FileType.Internal));
+//			enemyKill.play();
+//		}
 		
 	} 
 
