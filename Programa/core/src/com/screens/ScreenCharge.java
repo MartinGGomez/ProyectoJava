@@ -49,10 +49,10 @@ public class ScreenCharge implements Screen {
 		
 		game.batch.enableBlending();
 		
-		start = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/101.mp3", FileType.Internal));
+		//start = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/101.mp3", FileType.Internal));
 		
-		start.play();
-		start.setLooping(true);
+		//start.play();
+		//start.setLooping(true);
 	}
 
 	private void update(float delta) {

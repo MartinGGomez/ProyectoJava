@@ -1,23 +1,13 @@
 package com.screens;
 
-
-
-
-
-
-import com.actors.Enemy;
 import com.actors.Player;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor;
-import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -32,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -41,6 +30,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.constants.MessageType;
 import com.game.MainGame;
 
 public class Hud implements Disposable {
@@ -55,8 +45,8 @@ public class Hud implements Disposable {
 	public static Skin skin;
 	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, nameAttack;
 	public Player player;
-	private Table table;
-	private ScrollPane scrollPane;
+	private static Table table;
+	private static ScrollPane scrollPane;
 	Array<String> items = new Array<String>();
 	private BitmapFont font, whiteFont, littleFont, miniFont;
 	private ProgressBar healthBar, manaBar, energyBar;
@@ -89,6 +79,32 @@ public class Hud implements Disposable {
 		updateStats(player);
 
 	}
+	
+	public static void printMessage(String message, MessageType type) {
+		// Podriamos cambiar la fuente del mensaje ademas del color
+		Color color;
+		
+		switch (type) {
+		case PLAYER_CLICK:
+				color = Color.LIGHT_GRAY;
+			break;
+		case ENEMY_CLICK:
+				color = Color.FIREBRICK;
+			break;
+		case COMBAT:
+				color = Color.RED;
+			break;
+
+		default:
+			color = Color.WHITE;
+			break;
+		}
+		
+		table.row().expand();
+		table.add(message, "white-font", color).expand(true, false).left();
+		scrollPane.layout();
+		scrollPane.scrollTo(0, 0, 0, 0);
+	}
 
 	public void updateStats(Player player) {
 		this.player = player;
@@ -100,7 +116,7 @@ public class Hud implements Disposable {
 		int energyValue = 100 - (this.player.energy * 100) / this.player.maxEnergy;
 		this.healthBar.setValue(healthValue);
 		this.manaBar.setValue(manaValue);
-		this.healthBar.setValue(energyValue);
+		this.energyBar.setValue(energyValue);
 		this.armorDef.setText(String.format("%s / %s", this.player.minArmorDef, this.player.minArmorDef));
 		this.helmetDef.setText(String.format("%s / %s", this.player.minHelmetDef, this.player.maxHelmetDef));
 		this.shieldDef.setText(String.format("%s / %s", this.player.minShieldDef, this.player.maxShieldDef));
@@ -173,7 +189,6 @@ public class Hud implements Disposable {
 		// Console table
 		table = new Table(skin);
 		table.row().expand();
-		table.add("Prueba", "white-font", Color.WHITE).expand(true, false).left();
 		table.setPosition(10, Gdx.graphics.getHeight() - 105);
 		table.setScale(0.5f);
 		table.setWidth(500);
@@ -232,19 +247,18 @@ public class Hud implements Disposable {
 		btnAttack1.setSize(40, 40);
 		btnAttack1.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				
+
 				System.out.println("tocaste el poder ");
 				onAttackClick(new Attack());
-				
-			
-//				Cursor customCursor = Gdx.graphics.newCursor(new Pixmap(Gdx.files.internal("cursor.png"));
-//				Gdx.graphics.setCursor(customCursor);
-				
-			
+
+				// Cursor customCursor = Gdx.graphics.newCursor(new
+				// Pixmap(Gdx.files.internal("cursor.png"));
+				// Gdx.graphics.setCursor(customCursor);
+
 			}
 		});
 
-		attack1 = new Texture("pink.png");	
+		attack1 = new Texture("pink.png");
 		drawable = new TextureRegionDrawable(new TextureRegion(attack1, 210, 588, 164, 176));
 		btnAttack2 = new ImageButton(drawable);
 		btnAttack2.setPosition((HUD_HALF_WIDTH * 2) + 110, (HUD_HALF_HEIGHT * 2) - 120);
@@ -287,7 +301,6 @@ public class Hud implements Disposable {
 				onAttackClick(new Attack());
 			}
 		});
-
 
 		attack5 = new Texture("health.png");
 		drawable = new TextureRegionDrawable(new TextureRegion(attack5, 439, 57, 81, 83));
@@ -470,13 +483,6 @@ public class Hud implements Disposable {
 		this.updateStats(this.player);
 	}
 
-	public void printMessage(String message) {
-		// Handle fonts.
-		table.row().expand();
-		table.add(message, "white-font", Color.WHITE).expand(true, false).left();
-		scrollPane.scrollTo(0, 0, 0, 0);
-	}
-
 	private void createFonts() {
 		// SE PUEDEN CREAR DISTINTAS FUENTES Y DSP IR USANDO LA QUE QUIERAS
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/KeepCalm.ttf"));
@@ -500,12 +506,9 @@ public class Hud implements Disposable {
 		this.skin.add("mini-font", this.miniFont);
 	}
 
-
 	private void onAttackClick(Attack attack) {
 		this.player.selectedAttack = attack;
 	}
-	
-	
 
 	@Override
 	public void dispose() {

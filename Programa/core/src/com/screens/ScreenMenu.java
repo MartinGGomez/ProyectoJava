@@ -36,6 +36,45 @@ public class ScreenMenu implements Screen, InputProcessor{
 	}
 	
 	@Override
+	public void render(float delta) {
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+	
+		update(delta);		
+		
+		
+		
+		//System.out.println(cont);
+		
+	}
+
+	private void update(float delta) {
+//		cont++;
+//		if (cont==120){
+//			game.setScreen(game.gameScreen);
+//		}
+//		
+		game.batch.begin();
+		game.batch.draw(menu, 0, 0, 800, 600);
+		game.batch.end();
+		
+	}
+	
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		
+		System.out.println(screenX);
+		System.out.println(screenY);
+		
+		if (((screenX > 724) && (screenY > 530 )) && ((screenX < 765) && (screenY < 585))){
+			game.setScreen(game.gameScreen);
+		}
+		
+		return false;
+	}
+	
+	@Override
 	public boolean keyDown(int keycode) {
 		// TODO Auto-generated method stub
 		return false;
@@ -53,18 +92,6 @@ public class ScreenMenu implements Screen, InputProcessor{
 		return false;
 	}
 
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		
-		System.out.println(screenX);
-		System.out.println(screenY);
-		
-		if (((screenX > 724) && (screenY > 530 )) && ((screenX < 765) && (screenY < 585))){
-			game.setScreen(game.gameScreen);
-		}
-		
-		return false;
-	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
@@ -96,30 +123,7 @@ public class ScreenMenu implements Screen, InputProcessor{
 		
 	}
 
-	@Override
-	public void render(float delta) {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-	
-		update(delta);		
-		
-		
-		
-		//System.out.println(cont);
-		
-	}
 
-	private void update(float delta) {
-//		cont++;
-//		if (cont==120){
-//			game.setScreen(game.gameScreen);
-//		}
-//		
-		game.batch.begin();
-		game.batch.draw(menu, 0, 0, 800, 600);
-		game.batch.end();
-		
-	}
 
 	@Override
 	public void resize(int width, int height) {
