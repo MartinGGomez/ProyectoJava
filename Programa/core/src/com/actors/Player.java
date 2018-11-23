@@ -45,7 +45,8 @@ public class Player extends Character {
 	public int minAttackDamage = 50;
 	public int maxAttackDamage = 70;
 	public int healthPotions = 20;
-	public int manaPotions = 20;
+	public int manaPotions = 30;
+	public int money = 0;
 
 	// Scene2d
 	private Label playerLabel;

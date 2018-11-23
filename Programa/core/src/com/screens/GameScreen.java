@@ -51,8 +51,6 @@ public class GameScreen implements Screen, InputProcessor {
 
 	public static Player player;
 
-	private Enemy enemy;
-
 	private Array<Enemy> enemies;
 
 	private int iteraciones = 0;
@@ -285,6 +283,20 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
+		if(keycode == Keys.NUM_1) {
+			if(player.health < player.maxHealth) {
+				player.healthPotions--;
+				player.health += 10;
+				hud.updateStats(player);	
+			}
+		}
+		if(keycode == Keys.NUM_2) {
+			if(player.mana < player.maxMana) {
+				player.manaPotions--;
+				player.mana += 20;
+				hud.updateStats(player);	
+			}
+		}
 		return false;
 	}
 

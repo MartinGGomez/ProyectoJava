@@ -44,6 +44,7 @@ public class Hud implements Disposable {
 	public static final float HUD_HALF_WIDTH = 273.5f;
 	public static Skin skin;
 	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, nameAttack;
+	public Label healthPotions, manaPotions, money;
 	public Player player;
 	private static Table table;
 	private static ScrollPane scrollPane;
@@ -97,8 +98,9 @@ public class Hud implements Disposable {
 		case DROP:
 			color = Color.LIME;
 		break;
-
-
+		case REWARD:
+			color = Color.GOLDENROD;
+		break;
 		default:
 			color = Color.WHITE;
 			break;
@@ -125,7 +127,9 @@ public class Hud implements Disposable {
 		this.helmetDef.setText(String.format("%s / %s", this.player.minHelmetDef, this.player.maxHelmetDef));
 		this.shieldDef.setText(String.format("%s / %s", this.player.minShieldDef, this.player.maxShieldDef));
 		this.attackDamage.setText(String.format("%s / %s", this.player.minAttackDamage, this.player.maxAttackDamage));
-
+		this.healthPotions.setText(Integer.toString(player.healthPotions));
+		this.manaPotions.setText(Integer.toString(player.manaPotions));
+		this.money.setText(Integer.toString(player.money));
 	}
 
 	public void defineHudElements() {
@@ -155,6 +159,21 @@ public class Hud implements Disposable {
 		attackDamage.setSize(50, 20);
 		attackDamage.setPosition(465, 30 - attackDamage.getHeight());
 		attackDamage.setAlignment(Align.center);
+		
+		healthPotions = new Label("", skin, "little-font", Color.WHITE);
+		healthPotions.setSize(50, 20);
+		healthPotions.setPosition(Gdx.graphics.getWidth() - 215, 185 - healthPotions.getHeight());
+		healthPotions.setAlignment(Align.center);
+		
+		manaPotions = new Label("", skin, "little-font", Color.WHITE);
+		manaPotions.setSize(50, 20);
+		manaPotions.setPosition(Gdx.graphics.getWidth() - 170, 185 - manaPotions.getHeight());
+		manaPotions.setAlignment(Align.center);
+
+		money = new Label("", skin, "little-font", Color.GOLDENROD);
+		money.setSize(50, 20);
+		money.setPosition(Gdx.graphics.getWidth() - 75, 185 - money.getHeight());
+		money.setAlignment(Align.center);
 
 		powersDef = new Label("Hechizos", skin, "white-font", Color.BLUE);
 		powersDef.setPosition(image.getWidth() - 205, image.getHeight() - 160);
@@ -237,7 +256,9 @@ public class Hud implements Disposable {
 		stage.addActor(btnAttack9);
 		stage.addActor(powersDef);
 		stage.addActor(nameAttack);
-
+		stage.addActor(manaPotions);
+		stage.addActor(healthPotions);
+		stage.addActor(money);
 	}
 
 	private void createAttacksButtons() {

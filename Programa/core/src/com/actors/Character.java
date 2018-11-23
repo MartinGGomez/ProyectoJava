@@ -2,6 +2,8 @@ package com.actors;
 
 import static com.constants.Constants.PPM;
 
+import java.util.Random;
+
 import com.actors.states.PlayerStates;
 import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
@@ -61,6 +63,8 @@ public class Character extends Sprite {
 	private TextureRegion regionOpen;
 	private TextureRegion regionClose;
 
+	private Random random = new Random();
+
 	public Character(MainGame game, World world, String name) {
 		this.world = world;
 		this.game = game;
@@ -80,7 +84,7 @@ public class Character extends Sprite {
 				alive = false;
 			}
 			setRegion(getFrame(delta));
-		} else { // ES UN COFRE
+		} else {// ES UN COFRE
 			this.isChest = true;
 			setBounds(body.getPosition().x - (this.regionClose.getRegionWidth() / 2) / PPM,
 					body.getPosition().y - (this.regionClose.getRegionWidth() / 2) / PPM, 30 / PPM, 32 / PPM);
@@ -92,11 +96,18 @@ public class Character extends Sprite {
 		}
 
 	}
-	
+
 	public void openChest() {
-		this.attackedBy.mana = 0;
-		GameScreen.hud.updateStats((Player) this.attackedBy);
-		Hud.printMessage("Abrio el cofre y obtuvo", MessageType.DROP);
+		int cantHealthPotions = random.nextInt(5) + 1;
+		int cantManaPotions = random.nextInt(10) + 1;
+		Player player = (Player) this.attackedBy;
+		player.healthPotions += cantHealthPotions;
+		player.manaPotions += cantManaPotions;
+		player.money += 100; 
+		GameScreen.hud.updateStats(player);
+		Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y " + cantManaPotions
+				+ " pociones de mana!!!", MessageType.REWARD);
+		Hud.printMessage("Ganaste 100 monedas de oro", MessageType.REWARD);
 	}
 
 	public TextureRegion getFrame(float delta) {
