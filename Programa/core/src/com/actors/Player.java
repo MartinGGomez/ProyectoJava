@@ -44,6 +44,8 @@ public class Player extends Character {
 	public int maxShieldDef = 5;
 	public int minAttackDamage = 50;
 	public int maxAttackDamage = 70;
+	public int healthPotions = 20;
+	public int manaPotions = 20;
 
 	// Scene2d
 	private Label playerLabel;
@@ -82,7 +84,7 @@ public class Player extends Character {
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 4) / PPM);
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
+		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER | Constants.BIT_CHEST;
 		fdef.shape = shape;
 
 		UserData userData = new UserData("Player", 1, false);
@@ -200,8 +202,6 @@ public class Player extends Character {
 		Hud.printMessage("Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
 				MessageType.COMBAT);
 		GameScreen.hud.updateStats(this);
-		}else{
-			Hud.printMessage("Enemigo Muerto", MessageType.COMBAT);
 		}
 		
 	}

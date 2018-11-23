@@ -16,6 +16,8 @@ public class MyContactListener implements ContactListener {
 	private int  enemyIndex;
 	private boolean enemyColliding;
 	private String enemyCollidingTo;
+	private boolean isCollidingToChest;
+	private int chestIndex;
 	
 	public ArrayList<CollisionMovement> enemiesColliding = new ArrayList<CollisionMovement>();
 	public ArrayList<Integer> enemiesStopColliding = new ArrayList<Integer>();
@@ -29,6 +31,16 @@ public class MyContactListener implements ContactListener {
 		UserData userDataA = (UserData) fixtureA.getUserData();
 		UserData userDataB = (UserData) fixtureB.getUserData();
 
+		//
+//		if(userDataA.type.equals("Chest") && userDataB.type.equals("Player")) {
+//			isCollidingToChest = true;
+//			chestIndex = userDataA.index;
+//		}
+//		if(userDataB.type.equals("Chest") && userDataA.type.equals("Player")) {
+//			isCollidingToChest = true;
+//			chestIndex = usedrDataB.index;
+//		}
+		
 		//
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
 			isColliding = true;
@@ -129,6 +141,15 @@ public class MyContactListener implements ContactListener {
 		UserData userDataA = (UserData) contact.getFixtureA().getUserData();
 		UserData userDataB = (UserData) contact.getFixtureB().getUserData();
 
+		//
+//		if(userDataA.type.equals("Chest") && userDataB.type.equals("Player")) {
+//			isCollidingToChest = false;
+//		}
+//		if(userDataB.type.equals("Chest") && userDataA.type.equals("Player")) {
+//			isCollidingToChest = false;
+//		}
+		//
+		
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
 			enemyColliding = false;
 			isColliding = false;
@@ -240,6 +261,15 @@ public class MyContactListener implements ContactListener {
 	public boolean isEnemyColliding() {
 		return enemyColliding;
 	}
+	
+	public boolean isCollidingToChest() {
+		return isCollidingToChest;
+	}
+
+	public int getChestIndex() {
+		return chestIndex;
+	}
+
 
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {

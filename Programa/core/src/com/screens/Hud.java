@@ -94,6 +94,10 @@ public class Hud implements Disposable {
 		case COMBAT:
 				color = Color.RED;
 			break;
+		case DROP:
+			color = Color.LIME;
+		break;
+
 
 		default:
 			color = Color.WHITE;

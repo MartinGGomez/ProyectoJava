@@ -35,6 +35,7 @@ public class Attack extends Sprite {
 	private Character attacker;
 
 	public boolean started = false;
+	private boolean enemyDead = false; 
 
 	public Attack() {
 		// this.texture = new Texture("fireAttack.png");
@@ -73,7 +74,9 @@ public class Attack extends Sprite {
 
 	@Override
 	public void draw(Batch batch) {
-		super.draw(batch);
+		if(this.characterToAttack.alive) {
+			super.draw(batch);	
+		}
 	}
 
 	public void dispose() {

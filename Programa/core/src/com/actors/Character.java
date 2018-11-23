@@ -1,7 +1,10 @@
 package com.actors;
 
+import static com.constants.Constants.PPM;
+
 import com.actors.states.PlayerStates;
 import com.attacks.Attack;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -9,31 +12,34 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.constants.MessageType;
 import com.game.MainGame;
+import com.screens.GameScreen;
+import com.screens.Hud;
 
-public class Character extends Sprite{
-	
+public class Character extends Sprite {
+
 	public String name;
 	public int health;
 	public int mana;
 	public int energy;
-	
+
 	public boolean alive = true;
-	
+
 	public boolean isBeingAttacked = false;
 	public Attack attack;
 	public Attack selectedAttack;
 	public boolean doingAttack = false;
 	public Character attackedBy;
 	protected int attackDamage;
-	
+
 	public World world;
 	public Body body;
 	protected MainGame game;
 
 	protected Texture texture;
 	protected TextureRegion region;
-	
+
 	// Animations
 	public PlayerStates states;
 	public PlayerStates direction;
@@ -46,21 +52,51 @@ public class Character extends Sprite{
 	protected PlayerStates currentState;
 	protected PlayerStates previousState;
 	//
-	
+
+	// COFRE DE DROP
+	public boolean isChest = false;
+	public boolean open = false;
+
+	private Texture textureChest;
+	private TextureRegion regionOpen;
+	private TextureRegion regionClose;
+
 	public Character(MainGame game, World world, String name) {
 		this.world = world;
 		this.game = game;
 		this.name = name;
+
+		this.textureChest = new Texture(Gdx.files.internal("chest.png"));
+		this.regionOpen = new TextureRegion(this.textureChest, 33, 0, 30, 32);
+		this.regionClose = new TextureRegion(this.textureChest, 0, 0, 30, 32);
 	}
 
 	public void update(float delta) {
-		if(isBeingAttacked) {
-			attack.begin(this, this.attackedBy);
+		if (alive) {
+			if (isBeingAttacked) {
+				attack.begin(this, this.attackedBy);
+			}
+			if (health <= 0) {
+				alive = false;
+			}
+			setRegion(getFrame(delta));
+		} else { // ES UN COFRE
+			this.isChest = true;
+			setBounds(body.getPosition().x - (this.regionClose.getRegionWidth() / 2) / PPM,
+					body.getPosition().y - (this.regionClose.getRegionWidth() / 2) / PPM, 30 / PPM, 32 / PPM);
+			if (open) {
+				setRegion(this.regionOpen);
+			} else {
+				setRegion(this.regionClose);
+			}
 		}
-		if(health <= 0) {
-			alive = false;
-		}
-		setRegion(getFrame(delta));
+
+	}
+	
+	public void openChest() {
+		this.attackedBy.mana = 0;
+		GameScreen.hud.updateStats((Player) this.attackedBy);
+		Hud.printMessage("Abrio el cofre y obtuvo", MessageType.DROP);
 	}
 
 	public TextureRegion getFrame(float delta) {
@@ -68,7 +104,7 @@ public class Character extends Sprite{
 
 		TextureRegion textureRegion;
 
- 		switch (currentState) {
+		switch (currentState) {
 		case FRONT:
 			textureRegion = movingFront.getKeyFrame(stateTimer, true);
 			break;
@@ -129,9 +165,7 @@ public class Character extends Sprite{
 	}
 
 	public void attack(Enemy enemy, float delta) {
-		
+
 	}
 
 }
-
-	

@@ -2,14 +2,12 @@ package com.screens;
 
 import static com.constants.Constants.PPM;
 
-import java.rmi.server.SocketSecurityException;
 import java.util.ArrayList;
 
 import com.actors.Enemy;
 import com.actors.Player;
-import com.actors.states.PlayerStates;
-import com.attacks.Attack;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -20,14 +18,12 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.constants.Constants;
 import com.constants.MessageType;
 import com.game.MainGame;
 import com.services.collision.CollisionHelper;
@@ -67,12 +63,8 @@ public class GameScreen implements Screen, InputProcessor {
 	// HUD
 	public static Hud hud;
 
-	private Attack attack;
-
 	private float cameraInitialPositionX;
 	private float cameraInitialPositionY;
-
-	private float time = 0f;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
@@ -122,11 +114,8 @@ public class GameScreen implements Screen, InputProcessor {
 		resolveEnemyCollisions();
 
 		handleAttacks(contactListener.enemiesCollidingWithPlayer, delta);
-
 		for (Enemy enemy : enemies) {
 			enemy.update(delta);
-			// System.out.println("Enemy " + enemy.getEnemyIndex() + " health " +
-			// enemy.health);
 		}
 
 		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
@@ -150,7 +139,6 @@ public class GameScreen implements Screen, InputProcessor {
 				if (enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
 					enemy.changePath = true;
 					enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
-					// System.err.println("Colliding to " + enemy.collidingTo);
 					changePathFound = true;
 				}
 			}
@@ -170,11 +158,15 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 
 		for (int i = 0; i < contactListener.enemiesStopCollidingWithPlayer.size(); i++) {
-			enemies.get(contactListener.enemiesStopCollidingWithPlayer.get(i)).preventMove = false;
+			if (contactListener.enemiesStopCollidingWithPlayer.get(i) < enemies.size) {
+				enemies.get(contactListener.enemiesStopCollidingWithPlayer.get(i)).preventMove = false;
+			}
 		}
 
 		for (int i = 0; i < contactListener.enemiesStopColliding.size(); i++) {
-			enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
+			if (contactListener.enemiesStopColliding.get(i) < enemies.size) {
+				enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
+			}
 		}
 
 	}
@@ -232,10 +224,9 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	private void handleAttacks(ArrayList<CollisionMovement> enemiesColliding, float delta) {
-		time += delta;
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
 			if (!player.doingAttack) {
-				if (contactListener.isColliding()) { // Lo mismo para enemy attack player en un futuro
+				if (contactListener.isColliding()) {
 					for (CollisionMovement enemyC : enemiesColliding) {
 						Enemy enemy = enemies.get(enemyC.index);
 						if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
@@ -244,12 +235,6 @@ public class GameScreen implements Screen, InputProcessor {
 						}
 					}
 
-				}
-			} else {
-				// Controla velocidad de ataque.
-				if (time > Constants.ATTACK_SPEED) {
-					player.doingAttack = false;
-					time = 0f;
 				}
 			}
 		}
@@ -329,10 +314,26 @@ public class GameScreen implements Screen, InputProcessor {
 		for (Enemy enemy : enemies) {
 			if ((posX > (enemy.getX()) && posX < enemy.getX() + enemy.getWidth())
 					&& (posY > enemy.getY() && posY < enemy.getY() + enemy.getHeight())) {
-				Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);
+				if(!enemy.isChest) {
+					Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);	
+				} else {
+					if(button == Buttons.LEFT) {
+						Hud.printMessage("Cofre de Drop", MessageType.DROP);	
+					}	
+					if(button== Buttons.RIGHT) {
+						if(enemy.open) {
+							Hud.printMessage("El cofre ya fue abierto", MessageType.DROP);	
+						} else {
+						enemy.open = true;
+						enemy.openChest();
+						}
+					}
+					
+				}
+				
 			}
-
 		}
+
 
 		return false;
 	}

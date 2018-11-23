@@ -41,11 +41,11 @@ public class Enemy extends Character {
 	public boolean changePath = false;
 	public String collidingTo;
 	private String moveTo;
-	
+
 	public Player collidingWith;
 	private float time = 0f;
-	
-	private int cont=0;
+
+	private int cont = 0;
 
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
@@ -60,7 +60,6 @@ public class Enemy extends Character {
 		this.posY = posY;
 		this.enemyIndex = enemyIndex;
 
-
 		defineEnemyBody();
 		createAnimations();
 
@@ -73,110 +72,110 @@ public class Enemy extends Character {
 		return enemyIndex;
 	}
 
-	
-
 	public void update(float delta) {
 		super.update(delta);
-if(alive){
-		if (preventMove) {
-			MassData mass = new MassData();
-			mass.mass = 999999;
-			body.setMassData(mass);
-			
-			handleAttackToPlayer(delta);
-			
-		} else {
-			body.resetMassData();
-		}
+		if (alive) {
+			if (preventMove) {
+				MassData mass = new MassData();
+				mass.mass = 999999;
+				body.setMassData(mass);
 
-		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
-				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
+				handleAttackToPlayer(delta);
 
-		body.setLinearVelocity(0, 0);
-
-		// Movimiento automatico
-		float activeDistance = 2f;
-		Player player = GameScreen.player;
-
-		if (!preventMove) {
-
-			if (((super.body.getPosition().x - player.body.getPosition().x) < activeDistance) // SIGUE A LA
-																								// IZQUIERDA
-					&& super.body.getPosition().x > player.body.getPosition().x) {
-				body.setLinearVelocity(new Vector2((float) -(SPEED * 0.55), 0));
+			} else {
+				body.resetMassData();
 			}
 
-			if (((super.body.getPosition().x + player.body.getPosition().x) > activeDistance) // SIGUE A LA DERECHA
-					&& super.body.getPosition().x < player.body.getPosition().x) {
-				body.setLinearVelocity(new Vector2((float) (SPEED * 0.55), 0));
-			}
+			setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
+					body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
 
-			float dif = Math.abs(super.body.getPosition().x - player.body.getPosition().x);
+			body.setLinearVelocity(0, 0);
 
-			if (dif < 0.1f) {
-				if (((super.body.getPosition().y + player.body.getPosition().y) > activeDistance) // SIGUE A ARRIBA
-						&& super.body.getPosition().y < player.body.getPosition().y) {
-					body.setLinearVelocity(new Vector2(0, (float) +(SPEED * 0.55)));
-				}
+			// Movimiento automatico
+			float activeDistance = 2f;
+			Player player = GameScreen.player;
 
-				if (((super.body.getPosition().y - player.body.getPosition().y) < activeDistance) // SIGUE A ABAJO
-						&& super.body.getPosition().y > player.body.getPosition().y) {
-					body.setLinearVelocity(new Vector2(0, (float) -(SPEED * 0.55)));
-				}
-			}
+			if (!preventMove) {
 
-			if (changePath) {
-				//
-				moveTo = changeDirectionTo(this.collidingTo);
-				if (moveTo.equals("Top")) {
-					body.setLinearVelocity(new Vector2(0, (float) (SPEED * 0.55)));
-				} else if (moveTo.equals("Bot")) {
-					body.setLinearVelocity(new Vector2(0, (float) -(SPEED * 0.55)));
-				} else if (moveTo.equals("Right")) {
-					body.setLinearVelocity(new Vector2((float) (SPEED * 0.55), 0));
-				} else {
+				if (((super.body.getPosition().x - player.body.getPosition().x) < activeDistance) // SIGUE A LA
+																									// IZQUIERDA
+						&& super.body.getPosition().x > player.body.getPosition().x) {
 					body.setLinearVelocity(new Vector2((float) -(SPEED * 0.55), 0));
 				}
+
+				if (((super.body.getPosition().x + player.body.getPosition().x) > activeDistance) // SIGUE A LA DERECHA
+						&& super.body.getPosition().x < player.body.getPosition().x) {
+					body.setLinearVelocity(new Vector2((float) (SPEED * 0.55), 0));
+				}
+
+				float dif = Math.abs(super.body.getPosition().x - player.body.getPosition().x);
+
+				if (dif < 0.1f) {
+					if (((super.body.getPosition().y + player.body.getPosition().y) > activeDistance) // SIGUE A ARRIBA
+							&& super.body.getPosition().y < player.body.getPosition().y) {
+						body.setLinearVelocity(new Vector2(0, (float) +(SPEED * 0.55)));
+					}
+
+					if (((super.body.getPosition().y - player.body.getPosition().y) < activeDistance) // SIGUE A ABAJO
+							&& super.body.getPosition().y > player.body.getPosition().y) {
+						body.setLinearVelocity(new Vector2(0, (float) -(SPEED * 0.55)));
+					}
+				}
+
+				if (changePath) {
+					//
+					moveTo = changeDirectionTo(this.collidingTo);
+					if (moveTo.equals("Top")) {
+						body.setLinearVelocity(new Vector2(0, (float) (SPEED * 0.55)));
+					} else if (moveTo.equals("Bot")) {
+						body.setLinearVelocity(new Vector2(0, (float) -(SPEED * 0.55)));
+					} else if (moveTo.equals("Right")) {
+						body.setLinearVelocity(new Vector2((float) (SPEED * 0.55), 0));
+					} else {
+						body.setLinearVelocity(new Vector2((float) -(SPEED * 0.55), 0));
+					}
+				}
+
 			}
 
+			if (body.getLinearVelocity().y > 0) {
+				states = PlayerStates.BACK;
+				direction = PlayerStates.BACK;
+			}
+			if (body.getLinearVelocity().y < 0) {
+				states = PlayerStates.FRONT;
+				direction = PlayerStates.FRONT;
+			}
+			if (body.getLinearVelocity().x < 0) {
+				states = PlayerStates.LEFT;
+				direction = PlayerStates.LEFT;
+			}
+			if (body.getLinearVelocity().x > 0) {
+				states = PlayerStates.RIGHT;
+				direction = PlayerStates.RIGHT;
+			}
+			super.setRegion(getFrame(delta));
 		}
-
-		if (body.getLinearVelocity().y > 0) {
-			states = PlayerStates.BACK;
-			direction = PlayerStates.BACK;
-		}
-		if (body.getLinearVelocity().y < 0) {
-			states = PlayerStates.FRONT;
-			direction = PlayerStates.FRONT;
-		}
-		if (body.getLinearVelocity().x < 0) {
-			states = PlayerStates.LEFT;
-			direction = PlayerStates.LEFT;
-		}
-		if (body.getLinearVelocity().x > 0) {
-			states = PlayerStates.RIGHT;
-			direction = PlayerStates.RIGHT;
-		}
-		super.setRegion(getFrame(delta));
-}
 	}
 
 	private void handleAttackToPlayer(float delta) {
 		Player playerToAttack = this.collidingWith;
 		time += delta;
-		
+
 		if (time > Constants.ENEMY_ATTACK_SPEED) {
 			this.doingAttack = false;
 			time = 0f;
 		}
-		
-		if(!this.doingAttack) {
+
+		if (!this.doingAttack) {
 			this.doingAttack = true;
 			playerToAttack.health -= this.attackDamage;
-			Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida", MessageType.COMBAT);
+			Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida",
+					MessageType.COMBAT);
 			GameScreen.hud.updateStats(playerToAttack);
+			// AGREGAR SONIDO DE GOLPE
 		}
-		
+
 	}
 
 	private String changeDirectionTo(String collidingTo) {
@@ -198,24 +197,25 @@ if(alive){
 
 	@Override
 	public void draw(Batch batch) {
-		
-		if(alive) {
+
+//		if (alive) {
 			super.draw(batch); // SE PUEDE PONER UN IF
 			// if (1==2) { no se dibuja } => Respawn??
-		}
-//		else if (!alive && cont==0){
-//			cont=1;
-//			Sound enemyKill;
-//			enemyKill = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/enemyKill.wav", FileType.Internal));
-//			enemyKill.play();
 //		}
-		
-	} 
+		// else if (!alive && cont==0){
+		// cont=1;
+		// Sound enemyKill;
+		// enemyKill = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/enemyKill.wav",
+		// FileType.Internal));
+		// enemyKill.play();
+		// }
+
+	}
 
 	public void dispose() {
 		world.destroyBody(body);
 	}
-	
+
 	public void defineEnemyBody() {
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(this.posX, this.posY);
