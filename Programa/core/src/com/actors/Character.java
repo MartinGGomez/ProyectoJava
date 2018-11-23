@@ -64,6 +64,8 @@ public class Character extends Sprite {
 	private TextureRegion regionClose;
 
 	private Random random = new Random();
+	
+	private boolean rewarded = false;
 
 	public Character(MainGame game, World world, String name) {
 		this.world = world;
@@ -85,6 +87,15 @@ public class Character extends Sprite {
 			}
 			setRegion(getFrame(delta));
 		} else {// ES UN COFRE
+			if(!rewarded) {
+				Player player = (Player) this.attackedBy;
+				player.money += 100; 
+				player.exp += 10f;
+				GameScreen.hud.updateStats(player);
+				Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);
+				rewarded = true;
+			}
+			
 			this.isChest = true;
 			setBounds(body.getPosition().x - (this.regionClose.getRegionWidth() / 2) / PPM,
 					body.getPosition().y - (this.regionClose.getRegionWidth() / 2) / PPM, 30 / PPM, 32 / PPM);
@@ -103,11 +114,10 @@ public class Character extends Sprite {
 		Player player = (Player) this.attackedBy;
 		player.healthPotions += cantHealthPotions;
 		player.manaPotions += cantManaPotions;
-		player.money += 100; 
 		GameScreen.hud.updateStats(player);
 		Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y " + cantManaPotions
 				+ " pociones de mana!!!", MessageType.REWARD);
-		Hud.printMessage("Ganaste 100 monedas de oro", MessageType.REWARD);
+		
 	}
 
 	public TextureRegion getFrame(float delta) {

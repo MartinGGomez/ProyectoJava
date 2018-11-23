@@ -47,6 +47,7 @@ public class Player extends Character {
 	public int healthPotions = 20;
 	public int manaPotions = 30;
 	public int money = 0;
+	public float exp = 0f;
 
 	// Scene2d
 	private Label playerLabel;
