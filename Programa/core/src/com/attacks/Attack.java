@@ -3,17 +3,15 @@ package com.attacks;
 import static com.constants.Constants.PPM;
 
 import com.actors.Character;
-import com.actors.Enemy;
 import com.actors.states.PlayerStates;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 
-public class Attack extends Sprite {
+public abstract class Attack extends Sprite {
 
 	public String name;
 	protected float duration;
@@ -35,7 +33,7 @@ public class Attack extends Sprite {
 	private Character attacker;
 
 	public boolean started = false;
-	private boolean enemyDead = false; 
+	private boolean enemyDead = false;
 
 	public Attack() {
 		// this.texture = new Texture("fireAttack.png");
@@ -74,9 +72,7 @@ public class Attack extends Sprite {
 
 	@Override
 	public void draw(Batch batch) {
-		if(this.characterToAttack.alive) {
-			super.draw(batch);	
-		}
+		super.draw(batch);
 	}
 
 	public void dispose() {
@@ -95,17 +91,4 @@ public class Attack extends Sprite {
 
 		return textureRegion;
 	}
-
-	// public void createAnimations() {
-	// // Animation DE FIRE ATTACK
-	// stateTimer = 0;
-	// Array<TextureRegion> frames = new Array<TextureRegion>();
-	// frames.add(new TextureRegion(this.texture, 34, 7, 123, 115));
-	// frames.add(new TextureRegion(this.texture, 207, 22, 123, 115));
-	// frames.add(new TextureRegion(this.texture, 394, 10, 123, 135));
-	// frames.add(new TextureRegion(this.texture, 595, 1, 114, 135));
-	// animation = new Animation<TextureRegion>(0.1f, frames);
-	// frames.clear();
-	//
-	// }
 }

@@ -19,7 +19,7 @@ import com.game.MainGame;
 import com.screens.GameScreen;
 import com.screens.Hud;
 
-public class Character extends Sprite {
+public abstract class Character extends Sprite {
 
 	public String name;
 	public int health;
@@ -185,8 +185,8 @@ public class Character extends Sprite {
 		world.destroyBody(body);
 	}
 
-	public void attack(Enemy enemy, float delta) {
-
+	public void attack(Enemy enemy, Attack attack) {
+		
 	}
 
 }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import com.actors.Enemy;
 import com.actors.Player;
+import com.attacks.BasicAttack;
+import com.attacks.FireAttack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
@@ -63,6 +65,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private float cameraInitialPositionX;
 	private float cameraInitialPositionY;
+	
 
 	public GameScreen(MainGame game) {
 		this.game = game;
@@ -228,7 +231,7 @@ public class GameScreen implements Screen, InputProcessor {
 					for (CollisionMovement enemyC : enemiesColliding) {
 						Enemy enemy = enemies.get(enemyC.index);
 						if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
-							player.attack(enemy, delta);
+							player.attack(enemy, new BasicAttack());
 							// hud.boton1.setVisible(false);
 						}
 					}
@@ -299,18 +302,7 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		return false;
 	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		float distanciaX = gamecam.position.x - this.cameraInitialPositionX;
@@ -327,7 +319,13 @@ public class GameScreen implements Screen, InputProcessor {
 			if ((posX > (enemy.getX()) && posX < enemy.getX() + enemy.getWidth())
 					&& (posY > enemy.getY() && posY < enemy.getY() + enemy.getHeight())) {
 				if(!enemy.isChest) {
-					Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);	
+					Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);
+					
+					if(player.selectedAttack!=null) {
+						player.attack(enemy, player.selectedAttack);
+						player.selectedAttack = null;
+					}
+					
 				} else {
 					if(button == Buttons.LEFT) {
 						Hud.printMessage("Cofre de Drop", MessageType.DROP);	
@@ -347,6 +345,18 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 
 
+		return false;
+	}
+
+
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 

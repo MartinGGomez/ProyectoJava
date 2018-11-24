@@ -71,7 +71,6 @@ public class Player extends Character {
 
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
-
 	}
 
 	public void definePlayerBody() {
@@ -107,10 +106,11 @@ public class Player extends Character {
 
 	public void update(float delta) {
 		super.update(delta);
+		
 		if (this.energy < this.maxEnergy) {
 			time += delta;
 			if (time > 1f) {
-				this.energy += 10;
+				this.energy += 4;
 				GameScreen.hud.updateStats(this);
 				time = 0f;
 			}
@@ -120,6 +120,7 @@ public class Player extends Character {
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
 
+		
 		body.setLinearVelocity(0, 0);
 		if (Gdx.input.isKeyPressed(Keys.W)) {
 			body.setLinearVelocity(new Vector2(0, SPEED));
@@ -193,11 +194,10 @@ public class Player extends Character {
 		world.destroyBody(body);
 	}
 
-	public void attack(Enemy enemy, float delta) {
-
+	public void attack(Enemy enemy, Attack attack) {
 		if (enemy.alive){
 		// Esto es para hechizos:
-		enemy.attack = new BasicAttack();
+		enemy.attack = attack;
 		enemy.isBeingAttacked = true;
 		enemy.attackedBy = this;
 		this.doingAttack = true;

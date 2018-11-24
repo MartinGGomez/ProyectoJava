@@ -155,6 +155,12 @@ public class Enemy extends Character {
 				direction = PlayerStates.RIGHT;
 			}
 			super.setRegion(getFrame(delta));
+		} else {
+			body.setLinearVelocity(0, 0);
+			MassData mass = new MassData();
+			mass.mass = 999999;
+			body.setMassData(mass);
+			
 		}
 	}
 
