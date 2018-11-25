@@ -87,12 +87,15 @@ public abstract class Character extends Sprite {
 			}
 			setRegion(getFrame(delta));
 		} else {// ES UN COFRE
-			if(!rewarded) {
+			if(this.attackedBy !=null && !rewarded) {
 				Player player = (Player) this.attackedBy;
 				player.money += 100; 
 				player.exp += 10f;
-				GameScreen.hud.updateStats(player);
-				Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);
+				if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+					GameScreen.hud.updateStats(player);
+					Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);	
+				}
+				
 				rewarded = true;
 			}
 			
@@ -114,9 +117,12 @@ public abstract class Character extends Sprite {
 		Player player = (Player) this.attackedBy;
 		player.healthPotions += cantHealthPotions;
 		player.manaPotions += cantManaPotions;
-		GameScreen.hud.updateStats(player);
-		Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y " + cantManaPotions
-				+ " pociones de mana!!!", MessageType.REWARD);
+		if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+			GameScreen.hud.updateStats(player);
+			Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y " + cantManaPotions
+					+ " pociones de mana!!!", MessageType.REWARD);	
+		}
+		
 		
 	}
 
@@ -185,8 +191,9 @@ public abstract class Character extends Sprite {
 		world.destroyBody(body);
 	}
 
-	public void attack(Enemy enemy, Attack attack) {
+	public void attack(Character enemy, Attack attack) {
 		
 	}
+	
 
 }

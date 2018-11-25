@@ -174,12 +174,18 @@ public class Enemy extends Character {
 		}
 
 		if (!this.doingAttack) {
+			if(playerToAttack.alive) {
 			this.doingAttack = true;
-			playerToAttack.health -= this.attackDamage;
+			if(playerToAttack.health - this.attackDamage < 0) {
+				playerToAttack.health = 0;
+			} else {
+				playerToAttack.health -= this.attackDamage;	
+			}
 			Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida",
 					MessageType.COMBAT);
 			GameScreen.hud.updateStats(playerToAttack);
 			// AGREGAR SONIDO DE GOLPE
+			}
 		}
 
 	}
@@ -224,6 +230,7 @@ public class Enemy extends Character {
 
 	public void defineEnemyBody() {
 		BodyDef bdef = new BodyDef();
+//		System.out.println("pos X" + this.posX + " - pos Y " + this.posY);
 		bdef.position.set(this.posX, this.posY);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 

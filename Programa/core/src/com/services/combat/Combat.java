@@ -1,5 +1,6 @@
 package com.services.combat;
 
+import com.actors.Character;
 import com.actors.Enemy;
 import com.actors.Player;
 import com.actors.states.PlayerStates;
@@ -7,7 +8,7 @@ import com.screens.GameScreen;
 
 public abstract class Combat {
 	
-	public static boolean canAttackToEnemy(Player player, Enemy enemy) {
+	public static boolean canAttackToEnemy(Player player, Character enemy) {
 		if ((player.direction.equals(PlayerStates.FRONT) || player.direction.equals(PlayerStates.STANDING_FRONT))
 				&& ((enemy.body.getPosition().y + enemy.getHeight()) > player.body.getPosition().y)
 				&& ((((enemy.body.getPosition().x - player.body.getPosition().x) < 0.15

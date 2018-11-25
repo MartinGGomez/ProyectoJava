@@ -18,6 +18,7 @@ public class MyContactListener implements ContactListener {
 	private String enemyCollidingTo;
 	private boolean isCollidingToChest;
 	private int chestIndex;
+	private boolean isCollidingToPlayer;
 	
 	public ArrayList<CollisionMovement> enemiesColliding = new ArrayList<CollisionMovement>();
 	public ArrayList<Integer> enemiesStopColliding = new ArrayList<Integer>();
@@ -32,14 +33,12 @@ public class MyContactListener implements ContactListener {
 		UserData userDataB = (UserData) fixtureB.getUserData();
 
 		//
-//		if(userDataA.type.equals("Chest") && userDataB.type.equals("Player")) {
-//			isCollidingToChest = true;
-//			chestIndex = userDataA.index;
-//		}
-//		if(userDataB.type.equals("Chest") && userDataA.type.equals("Player")) {
-//			isCollidingToChest = true;
-//			chestIndex = usedrDataB.index;
-//		}
+		if(userDataA.type.equals("Player") && userDataB.type.equals("Player")) {
+			isCollidingToPlayer = true;
+		}
+		if(userDataB.type.equals("Player") && userDataA.type.equals("Player")) {
+			isCollidingToPlayer = true;
+		}
 		
 		//
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
@@ -142,12 +141,12 @@ public class MyContactListener implements ContactListener {
 		UserData userDataB = (UserData) contact.getFixtureB().getUserData();
 
 		//
-//		if(userDataA.type.equals("Chest") && userDataB.type.equals("Player")) {
-//			isCollidingToChest = false;
-//		}
-//		if(userDataB.type.equals("Chest") && userDataA.type.equals("Player")) {
-//			isCollidingToChest = false;
-//		}
+		if(userDataA.type.equals("Player") && userDataB.type.equals("Player")) {
+			isCollidingToPlayer = false;
+		}
+		if(userDataB.type.equals("Player") && userDataA.type.equals("Player")) {
+			isCollidingToPlayer = false;
+		}
 		//
 		
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
@@ -262,12 +261,8 @@ public class MyContactListener implements ContactListener {
 		return enemyColliding;
 	}
 	
-	public boolean isCollidingToChest() {
-		return isCollidingToChest;
-	}
-
-	public int getChestIndex() {
-		return chestIndex;
+	public boolean isCollidingToPlayer() {
+		return isCollidingToPlayer;
 	}
 
 

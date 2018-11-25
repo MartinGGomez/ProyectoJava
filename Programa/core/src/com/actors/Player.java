@@ -51,13 +51,17 @@ public class Player extends Character {
 
 	// Scene2d
 	private Label playerLabel;
-	public Actor actor;
 
 	private float time = 0f;
 
-	public Player(MainGame game, World world, String name) {
-		super(game, world, name);
+	private int nroJugador = 0;
 
+	public float respawnTime = 4f;
+	public float deadTime = 0f;
+
+	public Player(MainGame game, World world, String name, int nroJugador) {
+		super(game, world, name);
+		this.nroJugador = nroJugador;
 		super.texture = new Texture("player.png");
 		super.region = new TextureRegion(super.texture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y =
 																		// 908.
@@ -71,12 +75,17 @@ public class Player extends Character {
 
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
+
 	}
 
 	public void definePlayerBody() {
 
 		BodyDef bdef = new BodyDef();
-		bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
+		if (nroJugador == 1) {
+			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
+		} else {
+			bdef.position.set(10, 5);
+		}
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
 		super.body = super.world.createBody(bdef);
@@ -85,7 +94,7 @@ public class Player extends Character {
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox((this.region.getRegionWidth() / 2) / PPM, (this.region.getRegionHeight() / 4) / PPM);
 		fdef.filter.categoryBits = Constants.BIT_PLAYER;
-		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER | Constants.BIT_CHEST;
+		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
 		fdef.shape = shape;
 
 		UserData userData = new UserData("Player", 1, false);
@@ -106,12 +115,14 @@ public class Player extends Character {
 
 	public void update(float delta) {
 		super.update(delta);
-		
+
 		if (this.energy < this.maxEnergy) {
 			time += delta;
 			if (time > 1f) {
 				this.energy += 4;
+				if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
 				GameScreen.hud.updateStats(this);
+				}
 				time = 0f;
 			}
 
@@ -120,29 +131,74 @@ public class Player extends Character {
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
 
-		
-		body.setLinearVelocity(0, 0);
-		if (Gdx.input.isKeyPressed(Keys.W)) {
-			body.setLinearVelocity(new Vector2(0, SPEED));
-			states = PlayerStates.BACK;
-			direction = PlayerStates.BACK;
-		}
-		if (Gdx.input.isKeyPressed(Keys.S)) {
-			body.setLinearVelocity(new Vector2(0, -SPEED));
-			states = PlayerStates.FRONT;
-			direction = PlayerStates.FRONT;
-		}
-		if (Gdx.input.isKeyPressed(Keys.A)) {
-			body.setLinearVelocity(new Vector2(-SPEED, 0));
-			states = PlayerStates.LEFT;
-			direction = PlayerStates.LEFT;
-		}
-		if (Gdx.input.isKeyPressed(Keys.D)) {
-			body.setLinearVelocity(new Vector2(SPEED, 0));
-			states = PlayerStates.RIGHT;
-			direction = PlayerStates.RIGHT;
+		if (this.alive) {
+			if (this.nroJugador == 1) {
+				body.setLinearVelocity(0, 0);
+				if (Gdx.input.isKeyPressed(Keys.W)) {
+					body.setLinearVelocity(new Vector2(0, SPEED));
+					states = PlayerStates.BACK;
+					direction = PlayerStates.BACK;
+				}
+				if (Gdx.input.isKeyPressed(Keys.S)) {
+					body.setLinearVelocity(new Vector2(0, -SPEED));
+					states = PlayerStates.FRONT;
+					direction = PlayerStates.FRONT;
+				}
+				if (Gdx.input.isKeyPressed(Keys.A)) {
+					body.setLinearVelocity(new Vector2(-SPEED, 0));
+					states = PlayerStates.LEFT;
+					direction = PlayerStates.LEFT;
+				}
+				if (Gdx.input.isKeyPressed(Keys.D)) {
+					body.setLinearVelocity(new Vector2(SPEED, 0));
+					states = PlayerStates.RIGHT;
+					direction = PlayerStates.RIGHT;
+				}
+			} else {
+				body.setLinearVelocity(0, 0);
+				if (Gdx.input.isKeyPressed(Keys.UP)) {
+					body.setLinearVelocity(new Vector2(0, SPEED));
+					states = PlayerStates.BACK;
+					direction = PlayerStates.BACK;
+				}
+				if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+					body.setLinearVelocity(new Vector2(0, -SPEED));
+					states = PlayerStates.FRONT;
+					direction = PlayerStates.FRONT;
+				}
+				if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+					body.setLinearVelocity(new Vector2(-SPEED, 0));
+					states = PlayerStates.LEFT;
+					direction = PlayerStates.LEFT;
+				}
+				if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+					body.setLinearVelocity(new Vector2(SPEED, 0));
+					states = PlayerStates.RIGHT;
+					direction = PlayerStates.RIGHT;
+				}
+			}
+
+		} else {
+			this.deadTime += delta;
+			if (deadTime >= respawnTime) {
+				deadTime = 0f;
+				this.alive = true;
+				this.resetStats();
+			} else {
+				if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+					GameScreen.hud.updateStats(this);
+				}
+				
+			}
 		}
 		super.setRegion(getFrame(delta));
+	}
+
+	private void resetStats() {
+		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
+		this.health = this.maxHealth;
+		this.mana = this.maxMana;
+		this.energy = this.maxEnergy;
 	}
 
 	public void createAnimations() {
@@ -194,18 +250,20 @@ public class Player extends Character {
 		world.destroyBody(body);
 	}
 
-	public void attack(Enemy enemy, Attack attack) {
-		if (enemy.alive){
-		// Esto es para hechizos:
-		enemy.attack = attack;
-		enemy.isBeingAttacked = true;
-		enemy.attackedBy = this;
-		this.doingAttack = true;
-		Hud.printMessage("Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
-				MessageType.COMBAT);
-		GameScreen.hud.updateStats(this);
+	public void attack(Character enemy, Attack attack) {
+		if (enemy.alive) {
+			enemy.attack = attack;
+			enemy.isBeingAttacked = true;
+			enemy.attackedBy = this;
+			this.doingAttack = true;
+			Hud.printMessage("Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
+					MessageType.COMBAT);
+			if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+				GameScreen.hud.updateStats(this);	
+			}
+			
 		}
-		
+
 	}
 
 }

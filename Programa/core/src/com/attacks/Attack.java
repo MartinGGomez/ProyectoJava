@@ -33,13 +33,8 @@ public abstract class Attack extends Sprite {
 	private Character attacker;
 
 	public boolean started = false;
-	private boolean enemyDead = false;
 
 	public Attack() {
-		// this.texture = new Texture("fireAttack.png");
-		// this.region = new TextureRegion(texture, 34, 7, 123, 115);
-		// createAnimations();
-		// setScale(1.5f);
 	}
 
 	public void begin(Character characterToAttack, Character attacker) {
@@ -47,12 +42,25 @@ public abstract class Attack extends Sprite {
 		this.attacker = attacker;
 		if (!this.started) {
 			this.started = true;
-			this.characterToAttack.health -= this.damage;
+			if(this.characterToAttack.health - this.damage < 0) {
+				this.characterToAttack.health = 0;
+			} else {
+				this.characterToAttack.health -= this.damage;
+			}
+			
 			if (this.attacker.mana != 0) {
-				this.attacker.mana -= this.mana;
+				if(this.characterToAttack.mana - this.mana < 0) {
+					this.characterToAttack.mana = 0;
+				} else {
+					this.characterToAttack.mana -= this.mana;
+				}
 			}
 			if (this.attacker.energy != 0) {
-				this.attacker.energy -= this.energy;
+				if(this.characterToAttack.energy - this.energy < 0) {
+					this.characterToAttack.energy = 0;
+				} else {
+					this.characterToAttack.energy -= this.energy;	
+				}
 			}
 		}
 

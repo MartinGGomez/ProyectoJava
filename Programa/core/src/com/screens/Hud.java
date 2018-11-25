@@ -46,7 +46,7 @@ public class Hud implements Disposable {
 	public static final float HUD_HALF_WIDTH = 273.5f;
 	public static Skin skin;
 	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, nameAttack;
-	public Label healthPotions, manaPotions, money;
+	public Label healthPotions, manaPotions, money, respawnLabel;
 	public Player player;
 	private static Table table;
 	private static ScrollPane scrollPane;
@@ -132,6 +132,13 @@ public class Hud implements Disposable {
 		this.healthPotions.setText(Integer.toString(player.healthPotions));
 		this.manaPotions.setText(Integer.toString(player.manaPotions));
 		this.money.setText(Integer.toString(player.money));
+		if(player.alive) {
+			this.respawnLabel.setVisible(false);
+		} else {
+			this.respawnLabel.setVisible(true);
+			this.respawnLabel.setText(String.format("Reapareceras en %s seg...", Math.round(this.player.respawnTime - this.player.deadTime)));
+		}
+		
 	}
 
 	public void defineHudElements() {
@@ -176,6 +183,11 @@ public class Hud implements Disposable {
 		money.setSize(50, 20);
 		money.setPosition(Gdx.graphics.getWidth() - 75, 185 - money.getHeight());
 		money.setAlignment(Align.center);
+		
+		respawnLabel = new Label("", skin, "default-font", Color.RED);
+		respawnLabel.setSize(50, 20);
+		respawnLabel.setPosition(HUD_HALF_WIDTH, HUD_HALF_HEIGHT);
+		respawnLabel.setAlignment(Align.center);
 
 		powersDef = new Label("Hechizos", skin, "white-font", Color.BLUE);
 		powersDef.setPosition(image.getWidth() - 205, image.getHeight() - 160);
@@ -261,6 +273,7 @@ public class Hud implements Disposable {
 		stage.addActor(manaPotions);
 		stage.addActor(healthPotions);
 		stage.addActor(money);
+		stage.addActor(respawnLabel);
 	}
 
 	private void createAttacksButtons() {
