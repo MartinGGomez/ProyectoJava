@@ -34,8 +34,6 @@ public class Enemy extends Character {
 	private float posX, posY;
 	private int enemyIndex;
 
-	public boolean preventMove;
-
 	public Label enemyLabel;
 
 	public boolean changePath = false;

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import com.actors.Enemy;
 import com.actors.Player;
+import com.actors.states.PlayerStates;
 import com.attacks.BasicAttack;
 import com.attacks.FireAttack;
 import com.badlogic.gdx.Gdx;
@@ -116,7 +117,7 @@ public class GameScreen implements Screen, InputProcessor {
 		player.update(delta);
 		player2.update(delta);
 
-		resolveEnemyCollisions();
+		resolveCollisions();
 
 		handleAttacksToEnemy(contactListener.enemiesCollidingWithPlayer, delta);
 		if (contactListener.isCollidingToPlayer()) {
@@ -204,7 +205,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	}
 	
-	private void resolveEnemyCollisions() {
+	private void resolveCollisions() {
 
 		boolean changePathFound = false;
 		for (int i = 0; i < contactListener.enemiesColliding.size(); i++) {
@@ -240,6 +241,23 @@ public class GameScreen implements Screen, InputProcessor {
 			if (contactListener.enemiesStopColliding.get(i) < enemies.size) {
 				enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
 			}
+		}
+		
+		if(contactListener.isCollidingToPlayer()) {
+			// Colisiona para arriba - ARREGLAR
+			if (((player.body.getPosition().y + player2.getHeight()) > player.body.getPosition().y)
+					&& ((((player2.body.getPosition().x - player.body.getPosition().x) < 0.15
+							&& player.body.getPosition().x - player.body.getPosition().x > -0.15))
+					|| ((player.body.getPosition().x - player.body.getPosition().x) > 0.15
+							&& player.body.getPosition().x - player.body.getPosition().x < -0.15))) {
+				resetMovement();
+				player.canMoveBot = false;
+				player2.canMoveTop = false;
+			} else {
+				resetMovement();
+			}
+		} else {
+			
 		}
 
 	}
@@ -278,6 +296,17 @@ public class GameScreen implements Screen, InputProcessor {
 				}
 			}
 		}
+	}
+	
+	private void resetMovement() {
+		player.canMoveBot = true;
+		player.canMoveTop = true;
+		player.canMoveLeft = true;
+		player.canMoveRight = true;
+		player2.canMoveBot = true;
+		player2.canMoveTop = true;
+		player2.canMoveLeft = true;
+		player2.canMoveRight = true;
 	}
 
 	@Override

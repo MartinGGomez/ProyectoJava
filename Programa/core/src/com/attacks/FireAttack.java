@@ -19,7 +19,7 @@ public class FireAttack extends Attack{
 		super.damage = 50;
 		super.mana = 100;
 		super.energy = 20;
-		super.duration = 2f;
+		super.duration = 1.5f;
 	}
 		
 	@Override

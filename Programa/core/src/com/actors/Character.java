@@ -54,6 +54,8 @@ public abstract class Character extends Sprite {
 	protected PlayerStates currentState;
 	protected PlayerStates previousState;
 	//
+	
+	public boolean preventMove;
 
 	// COFRE DE DROP
 	public boolean isChest = false;
@@ -91,7 +93,7 @@ public abstract class Character extends Sprite {
 				Player player = (Player) this.attackedBy;
 				player.money += 100; 
 				player.exp += 10f;
-				if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+				if(player.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
 					GameScreen.hud.updateStats(player);
 					Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);	
 				}
@@ -117,7 +119,7 @@ public abstract class Character extends Sprite {
 		Player player = (Player) this.attackedBy;
 		player.healthPotions += cantHealthPotions;
 		player.manaPotions += cantManaPotions;
-		if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+		if(player.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
 			GameScreen.hud.updateStats(player);
 			Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y " + cantManaPotions
 					+ " pociones de mana!!!", MessageType.REWARD);	

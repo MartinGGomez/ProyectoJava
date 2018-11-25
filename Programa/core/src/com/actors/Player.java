@@ -59,10 +59,22 @@ public class Player extends Character {
 	public float respawnTime = 4f;
 	public float deadTime = 0f;
 
+	public boolean canMoveTop = true;
+	public boolean canMoveBot = true;
+	public boolean canMoveRight = true;
+	public boolean canMoveLeft = true;
+	
+	
 	public Player(MainGame game, World world, String name, int nroJugador) {
 		super(game, world, name);
 		this.nroJugador = nroJugador;
-		super.texture = new Texture("player.png");
+		if(nroJugador == 1) {
+			super.texture = new Texture("player.png");	
+		} else {
+			super.texture = new Texture("player.png");
+//			super.texture = new Texture("player2.png");
+		}
+		
 		super.region = new TextureRegion(super.texture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y =
 																		// 908.
 		super.attackDamage = 50;
@@ -134,44 +146,44 @@ public class Player extends Character {
 		if (this.alive) {
 			if (this.nroJugador == 1) {
 				body.setLinearVelocity(0, 0);
-				if (Gdx.input.isKeyPressed(Keys.W)) {
+				if (Gdx.input.isKeyPressed(Keys.W) && canMoveTop) {
 					body.setLinearVelocity(new Vector2(0, SPEED));
 					states = PlayerStates.BACK;
 					direction = PlayerStates.BACK;
 				}
-				if (Gdx.input.isKeyPressed(Keys.S)) {
+				if (Gdx.input.isKeyPressed(Keys.S) && canMoveBot) {
 					body.setLinearVelocity(new Vector2(0, -SPEED));
 					states = PlayerStates.FRONT;
 					direction = PlayerStates.FRONT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.A)) {
+				if (Gdx.input.isKeyPressed(Keys.A) && canMoveLeft) {
 					body.setLinearVelocity(new Vector2(-SPEED, 0));
 					states = PlayerStates.LEFT;
 					direction = PlayerStates.LEFT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.D)) {
+				if (Gdx.input.isKeyPressed(Keys.D) && canMoveRight) {
 					body.setLinearVelocity(new Vector2(SPEED, 0));
 					states = PlayerStates.RIGHT;
 					direction = PlayerStates.RIGHT;
 				}
 			} else {
 				body.setLinearVelocity(0, 0);
-				if (Gdx.input.isKeyPressed(Keys.UP)) {
+				if (Gdx.input.isKeyPressed(Keys.UP) && canMoveTop) {
 					body.setLinearVelocity(new Vector2(0, SPEED));
 					states = PlayerStates.BACK;
 					direction = PlayerStates.BACK;
 				}
-				if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+				if (Gdx.input.isKeyPressed(Keys.DOWN) && canMoveBot) {
 					body.setLinearVelocity(new Vector2(0, -SPEED));
 					states = PlayerStates.FRONT;
 					direction = PlayerStates.FRONT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+				if (Gdx.input.isKeyPressed(Keys.LEFT) && canMoveLeft) {
 					body.setLinearVelocity(new Vector2(-SPEED, 0));
 					states = PlayerStates.LEFT;
 					direction = PlayerStates.LEFT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+				if (Gdx.input.isKeyPressed(Keys.RIGHT) && canMoveRight) {
 					body.setLinearVelocity(new Vector2(SPEED, 0));
 					states = PlayerStates.RIGHT;
 					direction = PlayerStates.RIGHT;
