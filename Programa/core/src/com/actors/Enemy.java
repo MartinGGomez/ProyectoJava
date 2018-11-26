@@ -91,10 +91,12 @@ public class Enemy extends Character {
 
 			// Movimiento automatico
 			float activeDistance = 2f;
-			Player player = GameScreen.player;
+			Player player = getCloserPlayer();
 
 			if (!preventMove) {
 
+				
+				
 				if (((super.body.getPosition().x - player.body.getPosition().x) < activeDistance) // SIGUE A LA
 																									// IZQUIERDA
 						&& super.body.getPosition().x > player.body.getPosition().x) {
@@ -162,6 +164,34 @@ public class Enemy extends Character {
 		}
 	}
 
+	private Player getCloserPlayer() {
+		Player player1 = GameScreen.player;
+		Player player2 = GameScreen.player2;
+		
+		float difPlayer1X = this.body.getPosition().x - player1.body.getPosition().x;
+		float difPlayer2X = this.body.getPosition().x - player2.body.getPosition().x;
+		float difPlayer1Y = this.body.getPosition().y - player1.body.getPosition().y;
+		float difPlayer2Y = this.body.getPosition().y - player2.body.getPosition().y;
+		
+		
+		// Teorema de Pitagoras // RaizDe(difx^2 + dify^2) = distanciaTotal 
+		float distanciaTotalPlayer1 =(float) Math.sqrt(Math.pow(difPlayer1X, 2) + Math.pow(difPlayer1Y, 2));
+		float distanciaTotalPlayer2 =(float) Math.sqrt(Math.pow(difPlayer2X, 2) + Math.pow(difPlayer2Y, 2));
+		
+		if(!player1.alive) {
+			return player2;
+		}
+		if(!player2.alive) {
+			return player1;
+		}
+		
+		if(distanciaTotalPlayer1 < distanciaTotalPlayer2) {
+			return player1;
+		} else {
+			return player2;
+		}
+	}
+
 	private void handleAttackToPlayer(float delta) {
 		Player playerToAttack = this.collidingWith;
 		time += delta;
@@ -179,9 +209,11 @@ public class Enemy extends Character {
 			} else {
 				playerToAttack.health -= this.attackDamage;	
 			}
-			Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida",
-					MessageType.COMBAT);
-			GameScreen.hud.updateStats(playerToAttack);
+			if(playerToAttack.name.equals("Coxne")) { // CAMBIAR CUANDO SEA EN RED POR Nº CLIENTE
+				Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida",
+						MessageType.COMBAT);
+				GameScreen.hud.updateStats(playerToAttack);	
+			}
 			// AGREGAR SONIDO DE GOLPE
 			}
 		}
@@ -228,7 +260,6 @@ public class Enemy extends Character {
 
 	public void defineEnemyBody() {
 		BodyDef bdef = new BodyDef();
-//		System.out.println("pos X" + this.posX + " - pos Y " + this.posY);
 		bdef.position.set(this.posX, this.posY);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 

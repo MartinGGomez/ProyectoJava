@@ -91,8 +91,15 @@ public abstract class Character extends Sprite {
 		} else {// ES UN COFRE
 			if(this.attackedBy !=null && !rewarded) {
 				Player player = (Player) this.attackedBy;
-				player.money += 100; 
-				player.exp += 10f;
+				player.money += 100;
+				if(player.exp + 25 >= 100) {
+					player.exp = 0;
+					player.minAttackDamage = (int) (player.minAttackDamage + (player.minAttackDamage * 0.1f));
+					player.maxAttackDamage = (int) (player.maxAttackDamage + (player.maxAttackDamage * 0.1f));
+				}else {
+					player.exp += 25f;	
+				}
+				
 				if(player.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
 					GameScreen.hud.updateStats(player);
 					Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);	

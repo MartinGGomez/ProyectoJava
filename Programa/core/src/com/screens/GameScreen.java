@@ -100,7 +100,7 @@ public class GameScreen implements Screen, InputProcessor {
 		// Hud
 		hud = new Hud(this.game, this.player);
 		player.defineStageElements();
-		player2.defineStageElements();
+//		player2.defineStageElements();
 
 		InputMultiplexer processors = new InputMultiplexer();
 		processors.addProcessor(this);
@@ -221,7 +221,11 @@ public class GameScreen implements Screen, InputProcessor {
 			for (Enemy enemy : enemies) {
 				if (enemy.getEnemyIndex() == contactListener.enemiesCollidingWithPlayer.get(i).index && !found) {
 					enemy.preventMove = true;
-					enemy.collidingWith = this.player;
+					if(contactListener.enemiesCollidingWithPlayer.get(i).playerIndex == 1) {
+						enemy.collidingWith = this.player;
+					} else {
+						enemy.collidingWith = this.player2;
+					}
 					found = true;
 				}
 			}

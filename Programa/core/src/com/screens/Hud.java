@@ -45,14 +45,14 @@ public class Hud implements Disposable {
 	public static final float HUD_HALF_HEIGHT = Gdx.graphics.getHeight() - 346;
 	public static final float HUD_HALF_WIDTH = 273.5f;
 	public static Skin skin;
-	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, nameAttack;
+	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, nameAttack, exp;
 	public Label healthPotions, manaPotions, money, respawnLabel;
 	public Player player;
 	private static Table table;
 	private static ScrollPane scrollPane;
 	Array<String> items = new Array<String>();
 	private BitmapFont font, whiteFont, littleFont, miniFont;
-	private ProgressBar healthBar, manaBar, energyBar;
+	private ProgressBar healthBar, manaBar, energyBar, expBar;
 
 	private Texture attack, attack1, attack2, attack3, attack4, attack5, attack6, attack7, attack8;
 	public ImageButton btnAttack1, btnAttack2, btnAttack3, btnAttack4, btnAttack5, btnAttack6, btnAttack7, btnAttack8,
@@ -125,6 +125,8 @@ public class Hud implements Disposable {
 		this.healthBar.setValue(healthValue);
 		this.manaBar.setValue(manaValue);
 		this.energyBar.setValue(energyValue);
+		this.exp.setText(String.format("EXP: %d / %d", (int) this.player.exp, 100));
+		this.expBar.setValue(this.player.exp);
 		this.armorDef.setText(String.format("%s / %s", this.player.minArmorDef, this.player.minArmorDef));
 		this.helmetDef.setText(String.format("%s / %s", this.player.minHelmetDef, this.player.maxHelmetDef));
 		this.shieldDef.setText(String.format("%s / %s", this.player.minShieldDef, this.player.maxShieldDef));
@@ -197,32 +199,7 @@ public class Hud implements Disposable {
 		// Botones para los hechizos
 
 		createAttacksButtons();
-
-		// // PROVISORIO
-		// TextButton cleanConsole = new TextButton("Clean Console", skin);
-		// cleanConsole.setPosition(Gdx.graphics.getWidth() - cleanConsole.getWidth() -
-		// 30, 260);
-		// cleanConsole.addListener(new ClickListener() {
-		// @Override
-		// public void clicked(InputEvent event, float x, float y) {
-		// items.clear();
-		// table.clear();
-		// }
-		// });
-		// TextButton testProgress = new TextButton("Progress Bar", skin);
-		// testProgress.setPosition(Gdx.graphics.getWidth() - testProgress.getWidth() -
-		// 30, 310);
-		// testProgress.addListener(new ClickListener() {
-		// @Override
-		// public void clicked(InputEvent event, float x, float y) {
-		// testProgressBar();
-		// }
-		// });
-		// //
-		//
-
-		//
-
+		
 		// Console table
 		table = new Table(skin);
 		table.row().expand();
@@ -245,8 +222,6 @@ public class Hud implements Disposable {
 		// Final - Agregar actores
 		Gdx.input.setInputProcessor(stage);
 		stage.addActor(image);
-		// stage.addActor(cleanConsole);
-		// stage.addActor(testProgress);
 		stage.addActor(scrollPane);
 		stage.addActor(playerName);
 		stage.addActor(healthBar);
@@ -274,6 +249,8 @@ public class Hud implements Disposable {
 		stage.addActor(healthPotions);
 		stage.addActor(money);
 		stage.addActor(respawnLabel);
+		stage.addActor(expBar);
+		stage.addActor(exp);
 	}
 
 	private void createAttacksButtons() {
@@ -515,6 +492,44 @@ public class Hud implements Disposable {
 		energy.setSize(90, 10);
 		energy.setAlignment(Align.center);
 
+		// EXP BAR
+		progressBarStyle = new ProgressBarStyle();
+		
+		pixmap = new Pixmap(0, 14, Format.RGBA8888);
+		pixmap.setColor(Color.BLACK);
+		pixmap.fill();
+		drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+		pixmap.dispose();
+		
+		progressBarStyle.background = drawable;
+
+		pixmap = new Pixmap(0, 14, Format.RGBA8888);
+		pixmap.setColor(0, 1, 0, 0.6f);
+		pixmap.fill();
+		drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+		pixmap.dispose();
+
+		progressBarStyle.knob = drawable;
+
+		pixmap = new Pixmap(137, 14, Format.RGBA8888);
+		pixmap.setColor(0, 1, 0, 0.6f);
+		pixmap.fill();
+		drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+		pixmap.dispose();
+
+		progressBarStyle.knobBefore = drawable;
+
+		expBar = new ProgressBar(0, 100, 1, false, progressBarStyle);
+		expBar.setWidth(137);
+		expBar.setHeight(13);
+		expBar.setAnimateDuration(1f);
+		expBar.setPosition(Gdx.graphics.getWidth() - 189, Gdx.graphics.getHeight() - 97f - expBar.getHeight());
+		
+		exp = new Label("EXP:", skin, "mini-font", Color.WHITE);
+		exp.setPosition(Gdx.graphics.getWidth() - 170, Gdx.graphics.getHeight() - 96 - expBar.getHeight());
+		exp.setSize(90, 10);
+		exp.setAlignment(Align.center);
+		
 	}
 
 	public void testProgressBar() {

@@ -51,7 +51,7 @@ public class MyContactListener implements ContactListener {
 				}
 			}
 			if (!existe) {
-				CollisionMovement c = new CollisionMovement(userDataB.index);
+				CollisionMovement c = new CollisionMovement(userDataB.index, userDataA.index);
 				enemiesCollidingWithPlayer.add(c);
 			}
 
@@ -72,7 +72,7 @@ public class MyContactListener implements ContactListener {
 				}
 			}
 			if (!existe) {
-				CollisionMovement c = new CollisionMovement(userDataA.index);
+				CollisionMovement c = new CollisionMovement(userDataA.index, userDataB.index);
 				enemiesCollidingWithPlayer.add(c);
 			}
 
@@ -108,7 +108,7 @@ public class MyContactListener implements ContactListener {
 					}
 				}
 				if (!existe) {
-					CollisionMovement c = new CollisionMovement(userDataA.index);
+					CollisionMovement c = new CollisionMovement(userDataA.index, userDataB.index);
 					c.enemyCollidingTo = restitutionToDirection(fixtureA.getRestitution());
 //					System.out.println("Colliding to " + c.enemyCollidingTo);
 					enemiesColliding.add(c);
@@ -123,7 +123,7 @@ public class MyContactListener implements ContactListener {
 					}
 				}
 				if (!existe) {
-					CollisionMovement c = new CollisionMovement(userDataB.index);
+					CollisionMovement c = new CollisionMovement(userDataB.index, userDataA.index);
 					c.enemyCollidingTo = restitutionToDirection(fixtureB.getRestitution());
 //					System.out.println("Colliding to " + c.enemyCollidingTo);
 					enemiesColliding.add(c);

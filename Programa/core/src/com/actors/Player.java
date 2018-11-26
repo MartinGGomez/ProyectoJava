@@ -95,7 +95,7 @@ public class Player extends Character {
 		if (nroJugador == 1) {
 			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
 		} else {
-			bdef.position.set(10, 5);
+			bdef.position.set(2, 3);
 		}
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
@@ -108,7 +108,7 @@ public class Player extends Character {
 		fdef.filter.maskBits = Constants.BIT_COLLISION | Constants.BIT_PLAYER;
 		fdef.shape = shape;
 
-		UserData userData = new UserData("Player", 1, false);
+		UserData userData = new UserData("Player", this.nroJugador, false);
 
 		super.body.createFixture(fdef).setUserData(userData);
 
