@@ -112,8 +112,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public void update(float delta) {
 
 		world.step(1 / 60f, 6, 2);
-		
-		
+
 		player.update(delta);
 		player2.update(delta);
 
@@ -141,8 +140,6 @@ public class GameScreen implements Screen, InputProcessor {
 
 		renderer.setView(gamecam);
 	}
-
-	
 
 	@Override
 	public void render(float delta) {
@@ -183,17 +180,17 @@ public class GameScreen implements Screen, InputProcessor {
 
 		player.draw(game.batch);
 		player2.draw(game.batch);
-		
+
 		if (player.isBeingAttacked) {
-			if(player.attack.started) {
+			if (player.attack.started) {
 				player.attack.update(delta);
-				player.attack.draw(game.batch);	
+				player.attack.draw(game.batch);
 			}
 		}
 		if (player2.isBeingAttacked) {
-			if(player2.attack.started) {
+			if (player2.attack.started) {
 				player2.attack.update(delta);
-				player2.attack.draw(game.batch);	
+				player2.attack.draw(game.batch);
 			}
 		}
 
@@ -204,7 +201,7 @@ public class GameScreen implements Screen, InputProcessor {
 		game.batch.end();
 
 	}
-	
+
 	private void resolveCollisions() {
 
 		boolean changePathFound = false;
@@ -242,22 +239,41 @@ public class GameScreen implements Screen, InputProcessor {
 				enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
 			}
 		}
-		
-		if(contactListener.isCollidingToPlayer()) {
-			// Colisiona para arriba - ARREGLAR
-			if (((player.body.getPosition().y + player2.getHeight()) > player.body.getPosition().y)
-					&& ((((player2.body.getPosition().x - player.body.getPosition().x) < 0.15
-							&& player.body.getPosition().x - player.body.getPosition().x > -0.15))
-					|| ((player.body.getPosition().x - player.body.getPosition().x) > 0.15
-							&& player.body.getPosition().x - player.body.getPosition().x < -0.15))) {
-				resetMovement();
+
+		if (contactListener.isCollidingToPlayer()) {
+			resetMovement();
+			
+			if (((player.body.getPosition().y + player.getHeight()) > player2.body.getPosition().y
+					+ player2.getHeight())
+					&& (player.body.getPosition().x < player2.body.getPosition().x + player2.getWidth()
+							&& player.body.getPosition().x + player.getWidth() > player2.body.getPosition().x)) {
+				// Player 1 arriba player 2 abajo
 				player.canMoveBot = false;
 				player2.canMoveTop = false;
-			} else {
-				resetMovement();
-			}
+			} else if (((player2.body.getPosition().y + player2.getHeight()) > player.body.getPosition().y
+					+ player.getHeight())
+					&& (player2.body.getPosition().x < player.body.getPosition().x + player.getWidth()
+							&& player2.body.getPosition().x + player2.getWidth() > player.body.getPosition().x)) { 
+				// Player 2 arriba player 1 abajo
+				player.canMoveTop = false;
+				player2.canMoveBot = false;
+			} else if (((player2.body.getPosition().x + player2.getWidth()) > player.body.getPosition().x
+					+ player.getWidth())
+					&& (player2.body.getPosition().y < player.body.getPosition().y + player.getHeight()
+							&& player2.body.getPosition().y + player2.getHeight() > player.body.getPosition().y)) {
+				// Player 1 izquierda player 2 derecha
+				player.canMoveRight = false;
+				player2.canMoveLeft = false;
+			} else if (((player.body.getPosition().x + player.getWidth()) > player2.body.getPosition().x
+					+ player2.getWidth())
+					&& (player.body.getPosition().y < player2.body.getPosition().y + player2.getHeight()
+							&& player.body.getPosition().y + player.getHeight() > player2.body.getPosition().y)) {
+				// Player 2 izquierda player 1 derecha
+				player.canMoveLeft = false;
+				player2.canMoveRight = false;
+			} 
 		} else {
-			
+			resetMovement();
 		}
 
 	}
@@ -297,7 +313,7 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 		}
 	}
-	
+
 	private void resetMovement() {
 		player.canMoveBot = true;
 		player.canMoveTop = true;
@@ -355,17 +371,18 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.NUM_1) {
-			if (player.health < player.maxHealth) {
-				player.healthPotions--;
-				player.health += 10;
-				hud.updateStats(player);
+			if (player.health < player.maxHealth && player.healthPotions > 0) {
+					player.healthPotions--;
+					player.health += 10;
+					hud.updateStats(player);	
+				
 			}
 		}
 		if (keycode == Keys.NUM_2) {
-			if (player.mana < player.maxMana) {
-				player.manaPotions--;
-				player.mana += 20;
-				hud.updateStats(player);
+			if (player.mana < player.maxMana && player.manaPotions > 0) {
+					player.manaPotions--;
+					player.mana += 20;
+					hud.updateStats(player);	
 			}
 		}
 		return false;
@@ -381,22 +398,22 @@ public class GameScreen implements Screen, InputProcessor {
 		if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
 				&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
 			Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
-			
+
 			if (player2.selectedAttack != null) {
 				player2.attack(player, player2.selectedAttack);
 				player2.selectedAttack = null;
 			}
 		}
-		
+
 		if ((posX > (player2.getX()) && posX < player2.getX() + player2.getWidth())
 				&& (posY > player2.getY() && posY < player2.getY() + player2.getHeight())) {
 			Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
-			
+
 			if (player.selectedAttack != null) {
 				player.attack(player2, player.selectedAttack);
 				player.selectedAttack = null;
 			}
-			
+
 		}
 
 		for (Enemy enemy : enemies) {
@@ -409,7 +426,7 @@ public class GameScreen implements Screen, InputProcessor {
 						player.attack(enemy, player.selectedAttack);
 						player.selectedAttack = null;
 					}
-					
+
 					if (player2.selectedAttack != null) {
 						player2.attack(enemy, player2.selectedAttack);
 						player2.selectedAttack = null;
@@ -432,10 +449,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 			}
 		}
-		
+
 		player.selectedAttack = null;
 		player2.selectedAttack = null;
-		
+
 		return false;
 	}
 

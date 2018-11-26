@@ -49,17 +49,17 @@ public abstract class Attack extends Sprite {
 			}
 			
 			if (this.attacker.mana != 0) {
-				if(this.characterToAttack.mana - this.mana < 0) {
-					this.characterToAttack.mana = 0;
+				if(this.attacker.mana - this.mana < 0) {
+					this.attacker.mana = 0;
 				} else {
-					this.characterToAttack.mana -= this.mana;
+					this.attacker.mana -= this.mana;
 				}
 			}
 			if (this.attacker.energy != 0) {
-				if(this.characterToAttack.energy - this.energy < 0) {
-					this.characterToAttack.energy = 0;
+				if(this.attacker.energy - this.energy < 0) {
+					this.attacker.energy = 0;
 				} else {
-					this.characterToAttack.energy -= this.energy;	
+					this.attacker.energy -= this.energy;	
 				}
 			}
 		}

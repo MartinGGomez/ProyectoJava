@@ -63,18 +63,17 @@ public class Player extends Character {
 	public boolean canMoveBot = true;
 	public boolean canMoveRight = true;
 	public boolean canMoveLeft = true;
-	
-	
+
 	public Player(MainGame game, World world, String name, int nroJugador) {
 		super(game, world, name);
 		this.nroJugador = nroJugador;
-		if(nroJugador == 1) {
-			super.texture = new Texture("player.png");	
+		if (nroJugador == 1) {
+			super.texture = new Texture("player.png");
 		} else {
 			super.texture = new Texture("player.png");
-//			super.texture = new Texture("player2.png");
+			// super.texture = new Texture("player2.png");
 		}
-		
+
 		super.region = new TextureRegion(super.texture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y =
 																		// 908.
 		super.attackDamage = 50;
@@ -132,8 +131,9 @@ public class Player extends Character {
 			time += delta;
 			if (time > 1f) {
 				this.energy += 4;
-				if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
-				GameScreen.hud.updateStats(this);
+				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
+													// gamescreen.nroCliente
+					GameScreen.hud.updateStats(this);
 				}
 				time = 0f;
 			}
@@ -146,45 +146,61 @@ public class Player extends Character {
 		if (this.alive) {
 			if (this.nroJugador == 1) {
 				body.setLinearVelocity(0, 0);
-				if (Gdx.input.isKeyPressed(Keys.W) && canMoveTop) {
-					body.setLinearVelocity(new Vector2(0, SPEED));
+				if (Gdx.input.isKeyPressed(Keys.W)) {
+					if (canMoveTop) {
+						body.setLinearVelocity(new Vector2(0, SPEED));
+					}
 					states = PlayerStates.BACK;
 					direction = PlayerStates.BACK;
 				}
-				if (Gdx.input.isKeyPressed(Keys.S) && canMoveBot) {
-					body.setLinearVelocity(new Vector2(0, -SPEED));
+				if (Gdx.input.isKeyPressed(Keys.S)) {
+					if (canMoveBot) {
+						body.setLinearVelocity(new Vector2(0, -SPEED));
+					}
 					states = PlayerStates.FRONT;
 					direction = PlayerStates.FRONT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.A) && canMoveLeft) {
-					body.setLinearVelocity(new Vector2(-SPEED, 0));
+				if (Gdx.input.isKeyPressed(Keys.A)) {
+					if (canMoveLeft) {
+						body.setLinearVelocity(new Vector2(-SPEED, 0));
+					}
 					states = PlayerStates.LEFT;
 					direction = PlayerStates.LEFT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.D) && canMoveRight) {
-					body.setLinearVelocity(new Vector2(SPEED, 0));
+				if (Gdx.input.isKeyPressed(Keys.D)) {
+					if (canMoveRight) {
+						body.setLinearVelocity(new Vector2(SPEED, 0));
+					}
 					states = PlayerStates.RIGHT;
 					direction = PlayerStates.RIGHT;
 				}
 			} else {
 				body.setLinearVelocity(0, 0);
-				if (Gdx.input.isKeyPressed(Keys.UP) && canMoveTop) {
-					body.setLinearVelocity(new Vector2(0, SPEED));
+				if (Gdx.input.isKeyPressed(Keys.UP)) {
+					if (canMoveTop) {
+						body.setLinearVelocity(new Vector2(0, SPEED));
+					}
 					states = PlayerStates.BACK;
 					direction = PlayerStates.BACK;
 				}
-				if (Gdx.input.isKeyPressed(Keys.DOWN) && canMoveBot) {
-					body.setLinearVelocity(new Vector2(0, -SPEED));
+				if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+					if (canMoveBot) {
+						body.setLinearVelocity(new Vector2(0, -SPEED));
+					}
 					states = PlayerStates.FRONT;
 					direction = PlayerStates.FRONT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.LEFT) && canMoveLeft) {
-					body.setLinearVelocity(new Vector2(-SPEED, 0));
+				if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+					if (canMoveLeft) {
+						body.setLinearVelocity(new Vector2(-SPEED, 0));
+					}
 					states = PlayerStates.LEFT;
 					direction = PlayerStates.LEFT;
 				}
-				if (Gdx.input.isKeyPressed(Keys.RIGHT) && canMoveRight) {
-					body.setLinearVelocity(new Vector2(SPEED, 0));
+				if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+					if (canMoveRight) {
+						body.setLinearVelocity(new Vector2(SPEED, 0));
+					}
 					states = PlayerStates.RIGHT;
 					direction = PlayerStates.RIGHT;
 				}
@@ -197,10 +213,11 @@ public class Player extends Character {
 				this.alive = true;
 				this.resetStats();
 			} else {
-				if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
+													// gamescreen.nroCliente
 					GameScreen.hud.updateStats(this);
 				}
-				
+
 			}
 		}
 		super.setRegion(getFrame(delta));
@@ -263,17 +280,23 @@ public class Player extends Character {
 	}
 
 	public void attack(Character enemy, Attack attack) {
-		if (enemy.alive) {
-			enemy.attack = attack;
-			enemy.isBeingAttacked = true;
-			enemy.attackedBy = this;
-			this.doingAttack = true;
-			Hud.printMessage("Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
-					MessageType.COMBAT);
-			if(this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
-				GameScreen.hud.updateStats(this);	
+		if (this.energy > attack.energy) {
+			if (enemy.alive) {
+				enemy.attack = attack;
+				enemy.isBeingAttacked = true;
+				enemy.attackedBy = this;
+				this.doingAttack = true;
+				Hud.printMessage(
+						"Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
+						MessageType.COMBAT);
+				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
+													// gamescreen.nroCliente
+					GameScreen.hud.updateStats(this);
+				}
+
 			}
-			
+		} else {
+			Hud.printMessage("No tienes suficiente energia.", MessageType.COMBAT);
 		}
 
 	}
