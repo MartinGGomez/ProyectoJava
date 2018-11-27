@@ -64,13 +64,20 @@ public abstract class Attack extends Sprite {
 			}
 		}
 
+		
 		setBounds(characterToAttack.body.getPosition().x, characterToAttack.body.getPosition().y, 32 / PPM, 48 / PPM);
+		
 	}
 
 	public void update(float delta) {
+		
+		float width2 =0.20f;
+		float height2 = 0.24f;
+		
+		
 		currentDuration += delta;
 		if (currentDuration < duration) {
-			setPosition(characterToAttack.body.getPosition().x, characterToAttack.body.getPosition().y);
+			setPosition(characterToAttack.body.getPosition().x - width2  , characterToAttack.body.getPosition().y - height2);
 			setRegion(getFrame(delta));
 		} else {
 			characterToAttack.isBeingAttacked = false;

@@ -2,7 +2,14 @@ package com.screens;
 
 import com.actors.Player;
 import com.attacks.Attack;
+import com.attacks.BlueCircleAttack;
+import com.attacks.BlueStarAttack;
+import com.attacks.DogFireAttack;
 import com.attacks.FireAttack;
+import com.attacks.HealthAttack;
+import com.attacks.PinkAttack;
+import com.attacks.ShotBlueAttack;
+import com.attacks.VulcanAttack;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
@@ -281,7 +288,7 @@ public class Hud implements Disposable {
 		btnAttack2.setSize(40, 40);
 		btnAttack2.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				onAttackClick(new FireAttack());
+				onAttackClick(new PinkAttack());
 			}
 		});
 
@@ -292,7 +299,7 @@ public class Hud implements Disposable {
 		btnAttack3.setSize(40, 40);
 		btnAttack3.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				onAttackClick(new FireAttack());
+				onAttackClick(new ShotBlueAttack());
 			}
 		});
 
@@ -303,7 +310,7 @@ public class Hud implements Disposable {
 		btnAttack4.setSize(40, 40);
 		btnAttack4.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				onAttackClick(new FireAttack());
+				onAttackClick(new VulcanAttack());
 			}
 		});
 
@@ -314,7 +321,7 @@ public class Hud implements Disposable {
 		btnAttack5.setSize(40, 40);
 		btnAttack5.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				onAttackClick(new FireAttack());
+				onAttackClick(new DogFireAttack());
 			}
 		});
 
@@ -325,7 +332,7 @@ public class Hud implements Disposable {
 		btnAttack6.setSize(40, 40);
 		btnAttack6.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				onAttackClick(new FireAttack());
+				onAttackClick(new HealthAttack());
 			}
 		});
 
@@ -336,7 +343,7 @@ public class Hud implements Disposable {
 		btnAttack7.setSize(40, 40);
 		btnAttack7.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				onAttackClick(new FireAttack());
+				onAttackClick(new BlueCircleAttack());
 			}
 		});
 
@@ -347,7 +354,7 @@ public class Hud implements Disposable {
 		btnAttack8.setSize(40, 40);
 		btnAttack8.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				onAttackClick(new FireAttack());
+				onAttackClick(new BlueStarAttack());
 			}
 		});
 

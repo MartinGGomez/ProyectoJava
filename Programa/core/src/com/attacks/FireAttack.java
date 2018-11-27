@@ -11,8 +11,8 @@ public class FireAttack extends Attack{
 
 	
 	public FireAttack() {
-		super.texture = new Texture("fireAttack.png");
-		this.region = new TextureRegion(texture, 34, 7, 123, 115); 
+		super.texture = new Texture("fire.png");
+		this.region = new TextureRegion(texture,0, 768, 192, 192); 
 		createAnimations();
 		setScale(1.5f);
 		super.name = "Ataque de fuego";
@@ -34,13 +34,27 @@ public class FireAttack extends Attack{
 	
 
 	public void createAnimations() {
-		 // Animation DE FIRE ATTACK
+		
 		 stateTimer = 0;
 		 Array<TextureRegion> frames = new Array<TextureRegion>();
-		 frames.add(new TextureRegion(this.texture, 34, 7, 123, 115));
-		 frames.add(new TextureRegion(this.texture, 207, 22, 123, 115));
-		 frames.add(new TextureRegion(this.texture, 394, 10, 123, 135));
-		 frames.add(new TextureRegion(this.texture, 595, 1, 114, 135));
+		 
+		 frames.add(new TextureRegion(this.texture, 0, 0, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 192,0, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 384, 0, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 576, 0, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 768, 0, 192, 192));
+		 
+		 frames.add(new TextureRegion(this.texture, 0, 192, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 192,192, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 384, 192, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 576, 192, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 768, 192, 192, 192));
+		 
+		 frames.add(new TextureRegion(this.texture, 0, 384, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 192,384, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 384, 384, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 576, 384, 192, 192));
+		 frames.add(new TextureRegion(this.texture, 768, 384, 192, 192));
 		 animation = new Animation<TextureRegion>(0.1f, frames);
 		 frames.clear();
 	}
