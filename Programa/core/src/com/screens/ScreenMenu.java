@@ -27,7 +27,7 @@ public class ScreenMenu implements Screen, InputProcessor{
 	 private int cont =0;
 	 
 	 private Sound click;
-		
+		private Sound inicioP;
 	
 	public ScreenMenu(MainGame game) {
 		click = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/click.ogg", FileType.Internal));
@@ -73,6 +73,9 @@ public class ScreenMenu implements Screen, InputProcessor{
 			
 			game.setScreen(game.gameScreen);
 			game.screenCharge.start.stop();
+			
+			inicioP = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/inicio personaje.ogg", FileType.Internal));
+			inicioP.play();
 		}
 		
 		return false;

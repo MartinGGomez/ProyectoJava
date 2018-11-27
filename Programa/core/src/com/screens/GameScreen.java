@@ -73,7 +73,7 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private Music inicio;
 	private Sound open;
-	private Sound inicioP;
+
 
 	public GameScreen(MainGame game) {
 		this.game = game;
@@ -111,7 +111,7 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		
 		inicio = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/inicio principal.mp3", FileType.Internal));
-		inicioP = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/inicio personaje.ogg", FileType.Internal));
+		
 		open = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/openChest.ogg", FileType.Internal));
 
 		InputMultiplexer processors = new InputMultiplexer();
@@ -119,7 +119,7 @@ public class GameScreen implements Screen, InputProcessor {
 		processors.addProcessor(this.game.stage);
 		Gdx.input.setInputProcessor(processors);
 		
-		inicioP.play();
+		
 
 	}
 

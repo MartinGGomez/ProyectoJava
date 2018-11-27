@@ -26,8 +26,8 @@ public class MainGame extends Game {
 		gameScreen = new GameScreen(this);
 		screenCharge = new ScreenCharge(this);
 		
-	//setScreen(screenCharge);
-		setScreen(gameScreen);
+	setScreen(screenCharge);
+	//	setScreen(gameScreen);
 	}
 
 	
