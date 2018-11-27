@@ -10,9 +10,8 @@ public class VulcanAttack extends Attack {
 
 	
 	public VulcanAttack() {
-	
-		
-		 super.texture = new Texture("vulcan.png");
+
+		 	super.texture = new Texture("vulcan.png");
 			this.region = new TextureRegion(texture, 0, 192, 192, 192); 
 			createAnimations();
 			setScale(1.5f);
@@ -36,7 +35,7 @@ public class VulcanAttack extends Attack {
 		
 
 		public void createAnimations() {
-			 // Animation DE FIRE ATTACK
+			 
 			 stateTimer = 0;
 			 Array<TextureRegion> frames = new Array<TextureRegion>();
 			 

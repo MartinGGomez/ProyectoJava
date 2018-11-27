@@ -7,9 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
 public class FireAttack extends Attack{
-	
 
-	
 	public FireAttack() {
 		super.texture = new Texture("fire.png");
 		this.region = new TextureRegion(texture,0, 768, 192, 192); 

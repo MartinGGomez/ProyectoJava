@@ -9,9 +9,6 @@ import com.badlogic.gdx.utils.Array;
 public class BlueCircleAttack extends Attack{
 	
 	public BlueCircleAttack() {
-	
-		
-		// TODO Auto-generated constructor stub
 		 
 		 super.texture = new Texture("blueCircle.png");
 			this.region = new TextureRegion(texture,  0, 384, 192, 192); 
@@ -37,7 +34,7 @@ public class BlueCircleAttack extends Attack{
 		
 
 		public void createAnimations() {
-			 // Animation DE FIRE ATTACK
+			
 			 stateTimer = 0;
 			 Array<TextureRegion> frames = new Array<TextureRegion>();
 			 

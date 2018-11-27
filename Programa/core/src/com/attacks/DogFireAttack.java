@@ -9,11 +9,8 @@ import com.badlogic.gdx.utils.Array;
 public class DogFireAttack extends Attack{
 	
 	public DogFireAttack() {
-	
-		
-		// TODO Auto-generated constructor stub
-		 
-		 super.texture = new Texture("dogFire.png");
+
+		 	super.texture = new Texture("dogFire.png");
 			this.region = new TextureRegion(texture,  0, 192, 192, 192); 
 			createAnimations();
 			setScale(1.5f);
@@ -37,7 +34,7 @@ public class DogFireAttack extends Attack{
 		
 
 		public void createAnimations() {
-			 // Animation DE FIRE ATTACK
+			
 			 stateTimer = 0;
 			 Array<TextureRegion> frames = new Array<TextureRegion>();
 			 

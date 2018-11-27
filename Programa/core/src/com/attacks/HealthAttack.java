@@ -9,9 +9,6 @@ import com.badlogic.gdx.utils.Array;
 public class HealthAttack extends Attack{
 	
 	public HealthAttack() {
-	
-		// TODO Auto-generated constructor stub
-		// TODO Auto-generated constructor stub
 		 
 		 super.texture = new Texture("health.png");
 			this.region = new TextureRegion(texture,  0, 384, 192, 192); 
@@ -37,7 +34,7 @@ public class HealthAttack extends Attack{
 		
 
 		public void createAnimations() {
-			 // Animation DE FIRE ATTACK
+			
 			 stateTimer = 0;
 			 Array<TextureRegion> frames = new Array<TextureRegion>();
 			 
@@ -83,8 +80,6 @@ public class HealthAttack extends Attack{
 			 frames.add(new TextureRegion(this.texture, 576, 1152, 192, 192));
 			 frames.add(new TextureRegion(this.texture, 768, 1152, 192, 192));
 			 
-			
-
 			 animation = new Animation<TextureRegion>(0.1f, frames);
 			 frames.clear();
 		}

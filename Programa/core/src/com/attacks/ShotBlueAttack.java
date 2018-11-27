@@ -10,10 +10,7 @@ public class ShotBlueAttack extends Attack {
 	
 	public ShotBlueAttack() {
 	
-		
-		// TODO Auto-generated constructor stub
-		 
-				 super.texture = new Texture("shotBlue.png");
+					super.texture = new Texture("shotBlue.png");
 					this.region = new TextureRegion(texture,  0, 384, 192, 192); 
 					createAnimations();
 					setScale(1.5f);
@@ -37,7 +34,7 @@ public class ShotBlueAttack extends Attack {
 				
 
 				public void createAnimations() {
-					 // Animation DE FIRE ATTACK
+					 
 					 stateTimer = 0;
 					 Array<TextureRegion> frames = new Array<TextureRegion>();
 					 

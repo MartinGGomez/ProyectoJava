@@ -10,8 +10,7 @@ public class BlueStarAttack extends Attack {
 
 	 public BlueStarAttack() {
 	
-		 
-		 super.texture = new Texture("blueStar.png");
+		    super.texture = new Texture("blueStar.png");
 			this.region = new TextureRegion(texture, 0, 960, 192, 192); 
 			createAnimations();
 			setScale(1.5f);
@@ -35,7 +34,7 @@ public class BlueStarAttack extends Attack {
 		
 
 		public void createAnimations() {
-			 // Animation DE FIRE ATTACK
+			 
 			 stateTimer = 0;
 			 Array<TextureRegion> frames = new Array<TextureRegion>();
 			 frames.add(new TextureRegion(this.texture, 0, 576, 192, 192));
