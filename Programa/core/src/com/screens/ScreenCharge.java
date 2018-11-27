@@ -23,13 +23,12 @@ public class ScreenCharge implements Screen {
 	
 	private Color c;
 	
-	Music start;
+	public Music start;
 	
-	public ScreenCharge(MainGame game ) {
+	public ScreenCharge(MainGame game  ) {
 		this.game = game;
 		menu = new ScreenMenu(game);
-	
-
+		start = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/101.mp3", FileType.Internal));
 		logo = new Texture("logoGame.png");
 		sLogo = new Sprite(logo);
 	}
@@ -49,10 +48,13 @@ public class ScreenCharge implements Screen {
 		
 		game.batch.enableBlending();
 		
-		//start = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/101.mp3", FileType.Internal));
 		
-		//start.play();
-		//start.setLooping(true);
+		
+		start.play();
+		
+		if (alpha>3){
+			//start.stop();	
+		}
 	}
 
 	private void update(float delta) {
@@ -71,8 +73,7 @@ public class ScreenCharge implements Screen {
 			if (alpha>3){
 
 				game.setScreen(menu);
-				//Parar la musica 
-	
+				
 			}
 			
 		}
@@ -112,8 +113,7 @@ public class ScreenCharge implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		start.dispose();		
 	}
 
 }

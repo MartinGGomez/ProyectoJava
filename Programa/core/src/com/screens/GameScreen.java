@@ -70,7 +70,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	public GameScreen(MainGame game) {
 		this.game = game;
-
+		
 		gamecam = new OrthographicCamera();
 
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);

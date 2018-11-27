@@ -20,33 +20,30 @@ public class ScreenMenu implements Screen, InputProcessor{
 
 	 private MainGame game;
 
-	
 	 private Texture menu;
 	
 	 private ProgressBar barMenu;
 	 
 	 private int cont =0;
 	 
+	 private Sound click;
+		
 	
 	public ScreenMenu(MainGame game) {
-		
+		click = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/click.ogg", FileType.Internal));
 		Gdx.input.setInputProcessor(this);
 		this.game = game;
 		menu = new Texture("menuPrincipal.png");
-		
 
 	}
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 	
 		update(delta);		
 		
-		
-		
-		//System.out.println(cont);
 		
 	}
 
@@ -71,12 +68,11 @@ public class ScreenMenu implements Screen, InputProcessor{
 		
 		if (((screenX > 724) && (screenY > 530 )) && ((screenX < 765) && (screenY < 585))){
 			
-			Sound click;
 			
-			click = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/click.ogg", FileType.Internal));
 			click.play();
 			
 			game.setScreen(game.gameScreen);
+			game.screenCharge.start.stop();
 		}
 		
 		return false;
