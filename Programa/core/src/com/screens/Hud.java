@@ -10,7 +10,9 @@ import com.attacks.HealthAttack;
 import com.attacks.PinkAttack;
 import com.attacks.ShotBlueAttack;
 import com.attacks.VulcanAttack;
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -65,10 +67,14 @@ public class Hud implements Disposable {
 	private Texture attack, attack1, attack2, attack3, attack4, attack5, attack6, attack7, attack8;
 	public ImageButton btnAttack1, btnAttack2, btnAttack3, btnAttack4, btnAttack5, btnAttack6, btnAttack7, btnAttack8,
 			btnAttack9;
+	
+	private Sound click2;
 
 	public Hud(MainGame game, Player player) {
 		this.game = game;
 		this.player = player;
+		
+		click2 = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/click2.ogg", FileType.Internal));
 
 		viewport = new FitViewport(800, 600, new OrthographicCamera());
 		texture = new Texture("hud.png");
@@ -282,7 +288,7 @@ public class Hud implements Disposable {
 			public void clicked(InputEvent event, float x, float y) {
 
 				onAttackClick(new FireAttack());
-
+				click2.play();
 //				 Cursor customCursor = Gdx.graphics.newCursor(new
 //				 Pixmap(Gdx.files.internal("cursor.png")), 0,0);
 //				 Gdx.graphics.setCursor(customCursor);
@@ -299,6 +305,7 @@ public class Hud implements Disposable {
 		btnAttack2.setSize(40, 40);
 		btnAttack2.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new PinkAttack());
 			}
 		});
@@ -312,6 +319,7 @@ public class Hud implements Disposable {
 		btnAttack3.setSize(40, 40);
 		btnAttack3.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new ShotBlueAttack());
 			}
 		});
@@ -325,6 +333,7 @@ public class Hud implements Disposable {
 		btnAttack4.setSize(40, 40);
 		btnAttack4.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new VulcanAttack());
 			}
 		});
@@ -338,6 +347,7 @@ public class Hud implements Disposable {
 		btnAttack5.setSize(40, 40);
 		btnAttack5.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new DogFireAttack());
 			}
 		});
@@ -351,6 +361,7 @@ public class Hud implements Disposable {
 		btnAttack6.setSize(40, 40);
 		btnAttack6.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new HealthAttack());
 			}
 		});
@@ -364,6 +375,7 @@ public class Hud implements Disposable {
 		btnAttack7.setSize(40, 40);
 		btnAttack7.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new BlueCircleAttack());
 			}
 		});
@@ -377,6 +389,7 @@ public class Hud implements Disposable {
 		btnAttack8.setSize(40, 40);
 		btnAttack8.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new BlueStarAttack());
 			}
 		});
@@ -390,6 +403,7 @@ public class Hud implements Disposable {
 		btnAttack9.setSize(40, 40);
 		btnAttack9.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				click2.play();
 				onAttackClick(new FireAttack());
 			}
 		});

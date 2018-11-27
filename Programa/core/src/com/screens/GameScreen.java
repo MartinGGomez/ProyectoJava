@@ -9,12 +9,15 @@ import com.actors.Player;
 import com.actors.states.PlayerStates;
 import com.attacks.BasicAttack;
 import com.attacks.FireAttack;
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -67,6 +70,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private float cameraInitialPositionX;
 	private float cameraInitialPositionY;
+	
+	private Music inicio;
+	private Sound open;
+	private Sound inicioP;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
@@ -101,11 +108,18 @@ public class GameScreen implements Screen, InputProcessor {
 		hud = new Hud(this.game, this.player);
 		player.defineStageElements();
 //		player2.defineStageElements();
+		
+		
+		inicio = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/inicio principal.mp3", FileType.Internal));
+		inicioP = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/inicio personaje.ogg", FileType.Internal));
+		open = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/openChest.ogg", FileType.Internal));
 
 		InputMultiplexer processors = new InputMultiplexer();
 		processors.addProcessor(this);
 		processors.addProcessor(this.game.stage);
 		Gdx.input.setInputProcessor(processors);
+		
+		inicioP.play();
 
 	}
 
@@ -139,6 +153,8 @@ public class GameScreen implements Screen, InputProcessor {
 		gamecam.update();
 
 		renderer.setView(gamecam);
+		
+		inicio.play();
 	}
 
 	@Override
@@ -439,6 +455,7 @@ public class GameScreen implements Screen, InputProcessor {
 				} else {
 					if (button == Buttons.LEFT) {
 						Hud.printMessage("Cofre de Drop", MessageType.DROP);
+						
 					}
 					if (button == Buttons.RIGHT) {
 						if (enemy.open) {
@@ -446,6 +463,7 @@ public class GameScreen implements Screen, InputProcessor {
 						} else {
 							enemy.open = true;
 							enemy.openChest();
+							open.play();
 						}
 					}
 
