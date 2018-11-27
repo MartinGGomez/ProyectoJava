@@ -52,8 +52,9 @@ public class Hud implements Disposable {
 	public static final float HUD_HALF_HEIGHT = Gdx.graphics.getHeight() - 346;
 	public static final float HUD_HALF_WIDTH = 273.5f;
 	public static Skin skin;
-	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, nameAttack, exp;
+	public Label playerName, health, mana, energy, attackDamage, armorDef, helmetDef, shieldDef, powersDef, exp;
 	public Label healthPotions, manaPotions, money, respawnLabel;
+	public Label nameAttack, nameAttack1,nameAttack2,nameAttack3,nameAttack4,nameAttack5,nameAttack6,nameAttack7,nameAttack8;
 	public Player player;
 	private static Table table;
 	private static ScrollPane scrollPane;
@@ -252,6 +253,14 @@ public class Hud implements Disposable {
 		stage.addActor(btnAttack9);
 		stage.addActor(powersDef);
 		stage.addActor(nameAttack);
+		stage.addActor(nameAttack1);
+		stage.addActor(nameAttack2);
+		stage.addActor(nameAttack3);
+		stage.addActor(nameAttack4);
+		stage.addActor(nameAttack5);
+		stage.addActor(nameAttack6);
+		stage.addActor(nameAttack7);
+		stage.addActor(nameAttack8);
 		stage.addActor(manaPotions);
 		stage.addActor(healthPotions);
 		stage.addActor(money);
@@ -282,6 +291,8 @@ public class Hud implements Disposable {
 		});
 
 		attack1 = new Texture("pink.png");
+		nameAttack1 = createNamesAttack("PinkAttack", nameAttack1, 103, 140);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack1, 210, 588, 164, 176));
 		btnAttack2 = new ImageButton(drawable);
 		btnAttack2.setPosition((HUD_HALF_WIDTH * 2) + 110, (HUD_HALF_HEIGHT * 2) - 120);
@@ -293,6 +304,8 @@ public class Hud implements Disposable {
 		});
 
 		attack2 = new Texture("shotBlue.png");
+		nameAttack2 = createNamesAttack("ShotBlue", nameAttack2, 180, 140);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack2, 782, 220, 149, 157));
 		btnAttack3 = new ImageButton(drawable);
 		btnAttack3.setPosition((HUD_HALF_WIDTH * 2) + 185, (HUD_HALF_HEIGHT * 2) - 120);
@@ -304,6 +317,8 @@ public class Hud implements Disposable {
 		});
 
 		attack3 = new Texture("vulcan.png");
+		nameAttack3 = createNamesAttack("Vulcan", nameAttack3, 30, 223);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack3, 232, 53, 110, 113));
 		btnAttack4 = new ImageButton(drawable);
 		btnAttack4.setPosition((HUD_HALF_WIDTH * 2) + 35, (HUD_HALF_HEIGHT * 2) - 200);
@@ -315,6 +330,8 @@ public class Hud implements Disposable {
 		});
 
 		attack4 = new Texture("dogFire.png");
+		nameAttack4 = createNamesAttack("DogFire", nameAttack4, 103, 223);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack4, 771, 13, 150, 178));
 		btnAttack5 = new ImageButton(drawable);
 		btnAttack5.setPosition((HUD_HALF_WIDTH * 2) + 110, (HUD_HALF_HEIGHT * 2) - 200);
@@ -326,6 +343,8 @@ public class Hud implements Disposable {
 		});
 
 		attack5 = new Texture("health.png");
+		nameAttack5 = createNamesAttack("Helath", nameAttack5, 180, 223);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack5, 439, 57, 81, 83));
 		btnAttack6 = new ImageButton(drawable);
 		btnAttack6.setPosition((HUD_HALF_WIDTH * 2) + 185, (HUD_HALF_HEIGHT * 2) - 200);
@@ -337,6 +356,8 @@ public class Hud implements Disposable {
 		});
 
 		attack6 = new Texture("blueCircle.png");
+		nameAttack6 = createNamesAttack("BlueCircle", nameAttack6, 30, 300);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack6, 627, 797, 114, 140));
 		btnAttack7 = new ImageButton(drawable);
 		btnAttack7.setPosition((HUD_HALF_WIDTH * 2) + 35, (HUD_HALF_HEIGHT * 2) - 280);
@@ -348,6 +369,8 @@ public class Hud implements Disposable {
 		});
 
 		attack7 = new Texture("blueStar.png");
+		nameAttack7 = createNamesAttack("BlueStar", nameAttack7, 103, 300);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack7, 383, 577, 194, 190));
 		btnAttack8 = new ImageButton(drawable);
 		btnAttack8.setPosition((HUD_HALF_WIDTH * 2) + 110, (HUD_HALF_HEIGHT * 2) - 280);
@@ -359,6 +382,8 @@ public class Hud implements Disposable {
 		});
 
 		attack8 = new Texture("fireAttack.png");
+		nameAttack8 = createNamesAttack("SuperFire", nameAttack8, 180, 300);
+		
 		drawable = new TextureRegionDrawable(new TextureRegion(attack8, 595, 1, 114, 135));
 		btnAttack9 = new ImageButton(drawable);
 		btnAttack9.setPosition((HUD_HALF_WIDTH * 2) + 185, (HUD_HALF_HEIGHT * 2) - 280);
