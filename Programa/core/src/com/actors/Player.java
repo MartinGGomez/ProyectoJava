@@ -80,8 +80,7 @@ public class Player extends Character {
 		if (nroJugador == 1) {
 			super.texture = new Texture("player.png");
 		} else {
-			super.texture = new Texture("player.png");
-			// super.texture = new Texture("Player 2.png");
+			super.texture = new Texture("player2.png");
 		}
 
 		super.region = new TextureRegion(super.texture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y =
