@@ -1,5 +1,7 @@
 package com.attacks;
 
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -19,6 +21,7 @@ public class PinkAttack  extends Attack{
 		super.mana = 150;
 		super.energy = 30;
 		super.duration = 4f;
+		super.sound = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/pink.ogg", FileType.Internal));
 
 		
 	}

@@ -73,6 +73,7 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private Music inicio;
 	private Sound open;
+	private Sound potas;
 
 
 	public GameScreen(MainGame game) {
@@ -111,7 +112,7 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		
 		inicio = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/inicio principal.mp3", FileType.Internal));
-		
+		potas = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/potas.ogg", FileType.Internal));
 		open = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/openChest.ogg", FileType.Internal));
 
 		InputMultiplexer processors = new InputMultiplexer();
@@ -397,6 +398,7 @@ public class GameScreen implements Screen, InputProcessor {
 					hud.updateStats(player);	
 				
 			}
+			potas.play();
 		}
 		if (keycode == Keys.NUM_2) {
 			if (player.mana < player.maxMana && player.manaPotions > 0) {
@@ -404,6 +406,7 @@ public class GameScreen implements Screen, InputProcessor {
 					player.mana += 20;
 					hud.updateStats(player);	
 			}
+			potas.play();
 		}
 		return false;
 	}
@@ -432,6 +435,7 @@ public class GameScreen implements Screen, InputProcessor {
 			if (player.selectedAttack != null) {
 				player.attack(player2, player.selectedAttack);
 				player.selectedAttack = null;
+				
 			}
 
 		}

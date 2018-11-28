@@ -4,6 +4,7 @@ import static com.constants.Constants.PPM;
 
 import com.actors.Character;
 import com.actors.states.PlayerStates;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -33,6 +34,8 @@ public abstract class Attack extends Sprite {
 	private Character attacker;
 
 	public boolean started = false;
+	
+	public Sound sound;
 
 	public Attack() {
 	}
@@ -105,5 +108,9 @@ public abstract class Attack extends Sprite {
 		previousState = currentState;
 
 		return textureRegion;
+	}
+
+	public void getSound() {
+		this.sound.play();
 	}
 }

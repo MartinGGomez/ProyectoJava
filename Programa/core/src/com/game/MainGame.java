@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.constants.MessageType;
 import com.screens.GameScreen;
 import com.screens.ScreenCharge;
 
@@ -26,8 +27,13 @@ public class MainGame extends Game {
 		gameScreen = new GameScreen(this);
 		screenCharge = new ScreenCharge(this);
 		
-	setScreen(screenCharge);
-	//	setScreen(gameScreen);
+	//setScreen(screenCharge);
+		setScreen(gameScreen);
+		
+		gameScreen.hud.printMessage("Bienvenidos a LatzinaAO", MessageType.DROP);
+		gameScreen.hud.printMessage("Game created by : GG-Games || CopyRight 2018", MessageType.REWARD);
+		gameScreen.hud.printMessage("Garcia Gonzalo - Gomez Martin", MessageType.DROP);
+
 	}
 
 	

@@ -44,6 +44,8 @@ public class Enemy extends Character {
 	private float time = 0f;
 
 	private int cont = 0;
+	
+	private Sound golpe;
 
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
@@ -63,6 +65,8 @@ public class Enemy extends Character {
 
 		setBounds(body.getPosition().x, body.getPosition().y, 29 / PPM, 55 / PPM);
 		setRegion(standingTextures[0]);
+		
+		golpe = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/GolpeBasico.ogg", FileType.Internal));
 
 	}
 
@@ -212,9 +216,13 @@ public class Enemy extends Character {
 			if(playerToAttack.name.equals("Coxne")) { // CAMBIAR CUANDO SEA EN RED POR Nº CLIENTE
 				Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida",
 						MessageType.COMBAT);
-				GameScreen.hud.updateStats(playerToAttack);	
+				GameScreen.hud.updateStats(playerToAttack);
+				
+				
 			}
-			// AGREGAR SONIDO DE GOLPE
+
+			golpe.play();
+			
 			}
 		}
 

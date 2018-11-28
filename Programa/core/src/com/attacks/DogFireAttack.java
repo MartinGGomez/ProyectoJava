@@ -1,5 +1,7 @@
 package com.attacks;
 
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -19,7 +21,7 @@ public class DogFireAttack extends Attack{
 			super.mana = 100;
 			super.energy = 20;
 			super.duration = 1.1f;
-		 
+			super.sound = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/Rugido.ogg", FileType.Internal));
 	}
 	 
 	 @Override

@@ -6,8 +6,10 @@ import static com.constants.Constants.SPEED;
 import com.actors.states.PlayerStates;
 import com.attacks.Attack;
 import com.attacks.BasicAttack;
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -27,6 +29,7 @@ import com.constants.MessageType;
 import com.game.MainGame;
 import com.screens.GameScreen;
 import com.screens.Hud;
+import com.services.collision.MyContactListener;
 import com.services.collision.userdata.UserData;
 
 public class Player extends Character {
@@ -63,6 +66,12 @@ public class Player extends Character {
 	public boolean canMoveBot = true;
 	public boolean canMoveRight = true;
 	public boolean canMoveLeft = true;
+	
+	private Sound golpe;
+	private Sound pasos;
+	
+	private int timePaso=0;
+	
 
 	public Player(MainGame game, World world, String name, int nroJugador) {
 		super(game, world, name);
@@ -86,7 +95,9 @@ public class Player extends Character {
 
 		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
 		setRegion(standingTextures[0]);
-
+		
+		golpe = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/GolpePlayer.ogg", FileType.Internal));
+		pasos = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/paso1.ogg", FileType.Internal));
 	}
 
 	public void definePlayerBody() {
@@ -148,7 +159,12 @@ public class Player extends Character {
 				body.setLinearVelocity(0, 0);
 				if (Gdx.input.isKeyPressed(Keys.W)) {
 					if (canMoveTop) {
-						body.setLinearVelocity(new Vector2(0, SPEED));
+						body.setLinearVelocity(new Vector2(0, SPEED));	
+						timePaso++;
+						if(timePaso>8){
+						pasos.play();
+						timePaso=0;
+						}
 					}
 					states = PlayerStates.BACK;
 					direction = PlayerStates.BACK;
@@ -156,6 +172,11 @@ public class Player extends Character {
 				if (Gdx.input.isKeyPressed(Keys.S)) {
 					if (canMoveBot) {
 						body.setLinearVelocity(new Vector2(0, -SPEED));
+						timePaso++;
+						if(timePaso>8 ){
+						pasos.play();
+						timePaso=0;
+						}
 					}
 					states = PlayerStates.FRONT;
 					direction = PlayerStates.FRONT;
@@ -163,6 +184,11 @@ public class Player extends Character {
 				if (Gdx.input.isKeyPressed(Keys.A)) {
 					if (canMoveLeft) {
 						body.setLinearVelocity(new Vector2(-SPEED, 0));
+						timePaso++;
+						if(timePaso>8){
+						pasos.play();
+						timePaso=0;
+						}
 					}
 					states = PlayerStates.LEFT;
 					direction = PlayerStates.LEFT;
@@ -170,6 +196,11 @@ public class Player extends Character {
 				if (Gdx.input.isKeyPressed(Keys.D)) {
 					if (canMoveRight) {
 						body.setLinearVelocity(new Vector2(SPEED, 0));
+						timePaso++;
+						if(timePaso>8){
+						pasos.play();
+						timePaso=0;
+						}
 					}
 					states = PlayerStates.RIGHT;
 					direction = PlayerStates.RIGHT;
@@ -280,6 +311,7 @@ public class Player extends Character {
 	}
 
 	public void attack(Character enemy, Attack attack) {
+		if(this.mana > attack.mana){
 		if (this.energy > attack.energy) {
 			if (enemy.alive) {
 				enemy.attack = attack;
@@ -293,10 +325,18 @@ public class Player extends Character {
 													// gamescreen.nroCliente
 					GameScreen.hud.updateStats(this);
 				}
-
+				if(enemy.attack.name.equals("Ataque basico")){
+					golpe.play();	
+				}else{
+					selectedAttack.getSound();
+				}
+				
 			}
 		} else {
 			Hud.printMessage("No tienes suficiente energia.", MessageType.COMBAT);
+		}
+		}else{
+			Hud.printMessage("No tienes suficiente mana.", MessageType.COMBAT);
 		}
 
 	}
