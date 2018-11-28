@@ -76,6 +76,7 @@ public class Player extends Character {
 	public Player(MainGame game, World world, String name, int nroJugador) {
 		super(game, world, name);
 		this.nroJugador = nroJugador;
+		System.out.println("Jugador nro: " + nroJugador);
 		if (nroJugador == 1) {
 			super.texture = new Texture("player.png");
 		} else {
@@ -103,11 +104,13 @@ public class Player extends Character {
 	public void definePlayerBody() {
 
 		BodyDef bdef = new BodyDef();
-		if (nroJugador == 1) {
+//		if (nroJugador == 1) {
+			System.err.println("Jugador 1: " + this.name);
 			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
-		} else {
-			bdef.position.set(2, 3);
-		}
+//		} else {
+//			System.err.println("Jugador 2: " + this.name);
+//			bdef.position.set(2, 3);
+//		}
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
 		super.body = super.world.createBody(bdef);
@@ -125,23 +128,17 @@ public class Player extends Character {
 
 	}
 
-	public void defineStageElements() {
-		// SCENE2D STAGE
-		playerLabel = new Label(this.name, Hud.skin, "little-font", Color.WHITE);
-		playerLabel.setPosition((body.getPosition().x * PPM) - (this.region.getRegionWidth() / 2) - 22,
-				(body.getPosition().y * PPM) - (this.region.getRegionHeight() / 2) - 6);
-		playerLabel.setSize(80, 12);
-		playerLabel.setAlignment(Align.center);
-		this.game.stage.addActor(playerLabel);
-	}
-
 	public void update(float delta) {
 		super.update(delta);
 
 		if (this.energy < this.maxEnergy) {
 			time += delta;
 			if (time > 1f) {
-				this.energy += 4;
+				if(this.energy + 4 > this.maxEnergy) {
+					this.energy = this.maxEnergy;
+				} else {
+					this.energy += 4;	
+				}
 				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
 													// gamescreen.nroCliente
 					GameScreen.hud.updateStats(this);

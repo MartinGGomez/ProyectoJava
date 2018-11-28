@@ -70,15 +70,17 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private float cameraInitialPositionX;
 	private float cameraInitialPositionY;
-	
+
 	private Music inicio;
 	private Sound open;
 	private Sound potas;
-
+	
+	public int nroJugador;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
-		
+		this.nroJugador = this.game.nroCliente;
+
 		gamecam = new OrthographicCamera();
 
 		gameport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, gamecam);
@@ -97,8 +99,16 @@ public class GameScreen implements Screen, InputProcessor {
 		contactListener = new MyContactListener();
 		world.setContactListener(contactListener);
 
-		player = new Player(this.game, world, "Coxne", 1);
-		player2 = new Player(this.game, world, "Player 2", 2);
+		
+		if(nroJugador == 1) {
+			player = new Player(this.game, world, "Coxne", 1);
+			player2 = new Player(this.game, world, "Player 2", 2);
+		} else {
+			player = new Player(this.game, world, "Coxne", 2);
+			player2 = new Player(this.game, world, "Player 2", 1);
+		}
+		
+		
 
 		// Body Definitions
 		collisionHelper = new CollisionHelper(map, world);
@@ -106,10 +116,11 @@ public class GameScreen implements Screen, InputProcessor {
 		enemies = collisionHelper.createEnemies(this.game);
 
 		// Hud
-		hud = new Hud(this.game, this.player);
-		player.defineStageElements();
-//		player2.defineStageElements();
-		
+		if(this.nroJugador == 1) {
+			hud = new Hud(this.game, this.player); // Jugador 1	
+		} else {
+			hud = new Hud(this.game, this.player2); // Jugador 2
+		}
 		
 		inicio = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/inicio principal.mp3", FileType.Internal));
 		potas = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/potas.ogg", FileType.Internal));
@@ -119,9 +130,12 @@ public class GameScreen implements Screen, InputProcessor {
 		processors.addProcessor(this);
 		processors.addProcessor(this.game.stage);
 		Gdx.input.setInputProcessor(processors);
-		
-		
 
+		hud.printMessage("Bienvenidos a LatzinaAO", MessageType.DROP);
+		hud.printMessage("Game created by : GG-Games || CopyRight 2018", MessageType.REWARD);
+		hud.printMessage("Garcia Gonzalo - Gomez Martin", MessageType.DROP);
+
+		
 	}
 
 	public void update(float delta) {
@@ -142,8 +156,22 @@ public class GameScreen implements Screen, InputProcessor {
 			enemy.update(delta);
 		}
 
-		gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
-		gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
+		if(this.nroJugador == 1) {
+			if(iteraciones == 1) {
+				System.out.println("Siguiendo a player");	
+			}
+			
+			gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
+			gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD	
+		} else {
+			if(iteraciones == 1) {
+				System.out.println("Siguiendo a player2");	
+			}
+			
+			gamecam.position.x = player2.body.getPosition().x + 1.23f; // Sumar diferencia de camara
+			gamecam.position.y = player2.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
+		}
+		
 
 		if (iteraciones == 0) {
 			this.cameraInitialPositionX = gamecam.position.x;
@@ -154,8 +182,8 @@ public class GameScreen implements Screen, InputProcessor {
 		gamecam.update();
 
 		renderer.setView(gamecam);
-		
-		inicio.play();
+
+		// inicio.play();
 	}
 
 	@Override
@@ -238,7 +266,7 @@ public class GameScreen implements Screen, InputProcessor {
 			for (Enemy enemy : enemies) {
 				if (enemy.getEnemyIndex() == contactListener.enemiesCollidingWithPlayer.get(i).index && !found) {
 					enemy.preventMove = true;
-					if(contactListener.enemiesCollidingWithPlayer.get(i).playerIndex == 1) {
+					if (contactListener.enemiesCollidingWithPlayer.get(i).playerIndex == 1) {
 						enemy.collidingWith = this.player;
 					} else {
 						enemy.collidingWith = this.player2;
@@ -263,7 +291,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		if (contactListener.isCollidingToPlayer()) {
 			resetMovement();
-			
+
 			if (((player.body.getPosition().y + player.getHeight()) > player2.body.getPosition().y
 					+ player2.getHeight())
 					&& (player.body.getPosition().x < player2.body.getPosition().x + player2.getWidth()
@@ -274,7 +302,7 @@ public class GameScreen implements Screen, InputProcessor {
 			} else if (((player2.body.getPosition().y + player2.getHeight()) > player.body.getPosition().y
 					+ player.getHeight())
 					&& (player2.body.getPosition().x < player.body.getPosition().x + player.getWidth()
-							&& player2.body.getPosition().x + player2.getWidth() > player.body.getPosition().x)) { 
+							&& player2.body.getPosition().x + player2.getWidth() > player.body.getPosition().x)) {
 				// Player 2 arriba player 1 abajo
 				player.canMoveTop = false;
 				player2.canMoveBot = false;
@@ -292,7 +320,7 @@ public class GameScreen implements Screen, InputProcessor {
 				// Player 2 izquierda player 1 derecha
 				player.canMoveLeft = false;
 				player2.canMoveRight = false;
-			} 
+			}
 		} else {
 			resetMovement();
 		}
@@ -393,20 +421,21 @@ public class GameScreen implements Screen, InputProcessor {
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.NUM_1) {
 			if (player.health < player.maxHealth && player.healthPotions > 0) {
-					player.healthPotions--;
-					player.health += 10;
-					hud.updateStats(player);	
-				
+				player.healthPotions--;
+				player.health += 10;
+				hud.updateStats(player);
+				potas.play();
 			}
-			potas.play();
+
 		}
 		if (keycode == Keys.NUM_2) {
 			if (player.mana < player.maxMana && player.manaPotions > 0) {
-					player.manaPotions--;
-					player.mana += 20;
-					hud.updateStats(player);	
+				player.manaPotions--;
+				player.mana += 20;
+				hud.updateStats(player);
+				potas.play();
 			}
-			potas.play();
+
 		}
 		return false;
 	}
@@ -435,7 +464,7 @@ public class GameScreen implements Screen, InputProcessor {
 			if (player.selectedAttack != null) {
 				player.attack(player2, player.selectedAttack);
 				player.selectedAttack = null;
-				
+
 			}
 
 		}
@@ -459,7 +488,7 @@ public class GameScreen implements Screen, InputProcessor {
 				} else {
 					if (button == Buttons.LEFT) {
 						Hud.printMessage("Cofre de Drop", MessageType.DROP);
-						
+
 					}
 					if (button == Buttons.RIGHT) {
 						if (enemy.open) {

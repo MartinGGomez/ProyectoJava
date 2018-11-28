@@ -1,6 +1,9 @@
 package com.screens;
 
 import com.badlogic.gdx.Files.FileType;
+
+import java.util.Scanner;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -16,19 +19,27 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.game.MainGame;
 
-public class ScreenMenu implements Screen, InputProcessor{
+import red.Cliente;
+import red.Servidor;
 
-	 private MainGame game;
+public class ScreenMenu implements Screen, InputProcessor {
 
-	 private Texture menu;
+	private MainGame game;
+
+	private Texture menu;
+
+	private ProgressBar barMenu;
+
+	private int cont = 0;
+
+	private Sound click;
+	private Sound inicioP;
 	
-	 private ProgressBar barMenu;
-	 
-	 private int cont =0;
-	 
-	 private Sound click;
-		private Sound inicioP;
-	
+	public Servidor servidor;
+	public Cliente cliente;
+	public boolean esCliente;
+	public boolean empiezaJuego = false;
+
 	public ScreenMenu(MainGame game) {
 		click = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/click.ogg", FileType.Internal));
 		Gdx.input.setInputProcessor(this);
@@ -36,51 +47,80 @@ public class ScreenMenu implements Screen, InputProcessor{
 		menu = new Texture("menuPrincipal.png");
 
 	}
-	
+
 	@Override
 	public void render(float delta) {
-	Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-	
-		update(delta);		
-		
-		
+
+		update(delta);
+
 	}
 
 	private void update(float delta) {
-//		cont++;
-//		if (cont==120){
-//			game.setScreen(game.gameScreen);
-//		}
-//		
+		// cont++;
+		// if (cont==120){
+		// game.setScreen(game.gameScreen);
+		// }
+		//
 		game.batch.begin();
 		game.batch.draw(menu, 0, 0, 800, 600);
 		game.batch.end();
 		
+		if(empiezaJuego) {
+			System.out.println("EMPEZAR JUEGO");
+			this.game.gameScreen = new GameScreen(this.game);
+			game.setScreen(game.gameScreen);
+			game.screenCharge.start.stop();
+		} else {
+			if(esCliente) {
+//				System.err.println("Esperando a otro jugador");	
+			}
+		}
+
 	}
-	
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		
+
 		System.out.println(screenX);
 		System.out.println(screenY);
-		
-		if (((screenX > 724) && (screenY > 530 )) && ((screenX < 765) && (screenY < 585))){
-			
-			
+
+		if (((screenX > 724) && (screenY > 530)) && ((screenX < 765) && (screenY < 585))) {
+
 			click.play();
-			
-			game.setScreen(game.gameScreen);
-			game.screenCharge.start.stop();
-			
+
 			inicioP = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/inicio personaje.ogg", FileType.Internal));
 			inicioP.play();
+			
+			if(esCliente) {
+				this.cliente.hiloCliente.enviarDatos("conexion");
+			}
+			
 		}
-		
+
 		return false;
 	}
-	
+
+	@Override
+	public void show() {
+
+		Scanner s = new Scanner(System.in);
+		System.out.println("¿Servidor o cliente?");
+		int opc = s.nextInt();
+		if (opc == 1)
+			esCliente = true;
+
+		if (!esCliente) {
+			servidor = new Servidor(this.game);
+			System.err.println("SERVIDOR");
+		} else {
+			cliente = new Cliente(this.game);
+			System.err.println("CLIENTE");
+		}
+
+	}
+
 	@Override
 	public boolean keyDown(int keycode) {
 		// TODO Auto-generated method stub
@@ -98,7 +138,6 @@ public class ScreenMenu implements Screen, InputProcessor{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
@@ -125,43 +164,33 @@ public class ScreenMenu implements Screen, InputProcessor{
 	}
 
 	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	
 
 }

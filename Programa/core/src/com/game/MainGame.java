@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.constants.MessageType;
 import com.screens.GameScreen;
 import com.screens.ScreenCharge;
+import com.screens.ScreenMenu;
 
 public class MainGame extends Game {
 	
@@ -17,6 +18,9 @@ public class MainGame extends Game {
 	public Stage stage;
 	
 	public ScreenCharge screenCharge;
+	public ScreenMenu menuScreen;
+	
+	public int nroCliente;
 	
 	@Override
 	public void create() {
@@ -24,16 +28,11 @@ public class MainGame extends Game {
 		assetManager.load("ui/uiskin.atlas", TextureAtlas.class);
 		assetManager.finishLoading();
 		batch = new SpriteBatch();
-		gameScreen = new GameScreen(this);
+//		gameScreen = new GameScreen(this);
 		screenCharge = new ScreenCharge(this);
 		
-	//setScreen(screenCharge);
-		setScreen(gameScreen);
-		
-		gameScreen.hud.printMessage("Bienvenidos a LatzinaAO", MessageType.DROP);
-		gameScreen.hud.printMessage("Game created by : GG-Games || CopyRight 2018", MessageType.REWARD);
-		gameScreen.hud.printMessage("Garcia Gonzalo - Gomez Martin", MessageType.DROP);
-
+	setScreen(screenCharge);
+//		setScreen(gameScreen);
 	}
 
 	

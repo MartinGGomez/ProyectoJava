@@ -28,6 +28,7 @@ public class ScreenCharge implements Screen {
 	public ScreenCharge(MainGame game  ) {
 		this.game = game;
 		menu = new ScreenMenu(game);
+		this.game.menuScreen = menu;
 		start = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/101.mp3", FileType.Internal));
 		logo = new Texture("logoGame.png");
 		sLogo = new Sprite(logo);
