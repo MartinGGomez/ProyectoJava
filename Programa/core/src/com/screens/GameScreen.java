@@ -104,8 +104,8 @@ public class GameScreen implements Screen, InputProcessor {
 			player = new Player(this.game, world, "Coxne", 1);
 			player2 = new Player(this.game, world, "Player 2", 2);
 		} else {
-			player = new Player(this.game, world, "Coxne", 2);
-			player2 = new Player(this.game, world, "Player 2", 1);
+			player = new Player(this.game, world, "Coxne", 1);
+			player2 = new Player(this.game, world, "Player 2", 2);
 		}
 		
 		

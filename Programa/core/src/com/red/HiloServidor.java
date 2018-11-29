@@ -1,4 +1,4 @@
-package red;
+package com.red;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -52,9 +52,9 @@ public class HiloServidor extends Thread{
 		
 		String[] mensajeCompuesto = mensaje.split("/");
 		
-		if(mensajeCompuesto.length > 1) {
-			
-		} else {
+		System.out.println("SERVIDOR RECIBE: " + mensaje);
+		
+		if(mensajeCompuesto.length == 1) {
 			if(mensaje.equals("conexion")) {
 				System.out.println("Conexion");
 				if(nroConexiones==0) {
@@ -74,11 +74,51 @@ public class HiloServidor extends Thread{
 			}
 		}
 		
-//		if(mensajeCompuesto.length>1) {
-//			if(mensajeCompuesto[0].equals("posPad1")) {
-//				this.enviarDatos(m, ip2, puerto2);
-//				app.pantallaJuego.pad1.setPos_y(Integer.valueOf(mensajeCompuesto[1]));
-//			}
+		// arriba/1
+
+		if(mensajeCompuesto.length>1) {
+			if(mensajeCompuesto[0].equals("arriba")) {
+				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverArriba();
+					this.enviarDatos(mensaje, ip2, puerto2);
+				}
+				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverArriba();
+					this.enviarDatos(mensaje, ip1, puerto1);
+				}
+			}
+			if(mensajeCompuesto[0].equals("abajo")) {
+				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverAbajo();
+					this.enviarDatos(mensaje, ip2, puerto2);
+				}
+				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverAbajo();
+					this.enviarDatos(mensaje, ip1, puerto1);
+				}
+			}
+			if(mensajeCompuesto[0].equals("derecha")) {
+				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverDerecha();
+					this.enviarDatos(mensaje, ip2, puerto2);
+				}
+				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverDerecha();
+					this.enviarDatos(mensaje, ip1, puerto1);
+				}
+			}
+			if(mensajeCompuesto[0].equals("izquierda")) {
+				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverIzquierda();
+					this.enviarDatos(mensaje, ip2, puerto2);
+				}
+				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverIzquierda();
+					this.enviarDatos(mensaje, ip1, puerto1);
+				}
+			}
+			
+		}
 //			
 //			if(mensajeCompuesto[0].equals("posPad2")) {
 //				this.enviarDatos(m, ip1, puerto1);

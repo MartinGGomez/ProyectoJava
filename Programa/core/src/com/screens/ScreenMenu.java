@@ -18,9 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.game.MainGame;
-
-import red.Cliente;
-import red.Servidor;
+import com.red.Cliente;
+import com.red.Servidor;
 
 public class ScreenMenu implements Screen, InputProcessor {
 
@@ -113,9 +112,11 @@ public class ScreenMenu implements Screen, InputProcessor {
 
 		if (!esCliente) {
 			servidor = new Servidor(this.game);
+			this.game.servidor = servidor;
 			System.err.println("SERVIDOR");
 		} else {
 			cliente = new Cliente(this.game);
+			this.game.cliente = cliente;
 			System.err.println("CLIENTE");
 		}
 

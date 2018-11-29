@@ -1,4 +1,4 @@
-package red;
+package com.red;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -62,6 +62,39 @@ public class HiloCliente extends Thread {
 				System.out.println("Sos el cliente nº " + mensajeCompuesto[1]);
 				app.nroCliente = Integer.valueOf(mensajeCompuesto[1]);
 			}
+			if (mensajeCompuesto[0].equals("arriba")) {
+				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverArriba();
+				}
+				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverArriba();
+				}
+			}
+			if (mensajeCompuesto[0].equals("abajo")) {
+				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverAbajo();
+				}
+				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverAbajo();
+				}
+			}
+			if (mensajeCompuesto[0].equals("derecha")) {
+				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverDerecha();
+				}
+				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverDerecha();
+				}
+			}
+			if (mensajeCompuesto[0].equals("izquierda")) {
+				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.moverIzquierda();
+				}
+				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.moverIzquierda();
+				}
+			}
+			
 		} else {
 			if (mensaje.equals("empieza")) {
 				app.menuScreen.empiezaJuego = true;

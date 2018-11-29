@@ -67,10 +67,14 @@ public class Player extends Character {
 	public boolean canMoveRight = true;
 	public boolean canMoveLeft = true;
 	
+	
 	private Sound golpe;
 	private Sound pasos;
 	
 	private int timePaso=0;
+	
+	private float deltaTime = 0f;
+	private int cantPasos = 0;
 	
 
 	public Player(MainGame game, World world, String name, int nroJugador) {
@@ -103,13 +107,13 @@ public class Player extends Character {
 	public void definePlayerBody() {
 
 		BodyDef bdef = new BodyDef();
-//		if (nroJugador == 1) {
-			System.err.println("Jugador 1: " + this.name);
-			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
-//		} else {
-//			System.err.println("Jugador 2: " + this.name);
-//			bdef.position.set(2, 3);
-//		}
+		if (nroJugador == 1) {
+			System.err.println("Jugador : " + this.nroJugador + " : " + this.name);
+			bdef.position.set(5, 5);
+		} else {
+			System.err.println("Jugador 2: " + this.name);
+			bdef.position.set(2, 3);
+		}
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
 		super.body = super.world.createBody(bdef);
@@ -129,7 +133,8 @@ public class Player extends Character {
 
 	public void update(float delta) {
 		super.update(delta);
-
+		deltaTime = delta;
+		
 		if (this.energy < this.maxEnergy) {
 			time += delta;
 			if (time > 1f) {
@@ -149,57 +154,24 @@ public class Player extends Character {
 
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
-
 		if (this.alive) {
-			if (this.nroJugador == 1) {
-				body.setLinearVelocity(0, 0);
+			body.setLinearVelocity(0, 0);
+			if (this.nroJugador == game.nroCliente) {
 				if (Gdx.input.isKeyPressed(Keys.W)) {
-					if (canMoveTop) {
-						body.setLinearVelocity(new Vector2(0, SPEED));	
-						timePaso++;
-						if(timePaso>8){
-						pasos.play();
-						timePaso=0;
-						}
-					}
-					states = PlayerStates.BACK;
-					direction = PlayerStates.BACK;
+					this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);
+					moverArriba();
 				}
 				if (Gdx.input.isKeyPressed(Keys.S)) {
-					if (canMoveBot) {
-						body.setLinearVelocity(new Vector2(0, -SPEED));
-						timePaso++;
-						if(timePaso>8 ){
-						pasos.play();
-						timePaso=0;
-						}
-					}
-					states = PlayerStates.FRONT;
-					direction = PlayerStates.FRONT;
+					moverAbajo();
+					this.game.cliente.hiloCliente.enviarDatos("abajo/" + this.nroJugador);
 				}
 				if (Gdx.input.isKeyPressed(Keys.A)) {
-					if (canMoveLeft) {
-						body.setLinearVelocity(new Vector2(-SPEED, 0));
-						timePaso++;
-						if(timePaso>8){
-						pasos.play();
-						timePaso=0;
-						}
-					}
-					states = PlayerStates.LEFT;
-					direction = PlayerStates.LEFT;
+					moverIzquierda();
+					this.game.cliente.hiloCliente.enviarDatos("izquierda/" + this.nroJugador);
 				}
 				if (Gdx.input.isKeyPressed(Keys.D)) {
-					if (canMoveRight) {
-						body.setLinearVelocity(new Vector2(SPEED, 0));
-						timePaso++;
-						if(timePaso>8){
-						pasos.play();
-						timePaso=0;
-						}
-					}
-					states = PlayerStates.RIGHT;
-					direction = PlayerStates.RIGHT;
+					moverDerecha();
+					this.game.cliente.hiloCliente.enviarDatos("derecha/" + this.nroJugador);
 				}
 			} else {
 				body.setLinearVelocity(0, 0);
@@ -248,6 +220,62 @@ public class Player extends Character {
 			}
 		}
 		super.setRegion(getFrame(delta));
+	}
+
+	public void moverDerecha() {
+		if (canMoveRight) {
+			body.setLinearVelocity(new Vector2(SPEED, 0));
+			timePaso++;
+			if(timePaso>8){
+			pasos.play();
+			timePaso=0;
+			}
+		}
+		states = PlayerStates.RIGHT;
+		direction = PlayerStates.RIGHT;
+	}
+
+	public void moverIzquierda() {
+		if (canMoveLeft) {
+			body.setLinearVelocity(new Vector2(-SPEED, 0));
+			timePaso++;
+			if(timePaso>8){
+			pasos.play();
+			timePaso=0;
+			}
+		}
+		states = PlayerStates.LEFT;
+		direction = PlayerStates.LEFT;
+	}
+
+	public void moverAbajo() {
+		if (canMoveBot) {
+			body.setLinearVelocity(new Vector2(0, -SPEED));
+			timePaso++;
+			if(timePaso>8 ){
+			pasos.play();
+			timePaso=0;
+			}
+		}
+		states = PlayerStates.FRONT;
+		direction = PlayerStates.FRONT;
+	}
+
+	public void moverArriba() {
+		
+		if (canMoveTop) {
+			body.setLinearVelocity(new Vector2(0, SPEED));	
+			timePaso++;
+			if(timePaso>8){
+			pasos.play();
+			timePaso=0;
+			}
+		}
+		states = PlayerStates.BACK;
+		direction = PlayerStates.BACK;
+		cantPasos++;
+		System.out.println("Moviendose arriba- cantidad de pasos: " + cantPasos);
+		System.out.println("X: " + this.body.getPosition().x + " Y: " + this.body.getPosition().y);
 	}
 
 	private void resetStats() {

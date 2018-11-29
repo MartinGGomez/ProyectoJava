@@ -1,4 +1,4 @@
-package red;
+package com.red;
 
 import com.game.MainGame;
 
