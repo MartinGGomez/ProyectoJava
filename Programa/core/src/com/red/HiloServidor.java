@@ -79,41 +79,49 @@ public class HiloServidor extends Thread{
 		if(mensajeCompuesto.length>1) {
 			if(mensajeCompuesto[0].equals("arriba")) {
 				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverArriba();
+					app.gameScreen.player.arriba = true;
+					app.gameScreen.player.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverArriba();
+					app.gameScreen.player2.arriba = true;
+					app.gameScreen.player2.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 			}
 			if(mensajeCompuesto[0].equals("abajo")) {
 				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverAbajo();
+					app.gameScreen.player.abajo = true;
+					app.gameScreen.player.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverAbajo();
+					app.gameScreen.player2.abajo = true;
+					app.gameScreen.player2.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 			}
 			if(mensajeCompuesto[0].equals("izquierda")) {
 				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverIzquierda();
+					app.gameScreen.player.izquierda = true;
+					app.gameScreen.player.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverIzquierda();
+					app.gameScreen.player2.izquierda = true;
+					app.gameScreen.player2.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 			}
 			if(mensajeCompuesto[0].equals("derecha")) {
 				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverDerecha();
+					app.gameScreen.player.derecha = true;
+					app.gameScreen.player.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverDerecha();
+					app.gameScreen.player2.derecha = true;
+					app.gameScreen.player2.stop = false;
 					this.enviarDatosATodos(mensaje);
 				}
 			}
@@ -121,11 +129,11 @@ public class HiloServidor extends Thread{
 			//
 			if(mensajeCompuesto[0].equals("stop")) {
 				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.stopPlayer();
+					app.gameScreen.player.stop = true;
 					this.enviarDatosATodos(mensaje);
 				}
 				if(mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.stopPlayer();
+					app.gameScreen.player2.stop = true;
 					this.enviarDatosATodos(mensaje);
 				}
 			}

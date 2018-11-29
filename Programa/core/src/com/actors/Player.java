@@ -114,10 +114,10 @@ public class Player extends Character{
 		BodyDef bdef = new BodyDef();
 		if (nroJugador == 1) {
 			System.err.println("Jugador : " + this.nroJugador + " : " + this.name);
-			bdef.position.set(5, 5);
+			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
 		} else {
 			System.err.println("Jugador 2: " + this.nroJugador + " : " + this.name);
-			bdef.position.set(4, 4);
+			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
 		}
 		bdef.type = BodyDef.BodyType.DynamicBody;
 

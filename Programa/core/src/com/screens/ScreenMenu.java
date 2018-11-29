@@ -30,6 +30,7 @@ public class ScreenMenu implements Screen, InputProcessor {
 	private ProgressBar barMenu;
 
 	private int cont = 0;
+	private boolean esperando = false;
 
 	private Sound click;
 	private Sound inicioP;
@@ -71,10 +72,6 @@ public class ScreenMenu implements Screen, InputProcessor {
 			this.game.gameScreen = new GameScreen(this.game);
 			game.setScreen(game.gameScreen);
 			game.screenCharge.start.stop();
-		} else {
-			if(esCliente) {
-//				System.err.println("Esperando a otro jugador");	
-			}
 		}
 
 	}
@@ -85,6 +82,8 @@ public class ScreenMenu implements Screen, InputProcessor {
 		System.out.println(screenX);
 		System.out.println(screenY);
 
+		if(!esperando) {
+		
 		if (((screenX > 724) && (screenY > 530)) && ((screenX < 765) && (screenY < 585))) {
 
 			click.play();
@@ -94,8 +93,10 @@ public class ScreenMenu implements Screen, InputProcessor {
 			
 			if(esCliente) {
 				this.cliente.hiloCliente.enviarDatos("conexion");
+				esperando = true;
 			}
 			
+		}
 		}
 
 		return false;

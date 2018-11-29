@@ -74,7 +74,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private Music inicio;
 	private Sound open;
 	private Sound potas;
-	
+
 	public int nroJugador;
 
 	public GameScreen(MainGame game) {
@@ -99,16 +99,13 @@ public class GameScreen implements Screen, InputProcessor {
 		contactListener = new MyContactListener();
 		world.setContactListener(contactListener);
 
-		
-		if(nroJugador == 1) {
+		if (nroJugador == 1) {
 			player = new Player(this.game, world, "Coxne", 1);
 			player2 = new Player(this.game, world, "Player 2", 2);
 		} else {
 			player = new Player(this.game, world, "Coxne", 1);
 			player2 = new Player(this.game, world, "Player 2", 2);
 		}
-		
-		
 
 		// Body Definitions
 		collisionHelper = new CollisionHelper(map, world);
@@ -116,12 +113,12 @@ public class GameScreen implements Screen, InputProcessor {
 		enemies = collisionHelper.createEnemies(this.game);
 
 		// Hud
-		if(this.nroJugador == 1) {
-			hud = new Hud(this.game, this.player); // Jugador 1	
+		if (this.nroJugador == 1) {
+			hud = new Hud(this.game, this.player); // Jugador 1
 		} else {
 			hud = new Hud(this.game, this.player2); // Jugador 2
 		}
-		
+
 		inicio = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/inicio principal.mp3", FileType.Internal));
 		potas = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/potas.ogg", FileType.Internal));
 		open = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/openChest.ogg", FileType.Internal));
@@ -135,7 +132,6 @@ public class GameScreen implements Screen, InputProcessor {
 		hud.printMessage("Game created by : GG-Games || CopyRight 2018", MessageType.REWARD);
 		hud.printMessage("Garcia Gonzalo - Gomez Martin", MessageType.DROP);
 
-		
 	}
 
 	public void update(float delta) {
@@ -156,22 +152,21 @@ public class GameScreen implements Screen, InputProcessor {
 			enemy.update(delta);
 		}
 
-		if(this.nroJugador == 1) {
-			if(iteraciones == 1) {
-				System.out.println("Siguiendo a player");	
+		if (this.nroJugador == 1) {
+			if (iteraciones == 1) {
+				System.out.println("Siguiendo a player");
 			}
-			
+
 			gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
-			gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD	
+			gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
 		} else {
-			if(iteraciones == 1) {
-				System.out.println("Siguiendo a player2");	
+			if (iteraciones == 1) {
+				System.out.println("Siguiendo a player2");
 			}
-			
+
 			gamecam.position.x = player2.body.getPosition().x + 1.23f; // Sumar diferencia de camara
 			gamecam.position.y = player2.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
 		}
-		
 
 		if (iteraciones == 0) {
 			this.cameraInitialPositionX = gamecam.position.x;
@@ -419,125 +414,155 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		float distanciaX = gamecam.position.x - this.cameraInitialPositionX;
-		float distanciaY = gamecam.position.y - this.cameraInitialPositionY;
-		float posX = screenX / PPM + distanciaX;
-		float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
+		if (this.game.menuScreen.esCliente) {
+			float distanciaX = gamecam.position.x - this.cameraInitialPositionX;
+			float distanciaY = gamecam.position.y - this.cameraInitialPositionY;
+			float posX = screenX / PPM + distanciaX;
+			float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
 
-		System.out.println("Touch down");
-		
-		if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
-				&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
-			Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
+			System.out.println("Click en " + posX + " - " + posY);
 
-			if (player2.selectedAttack != null) {
-				player2.attack(player, player2.selectedAttack);
-				player2.selectedAttack = null;
+			System.out.println("Player 1 pos: " + player.getX() + " - " + player.getY());
+			
+			if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
+					&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
+				Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
+
+				if (player2.selectedAttack != null) {
+					player2.attack(player, player2.selectedAttack);
+					player2.selectedAttack = null;
+				}
 			}
-		}
+			
+			
+//			if (this.nroJugador == 1) {
+//				if (posX > Hud.HUD_HALF_WIDTH / PPM - player.getWidth()
+//						&& posX < Hud.HUD_HALF_WIDTH / PPM + player.getWidth()
+//						&& posY > Hud.HUD_HALF_HEIGHT / PPM - player.getHeight()
+//						&& posY < Hud.HUD_HALF_HEIGHT / PPM + player.getHeight()) {
+//					Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
+//				}
+//			}
+//			
+//			if (this.nroJugador == 2) {
+//				if (posX > Hud.HUD_HALF_WIDTH / PPM - player2.getWidth()
+//						&& posX < Hud.HUD_HALF_WIDTH / PPM + player2.getWidth()
+//						&& posY > Hud.HUD_HALF_HEIGHT / PPM - player2.getHeight()
+//						&& posY < Hud.HUD_HALF_HEIGHT / PPM + player2.getHeight()) {
+//					Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
+//				}
+//			}
+			
 
-		if ((posX > (player2.getX()) && posX < player2.getX() + player2.getWidth())
-				&& (posY > player2.getY() && posY < player2.getY() + player2.getHeight())) {
-			Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
+			
 
-			if (player.selectedAttack != null) {
-				player.attack(player2, player.selectedAttack);
-				player.selectedAttack = null;
+			if ((posX > (player2.getX()) && posX < player2.getX() + player2.getWidth())
+					&& (posY > player2.getY() && posY < player2.getY() + player2.getHeight())) {
+				Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
 
-			}
-
-		}
-
-		for (Enemy enemy : enemies) {
-			if ((posX > (enemy.getX()) && posX < enemy.getX() + enemy.getWidth())
-					&& (posY > enemy.getY() && posY < enemy.getY() + enemy.getHeight())) {
-				if (!enemy.isChest) {
-					Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);
-
-					if (player.selectedAttack != null) {
-						player.attack(enemy, player.selectedAttack);
-						player.selectedAttack = null;
-					}
-
-					if (player2.selectedAttack != null) {
-						player2.attack(enemy, player2.selectedAttack);
-						player2.selectedAttack = null;
-					}
-
-				} else {
-					if (button == Buttons.LEFT) {
-						Hud.printMessage("Cofre de Drop", MessageType.DROP);
-
-					}
-					if (button == Buttons.RIGHT) {
-						if (enemy.open) {
-							Hud.printMessage("El cofre ya fue abierto", MessageType.DROP);
-						} else {
-							enemy.open = true;
-							enemy.openChest();
-							open.play();
-						}
-					}
+				if (player.selectedAttack != null) {
+					player.attack(player2, player.selectedAttack);
+					player.selectedAttack = null;
 
 				}
 
 			}
+
+			for (Enemy enemy : enemies) {
+				if ((posX > (enemy.getX()) && posX < enemy.getX() + enemy.getWidth())
+						&& (posY > enemy.getY() && posY < enemy.getY() + enemy.getHeight())) {
+					if (!enemy.isChest) {
+						Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);
+
+						if (player.selectedAttack != null) {
+							player.attack(enemy, player.selectedAttack);
+							player.selectedAttack = null;
+						}
+
+						if (player2.selectedAttack != null) {
+							player2.attack(enemy, player2.selectedAttack);
+							player2.selectedAttack = null;
+						}
+
+					} else {
+						if (button == Buttons.LEFT) {
+							Hud.printMessage("Cofre de Drop", MessageType.DROP);
+
+						}
+						if (button == Buttons.RIGHT) {
+							if (enemy.open) {
+								Hud.printMessage("El cofre ya fue abierto", MessageType.DROP);
+							} else {
+								enemy.open = true;
+								enemy.openChest();
+								open.play();
+							}
+						}
+
+					}
+
+				}
+			}
+
+			player.selectedAttack = null;
+			player2.selectedAttack = null;
 		}
-
-		player.selectedAttack = null;
-		player2.selectedAttack = null;
-
 		return false;
+
 	}
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.NUM_1) {
-			if (player.health < player.maxHealth && player.healthPotions > 0) {
-				player.healthPotions--;
-				player.health += 10;
-				hud.updateStats(player);
-				potas.play();
-			}
+		if (this.game.menuScreen.esCliente) {
+			if (keycode == Keys.NUM_1) {
+				if (player.health < player.maxHealth && player.healthPotions > 0) {
+					player.healthPotions--;
+					player.health += 10;
+					hud.updateStats(player);
+					potas.play();
+				}
 
-		}
-		if (keycode == Keys.NUM_2) {
-			if (player.mana < player.maxMana && player.manaPotions > 0) {
-				player.manaPotions--;
-				player.mana += 20;
-				hud.updateStats(player);
-				potas.play();
 			}
+			if (keycode == Keys.NUM_2) {
+				if (player.mana < player.maxMana && player.manaPotions > 0) {
+					player.manaPotions--;
+					player.mana += 20;
+					hud.updateStats(player);
+					potas.play();
+				}
 
+			}
+			if (keycode == Keys.W) {
+				this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);
+			}
+			if (keycode == Keys.S) {
+				this.game.cliente.hiloCliente.enviarDatos("abajo/" + this.nroJugador);
+			}
+			if (keycode == Keys.A) {
+				this.game.cliente.hiloCliente.enviarDatos("izquierda/" + this.nroJugador);
+			}
+			if (keycode == Keys.D) {
+				this.game.cliente.hiloCliente.enviarDatos("derecha/" + this.nroJugador);
+			}
 		}
-		if(keycode == Keys.W) {
-			this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);
-		}
-		if(keycode == Keys.S) {
-			this.game.cliente.hiloCliente.enviarDatos("abajo/" + this.nroJugador);
-		}
-		if(keycode == Keys.A) {
-			this.game.cliente.hiloCliente.enviarDatos("izquierda/" + this.nroJugador);
-		}
-		if(keycode == Keys.D) {
-			this.game.cliente.hiloCliente.enviarDatos("derecha/" + this.nroJugador);
-		}		
 		return false;
 	}
-	
+
 	@Override
 	public boolean keyUp(int keycode) {
-		if(keycode == Keys.W) {
-			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
-		}
-		if(keycode == Keys.S) {
-			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
-		}
-		if(keycode == Keys.A) {
-			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
-		}
-		if(keycode == Keys.D) {
-			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+		if (this.game.menuScreen.esCliente) {
+			if (keycode == Keys.W) {
+				this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+			}
+			if (keycode == Keys.S) {
+				this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+			}
+			if (keycode == Keys.A) {
+				this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+			}
+			if (keycode == Keys.D) {
+				this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+			}
 		}
 		return false;
 	}
