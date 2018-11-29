@@ -418,35 +418,14 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
-		if (keycode == Keys.NUM_1) {
-			if (player.health < player.maxHealth && player.healthPotions > 0) {
-				player.healthPotions--;
-				player.health += 10;
-				hud.updateStats(player);
-				potas.play();
-			}
-
-		}
-		if (keycode == Keys.NUM_2) {
-			if (player.mana < player.maxMana && player.manaPotions > 0) {
-				player.manaPotions--;
-				player.mana += 20;
-				hud.updateStats(player);
-				potas.play();
-			}
-
-		}
-		return false;
-	}
-
-	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		float distanciaX = gamecam.position.x - this.cameraInitialPositionX;
 		float distanciaY = gamecam.position.y - this.cameraInitialPositionY;
 		float posX = screenX / PPM + distanciaX;
 		float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
 
+		System.out.println("Touch down");
+		
 		if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
 				&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
 			Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
@@ -512,7 +491,54 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	@Override
+	public boolean keyDown(int keycode) {
+		if (keycode == Keys.NUM_1) {
+			if (player.health < player.maxHealth && player.healthPotions > 0) {
+				player.healthPotions--;
+				player.health += 10;
+				hud.updateStats(player);
+				potas.play();
+			}
+
+		}
+		if (keycode == Keys.NUM_2) {
+			if (player.mana < player.maxMana && player.manaPotions > 0) {
+				player.manaPotions--;
+				player.mana += 20;
+				hud.updateStats(player);
+				potas.play();
+			}
+
+		}
+		if(keycode == Keys.W) {
+			this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);
+		}
+		if(keycode == Keys.S) {
+			this.game.cliente.hiloCliente.enviarDatos("abajo/" + this.nroJugador);
+		}
+		if(keycode == Keys.A) {
+			this.game.cliente.hiloCliente.enviarDatos("izquierda/" + this.nroJugador);
+		}
+		if(keycode == Keys.D) {
+			this.game.cliente.hiloCliente.enviarDatos("derecha/" + this.nroJugador);
+		}		
+		return false;
+	}
+	
+	@Override
 	public boolean keyUp(int keycode) {
+		if(keycode == Keys.W) {
+			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+		}
+		if(keycode == Keys.S) {
+			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+		}
+		if(keycode == Keys.A) {
+			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+		}
+		if(keycode == Keys.D) {
+			this.game.cliente.hiloCliente.enviarDatos("stop/" + this.nroJugador);
+		}
 		return false;
 	}
 

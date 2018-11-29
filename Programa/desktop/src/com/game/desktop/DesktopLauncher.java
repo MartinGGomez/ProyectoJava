@@ -11,6 +11,8 @@ public class DesktopLauncher {
 		config.width = 800;
 		config.height = 600;
 		config.resizable=false;
+		config.backgroundFPS = 60;
+		config.foregroundFPS = 60;
 		new LwjglApplication(new MainGame(), config);
 	}
 }

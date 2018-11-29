@@ -14,6 +14,8 @@ public class HiloCliente extends Thread {
 	private InetAddress ip;
 	private DatagramSocket socket;
 	private MainGame app;
+	
+	private boolean playerStop = false;
 
 	public HiloCliente(MainGame app) {
 
@@ -50,7 +52,7 @@ public class HiloCliente extends Thread {
 	private void procesarMensaje(DatagramPacket packet) {
 		String mensaje = new String(packet.getData()).trim();
 
-		System.out.println(mensaje);
+		System.out.println("Cliente recibe: " + mensaje);
 
 		int puerto = packet.getPort();
 		InetAddress ip = packet.getAddress();
@@ -64,36 +66,60 @@ public class HiloCliente extends Thread {
 			}
 			if (mensajeCompuesto[0].equals("arriba")) {
 				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverArriba();
+					app.gameScreen.player.arriba = true;
+					app.gameScreen.player.stop = false;
 				}
 				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverArriba();
+					app.gameScreen.player2.arriba = true;
+					app.gameScreen.player2.stop = false;
 				}
 			}
 			if (mensajeCompuesto[0].equals("abajo")) {
 				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverAbajo();
+					app.gameScreen.player.abajo = true;
+					app.gameScreen.player.stop = false;
 				}
 				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverAbajo();
+					app.gameScreen.player2.abajo = true;
+					app.gameScreen.player2.stop = false;
 				}
 			}
 			if (mensajeCompuesto[0].equals("derecha")) {
 				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverDerecha();
+					app.gameScreen.player.derecha = true;
+					app.gameScreen.player.stop = false;
 				}
 				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverDerecha();
+					app.gameScreen.player2.derecha = true;
+					app.gameScreen.player2.stop = false;
 				}
 			}
 			if (mensajeCompuesto[0].equals("izquierda")) {
 				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.moverIzquierda();
+					app.gameScreen.player.izquierda = true;
+					app.gameScreen.player.stop = false;
 				}
 				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.moverIzquierda();
+					app.gameScreen.player2.izquierda = true;
+					app.gameScreen.player2.stop = false;
 				}
 			}
+			
+			
+			if (mensajeCompuesto[0].equals("stop")) {
+				playerStop = true;
+				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+					app.gameScreen.player.arriba = false;
+					app.gameScreen.player.stop = true;
+				}
+				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+					app.gameScreen.player2.arriba = false;
+					app.gameScreen.player2.stop = true;
+				}
+			}
+			
+			
+			//
 			
 		} else {
 			if (mensaje.equals("empieza")) {
@@ -146,6 +172,8 @@ public class HiloCliente extends Thread {
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, 9000);
 		try {
 
+			System.out.println("Se envio: " + mensaje);
+			
 			socket.send(packet);
 
 		} catch (IOException e) {

@@ -9,6 +9,7 @@ import com.attacks.BasicAttack;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -32,7 +33,7 @@ import com.screens.Hud;
 import com.services.collision.MyContactListener;
 import com.services.collision.userdata.UserData;
 
-public class Player extends Character {
+public class Player extends Character{
 
 	// Player properties
 	// Health is in Character class.
@@ -76,6 +77,10 @@ public class Player extends Character {
 	private float deltaTime = 0f;
 	private int cantPasos = 0;
 	
+	public boolean arriba = false, abajo = false, izquierda = false, derecha = false;
+	public boolean stop = false;
+	
+	
 
 	public Player(MainGame game, World world, String name, int nroJugador) {
 		super(game, world, name);
@@ -111,8 +116,8 @@ public class Player extends Character {
 			System.err.println("Jugador : " + this.nroJugador + " : " + this.name);
 			bdef.position.set(5, 5);
 		} else {
-			System.err.println("Jugador 2: " + this.name);
-			bdef.position.set(2, 3);
+			System.err.println("Jugador 2: " + this.nroJugador + " : " + this.name);
+			bdef.position.set(4, 4);
 		}
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
@@ -133,6 +138,7 @@ public class Player extends Character {
 
 	public void update(float delta) {
 		super.update(delta);
+		
 		deltaTime = delta;
 		
 		if (this.energy < this.maxEnergy) {
@@ -155,55 +161,72 @@ public class Player extends Character {
 		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
 		if (this.alive) {
-			body.setLinearVelocity(0, 0);
-			if (this.nroJugador == game.nroCliente) {
-				if (Gdx.input.isKeyPressed(Keys.W)) {
-					this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);
-					moverArriba();
-				}
-				if (Gdx.input.isKeyPressed(Keys.S)) {
-					moverAbajo();
-					this.game.cliente.hiloCliente.enviarDatos("abajo/" + this.nroJugador);
-				}
-				if (Gdx.input.isKeyPressed(Keys.A)) {
-					moverIzquierda();
-					this.game.cliente.hiloCliente.enviarDatos("izquierda/" + this.nroJugador);
-				}
-				if (Gdx.input.isKeyPressed(Keys.D)) {
-					moverDerecha();
-					this.game.cliente.hiloCliente.enviarDatos("derecha/" + this.nroJugador);
-				}
-			} else {
-				body.setLinearVelocity(0, 0);
-				if (Gdx.input.isKeyPressed(Keys.UP)) {
-					if (canMoveTop) {
-						body.setLinearVelocity(new Vector2(0, SPEED));
+			
+//			if (this.nroJugador == game.nroCliente) {
+				if(!stop) {
+					if(arriba) {
+						this.moverArriba();
 					}
-					states = PlayerStates.BACK;
-					direction = PlayerStates.BACK;
-				}
-				if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-					if (canMoveBot) {
-						body.setLinearVelocity(new Vector2(0, -SPEED));
+					if(abajo) {
+						this.moverAbajo();
 					}
-					states = PlayerStates.FRONT;
-					direction = PlayerStates.FRONT;
-				}
-				if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-					if (canMoveLeft) {
-						body.setLinearVelocity(new Vector2(-SPEED, 0));
+					if(derecha) {
+						this.moverDerecha();
 					}
-					states = PlayerStates.LEFT;
-					direction = PlayerStates.LEFT;
-				}
-				if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-					if (canMoveRight) {
-						body.setLinearVelocity(new Vector2(SPEED, 0));
+					if(izquierda) {
+						this.moverIzquierda();
 					}
-					states = PlayerStates.RIGHT;
-					direction = PlayerStates.RIGHT;
+				}else {
+					arriba = false;
+					abajo = false;
+					derecha = false;
+					izquierda = false;
+					body.setLinearVelocity(0, 0);		
 				}
-			}
+//			}
+//				if (Gdx.input.isKeyPressed(Keys.W)) {
+//					this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);
+//				}
+//				if (Gdx.input.isKeyPressed(Keys.S)) {
+//					this.game.cliente.hiloCliente.enviarDatos("abajo/" + this.nroJugador);
+//				}
+//				if (Gdx.input.isKeyPressed(Keys.A)) {
+//					this.game.cliente.hiloCliente.enviarDatos("izquierda/" + this.nroJugador);
+//				}
+//				if (Gdx.input.isKeyPressed(Keys.D)) {
+//					this.game.cliente.hiloCliente.enviarDatos("derecha/" + this.nroJugador);
+//				}
+//			} else {
+//				body.setLinearVelocity(0, 0);
+//				if (Gdx.input.isKeyPressed(Keys.UP)) {
+//					if (canMoveTop) {
+//						body.setLinearVelocity(new Vector2(0, SPEED));
+//					}
+//					states = PlayerStates.BACK;
+//					direction = PlayerStates.BACK;
+//				}
+//				if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+//					if (canMoveBot) {
+//						body.setLinearVelocity(new Vector2(0, -SPEED));
+//					}
+//					states = PlayerStates.FRONT;
+//					direction = PlayerStates.FRONT;
+//				}
+//				if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+//					if (canMoveLeft) {
+//						body.setLinearVelocity(new Vector2(-SPEED, 0));
+//					}
+//					states = PlayerStates.LEFT;
+//					direction = PlayerStates.LEFT;
+//				}
+//				if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+//					if (canMoveRight) {
+//						body.setLinearVelocity(new Vector2(SPEED, 0));
+//					}
+//					states = PlayerStates.RIGHT;
+//					direction = PlayerStates.RIGHT;
+//				}
+//			}
 
 		} else {
 			this.deadTime += delta;
@@ -262,7 +285,6 @@ public class Player extends Character {
 	}
 
 	public void moverArriba() {
-		
 		if (canMoveTop) {
 			body.setLinearVelocity(new Vector2(0, SPEED));	
 			timePaso++;
@@ -276,6 +298,10 @@ public class Player extends Character {
 		cantPasos++;
 		System.out.println("Moviendose arriba- cantidad de pasos: " + cantPasos);
 		System.out.println("X: " + this.body.getPosition().x + " Y: " + this.body.getPosition().y);
+	}
+	
+	public void stopPlayer() {
+		this.body.setLinearVelocity(0, 0);
 	}
 
 	private void resetStats() {
@@ -364,5 +390,8 @@ public class Player extends Character {
 		}
 
 	}
+
+
+	
 
 }

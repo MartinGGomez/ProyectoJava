@@ -33,8 +33,9 @@ public class MainGame extends Game {
 		batch = new SpriteBatch();
 //		gameScreen = new GameScreen(this);
 		screenCharge = new ScreenCharge(this);
+		menuScreen = new ScreenMenu(this);
 		
-	setScreen(screenCharge);
+	setScreen(menuScreen);
 //		setScreen(gameScreen);
 	}
 
