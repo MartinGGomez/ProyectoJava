@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -80,6 +81,8 @@ public class Player extends Character{
 	public boolean arriba = false, abajo = false, izquierda = false, derecha = false;
 	public boolean stop = false;
 	
+	public boolean colliding = false;
+	
 	
 
 	public Player(MainGame game, World world, String name, int nroJugador) {
@@ -107,6 +110,7 @@ public class Player extends Character{
 		
 		golpe = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/GolpePlayer.ogg", FileType.Internal));
 		pasos = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/paso1.ogg", FileType.Internal));
+		
 	}
 
 	public void definePlayerBody() {
@@ -134,6 +138,8 @@ public class Player extends Character{
 
 		super.body.createFixture(fdef).setUserData(userData);
 
+		super.body.setLinearDamping(0);
+		stop = false;
 	}
 
 	public void update(float delta) {
@@ -369,7 +375,7 @@ public class Player extends Character{
 				enemy.attackedBy = this;
 				this.doingAttack = true;
 				Hud.printMessage(
-						"Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
+						"Le has causado " + enemy.attack.damage + " a " + enemy.enemyIndex + " con " + enemy.attack.name,
 						MessageType.COMBAT);
 				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
 													// gamescreen.nroCliente

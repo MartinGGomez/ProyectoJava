@@ -114,7 +114,6 @@ public class CollisionHelper {
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
 			for (int i = 1; i < maxEnemies+1; i++) {
-				
 				float posX = ((rect.getX() + rect.getWidth()) * 0.20f) * i; 
 				float posY = ((rect.getY() + rect.getHeight()) * 0.20f) * i;
 
@@ -136,11 +135,11 @@ public class CollisionHelper {
 		for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
-			for (int i = 1; i < maxEnemies+1; i++) {				
-				
+			for (int i = 0; i < maxEnemies; i++) {				
+
 				float posX = rect.getX() / PPM;
 				float posY = rect.getY() / PPM;
-
+				
 				if(game.menuScreen.esCliente) {
 					enemiesPositions.add(new Vector2(posX, posY));
 				}

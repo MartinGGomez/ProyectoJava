@@ -32,7 +32,7 @@ public class Enemy extends Character {
 	// Health is in Character class.
 
 	private float posX, posY;
-	private int enemyIndex;
+	
 
 	public Label enemyLabel;
 
@@ -90,15 +90,24 @@ public class Enemy extends Character {
 
 			setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
 					body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
-
+			
+			
 			body.setLinearVelocity(0, 0);
 
 			// Movimiento automatico
 			float activeDistance = 2f;
-			Player player = getCloserPlayer();
+			Player player = getCloserPlayer(activeDistance);
+			boolean ningunPlayerCerca = false;
+			if(player==null) {
+				ningunPlayerCerca = true;
+			} else {
+				ningunPlayerCerca = false;
+			}
 
 			if (!preventMove) {
 
+				if(!ningunPlayerCerca) {
+					
 				
 				
 				if (((super.body.getPosition().x - player.body.getPosition().x) < activeDistance) // SIGUE A LA
@@ -128,7 +137,12 @@ public class Enemy extends Character {
 
 				if (changePath) {
 					//
+					
 					moveTo = changeDirectionTo(this.collidingTo);
+					if(this.enemyIndex == 33) {
+						System.out.println("Should change path to: " + moveTo);	
+					}
+					
 					if (moveTo.equals("Top")) {
 						body.setLinearVelocity(new Vector2(0, (float) (SPEED * 0.55)));
 					} else if (moveTo.equals("Bot")) {
@@ -138,6 +152,8 @@ public class Enemy extends Character {
 					} else {
 						body.setLinearVelocity(new Vector2((float) -(SPEED * 0.55), 0));
 					}
+				}
+				
 				}
 
 			}
@@ -168,7 +184,7 @@ public class Enemy extends Character {
 		}
 	}
 
-	private Player getCloserPlayer() {
+	private Player getCloserPlayer(float minDistancia) {
 		Player player1 = GameScreen.player;
 		Player player2 = GameScreen.player2;
 		
@@ -181,6 +197,11 @@ public class Enemy extends Character {
 		// Teorema de Pitagoras // RaizDe(difx^2 + dify^2) = distanciaTotal 
 		float distanciaTotalPlayer1 =(float) Math.sqrt(Math.pow(difPlayer1X, 2) + Math.pow(difPlayer1Y, 2));
 		float distanciaTotalPlayer2 =(float) Math.sqrt(Math.pow(difPlayer2X, 2) + Math.pow(difPlayer2Y, 2));
+		
+		if(distanciaTotalPlayer1>minDistancia && distanciaTotalPlayer2>minDistancia) {
+			return null;
+		}
+		
 		
 		if(!player1.alive) {
 			return player2;

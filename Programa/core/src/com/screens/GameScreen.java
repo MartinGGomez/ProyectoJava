@@ -254,16 +254,60 @@ public class GameScreen implements Screen, InputProcessor {
 		game.batch.end();
 
 	}
+	
+	private Player getCloserPlayer(Enemy enemy, float minDistancia) {
+		Player player1 = GameScreen.player;
+		Player player2 = GameScreen.player2;
+		
+		float difPlayer1X = enemy.body.getPosition().x - player1.body.getPosition().x;
+		float difPlayer2X = enemy.body.getPosition().x - player2.body.getPosition().x;
+		float difPlayer1Y = enemy.body.getPosition().y - player1.body.getPosition().y;
+		float difPlayer2Y = enemy.body.getPosition().y - player2.body.getPosition().y;
+		
+		
+		// Teorema de Pitagoras // RaizDe(difx^2 + dify^2) = distanciaTotal 
+		float distanciaTotalPlayer1 =(float) Math.sqrt(Math.pow(difPlayer1X, 2) + Math.pow(difPlayer1Y, 2));
+		float distanciaTotalPlayer2 =(float) Math.sqrt(Math.pow(difPlayer2X, 2) + Math.pow(difPlayer2Y, 2));
+		
+		if(distanciaTotalPlayer1>minDistancia && distanciaTotalPlayer2>minDistancia) {
+			return null;
+		}
+		
+		
+		if(!player1.alive) {
+			return player2;
+		}
+		if(!player2.alive) {
+			return player1;
+		}
+		
+		if(distanciaTotalPlayer1 < distanciaTotalPlayer2) {
+			return player1;
+		} else {
+			return player2;
+		}
+	}
+
 
 	private void resolveCollisions() {
 
 		boolean changePathFound = false;
 		for (int i = 0; i < contactListener.enemiesColliding.size(); i++) {
 			for (Enemy enemy : enemies) {
+				float activeDistance = 2f;
+				Player player = getCloserPlayer(enemy, activeDistance);
+				boolean ningunPlayerCerca = false;
+				if(player==null) {
+					ningunPlayerCerca = true;
+				} else {
+					ningunPlayerCerca = false;
+				}
+				if(!ningunPlayerCerca) {
 				if (enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
 					enemy.changePath = true;
 					enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
 					changePathFound = true;
+				}
 				}
 			}
 		}
@@ -298,12 +342,13 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 
 		if (contactListener.isCollidingToPlayer()) {
-			resetMovement();
+			
 			if (((player.body.getPosition().y + player.getHeight()) > player2.body.getPosition().y
 					+ player2.getHeight())
 					&& (player.body.getPosition().x < player2.body.getPosition().x + player2.getWidth()
 							&& player.body.getPosition().x + player.getWidth() > player2.body.getPosition().x)) {
 				// Player 1 arriba player 2 abajo
+				resetMovement();
 				player.canMoveBot = false;
 				player2.canMoveTop = false;
 			} else if (((player2.body.getPosition().y + player2.getHeight()) > player.body.getPosition().y
@@ -311,6 +356,7 @@ public class GameScreen implements Screen, InputProcessor {
 					&& (player2.body.getPosition().x < player.body.getPosition().x + player.getWidth()
 							&& player2.body.getPosition().x + player2.getWidth() > player.body.getPosition().x)) {
 				// Player 2 arriba player 1 abajo
+				resetMovement();
 				player.canMoveTop = false;
 				player2.canMoveBot = false;
 			} else if (((player2.body.getPosition().x + player2.getWidth()) > player.body.getPosition().x
@@ -318,6 +364,7 @@ public class GameScreen implements Screen, InputProcessor {
 					&& (player2.body.getPosition().y < player.body.getPosition().y + player.getHeight()
 							&& player2.body.getPosition().y + player2.getHeight() > player.body.getPosition().y)) {
 				// Player 1 izquierda player 2 derecha
+				resetMovement();
 				player.canMoveRight = false;
 				player2.canMoveLeft = false;
 			} else if (((player.body.getPosition().x + player.getWidth()) > player2.body.getPosition().x
@@ -325,6 +372,7 @@ public class GameScreen implements Screen, InputProcessor {
 					&& (player.body.getPosition().y < player2.body.getPosition().y + player2.getHeight()
 							&& player.body.getPosition().y + player.getHeight() > player2.body.getPosition().y)) {
 				// Player 2 izquierda player 1 derecha
+				resetMovement();
 				player.canMoveLeft = false;
 				player2.canMoveRight = false;
 			}
@@ -343,7 +391,6 @@ public class GameScreen implements Screen, InputProcessor {
 						if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
 							System.out.println("atacando");
 							player.attack(enemy, new BasicAttack());
-							// hud.boton1.setVisible(false);
 						}
 					}
 

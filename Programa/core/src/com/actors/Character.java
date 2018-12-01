@@ -34,6 +34,8 @@ public abstract class Character extends Sprite {
 	public boolean doingAttack = false;
 	public Character attackedBy;
 	protected int attackDamage;
+	
+	public int enemyIndex;
 
 	public World world;
 	public Body body;
