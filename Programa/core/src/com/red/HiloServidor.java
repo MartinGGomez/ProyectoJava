@@ -70,11 +70,14 @@ public class HiloServidor extends Thread{
 					this.enviarDatos("empieza", ip1, puerto1);
 					this.enviarDatos("empieza", ip2, puerto2);
 					this.app.menuScreen.empiezaJuego = true;
+					//
+					// Crear enemigos
+					
 				}
 			}
 		}
 		
-		// arriba/1
+		//
 
 		if(mensajeCompuesto.length>1) {
 			if(mensajeCompuesto[0].equals("arriba")) {
@@ -168,7 +171,7 @@ public class HiloServidor extends Thread{
 		
 	}
 
-	private void enviarDatosATodos(String mensaje) {
+	public void enviarDatosATodos(String mensaje) {
 		byte[] data = mensaje.getBytes();
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip1, puerto1);
 		DatagramPacket packet2 = new DatagramPacket(data, data.length, ip2, puerto2);

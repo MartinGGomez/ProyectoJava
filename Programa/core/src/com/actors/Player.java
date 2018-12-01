@@ -114,10 +114,10 @@ public class Player extends Character{
 		BodyDef bdef = new BodyDef();
 		if (nroJugador == 1) {
 			System.err.println("Jugador : " + this.nroJugador + " : " + this.name);
-			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
+			bdef.position.set(30, 20);
 		} else {
 			System.err.println("Jugador 2: " + this.nroJugador + " : " + this.name);
-			bdef.position.set(Hud.HUD_HALF_WIDTH / PPM, Hud.HUD_HALF_HEIGHT / PPM);
+			bdef.position.set(38, 20);
 		}
 		bdef.type = BodyDef.BodyType.DynamicBody;
 
@@ -361,7 +361,7 @@ public class Player extends Character{
 	}
 
 	public void attack(Character enemy, Attack attack) {
-		if(this.mana > attack.mana){
+		if(this.mana >= attack.mana){
 		if (this.energy > attack.energy) {
 			if (enemy.alive) {
 				enemy.attack = attack;

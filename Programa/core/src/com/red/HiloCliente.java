@@ -8,12 +8,13 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.game.MainGame;
+import com.services.collision.CollisionHelper;
 
 public class HiloCliente extends Thread {
 
 	private InetAddress ip;
 	private DatagramSocket socket;
-	private MainGame app;
+	public MainGame app;
 	
 	private boolean playerStop = false;
 
@@ -64,67 +65,15 @@ public class HiloCliente extends Thread {
 				System.out.println("Sos el cliente nº " + mensajeCompuesto[1]);
 				app.nroCliente = Integer.valueOf(mensajeCompuesto[1]);
 			}
-			if (mensajeCompuesto[0].equals("arriba")) {
-				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.arriba = true;
-					app.gameScreen.player.stop = false;
-				}
-				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.arriba = true;
-					app.gameScreen.player2.stop = false;
-				}
-			}
-			if (mensajeCompuesto[0].equals("abajo")) {
-				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.abajo = true;
-					app.gameScreen.player.stop = false;
-				}
-				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.abajo = true;
-					app.gameScreen.player2.stop = false;
-				}
-			}
-			if (mensajeCompuesto[0].equals("derecha")) {
-				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.derecha = true;
-					app.gameScreen.player.stop = false;
-				}
-				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.derecha = true;
-					app.gameScreen.player2.stop = false;
-				}
-			}
-			if (mensajeCompuesto[0].equals("izquierda")) {
-				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.izquierda = true;
-					app.gameScreen.player.stop = false;
-				}
-				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.izquierda = true;
-					app.gameScreen.player2.stop = false;
-				}
-			}
-			
-			
-			if (mensajeCompuesto[0].equals("stop")) {
-				playerStop = true;
-				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
-					app.gameScreen.player.arriba = false;
-					app.gameScreen.player.stop = true;
-				}
-				if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
-					app.gameScreen.player2.arriba = false;
-					app.gameScreen.player2.stop = true;
-				}
-			}
-			
-			
+			manejarMovimientos(mensajeCompuesto);
 			//
+			
 			
 		} else {
 			if (mensaje.equals("empieza")) {
 				app.menuScreen.empiezaJuego = true;
 			}
+			
 		}
 
 		//
@@ -164,6 +113,62 @@ public class HiloCliente extends Thread {
 		// app.pantallaJuego.gorep = false;
 		// }
 		// }
+	}
+
+	private void manejarMovimientos(String[] mensajeCompuesto) {
+		if (mensajeCompuesto[0].equals("arriba")) {
+			if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+				app.gameScreen.player.arriba = true;
+				app.gameScreen.player.stop = false;
+			}
+			if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+				app.gameScreen.player2.arriba = true;
+				app.gameScreen.player2.stop = false;
+			}
+		}
+		if (mensajeCompuesto[0].equals("abajo")) {
+			if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+				app.gameScreen.player.abajo = true;
+				app.gameScreen.player.stop = false;
+			}
+			if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+				app.gameScreen.player2.abajo = true;
+				app.gameScreen.player2.stop = false;
+			}
+		}
+		if (mensajeCompuesto[0].equals("derecha")) {
+			if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+				app.gameScreen.player.derecha = true;
+				app.gameScreen.player.stop = false;
+			}
+			if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+				app.gameScreen.player2.derecha = true;
+				app.gameScreen.player2.stop = false;
+			}
+		}
+		if (mensajeCompuesto[0].equals("izquierda")) {
+			if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+				app.gameScreen.player.izquierda = true;
+				app.gameScreen.player.stop = false;
+			}
+			if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+				app.gameScreen.player2.izquierda = true;
+				app.gameScreen.player2.stop = false;
+			}
+		}
+		
+		
+		if (mensajeCompuesto[0].equals("stop")) {
+			playerStop = true;
+			if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
+				app.gameScreen.player.arriba = false;
+				app.gameScreen.player.stop = true;
+			}
+			if (mensajeCompuesto[1].equals("2")) { // Mover jugador 2
+				app.gameScreen.player2.arriba = false;
+				app.gameScreen.player2.stop = true;
+			}
+		}
 	}
 
 	public void enviarDatos(String mensaje) {

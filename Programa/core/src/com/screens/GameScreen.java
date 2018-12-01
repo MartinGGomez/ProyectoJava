@@ -51,19 +51,19 @@ public class GameScreen implements Screen, InputProcessor {
 	private OrthogonalTiledMapRenderer renderer;
 
 	// Box2D
-	private World world;
+	public World world;
 	private Box2DDebugRenderer box2dRender;
 	public static MyContactListener contactListener;
 
 	public static Player player;
 	public static Player player2;
 
-	private Array<Enemy> enemies;
+	public Array<Enemy> enemies = new Array<Enemy>();
 
 	private int iteraciones = 0;
 
 	// Helpers
-	private CollisionHelper collisionHelper;
+	public CollisionHelper collisionHelper;
 
 	// HUD
 	public static Hud hud;
@@ -80,6 +80,9 @@ public class GameScreen implements Screen, InputProcessor {
 	public GameScreen(MainGame game) {
 		this.game = game;
 		this.nroJugador = this.game.nroCliente;
+		if(this.game.menuScreen.esCliente) {
+			this.game.cliente.hiloCliente.app.gameScreen = this;	
+		} 
 
 		gamecam = new OrthographicCamera();
 
@@ -89,7 +92,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		// Tiled Map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("Mapa de Prueba.tmx");
+		map = mapLoader.load("Nuevo Mapa.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
 
 		// Box2D
@@ -107,10 +110,17 @@ public class GameScreen implements Screen, InputProcessor {
 			player2 = new Player(this.game, world, "Player 2", 2);
 		}
 
-		// Body Definitions
 		collisionHelper = new CollisionHelper(map, world);
+		// Body Definitions
 		collisionHelper.createMapObjects();
-		enemies = collisionHelper.createEnemies(this.game);
+		if(!this.game.menuScreen.esCliente) {
+			enemies = collisionHelper.createEnemies(game);
+		} else  {
+			collisionHelper.generateEnemiesPositions(game);
+			enemies = collisionHelper.copiarEnemigos(game);
+			System.out.println("Enemigos creados : " + enemies.size);
+		}
+		
 
 		// Hud
 		if (this.nroJugador == 1) {
@@ -415,14 +425,21 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (this.game.menuScreen.esCliente) {
-			float distanciaX = gamecam.position.x - this.cameraInitialPositionX;
-			float distanciaY = gamecam.position.y - this.cameraInitialPositionY;
+			float distanciaX, distanciaY;
+			if(this.nroJugador == 1) {
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (27.265f);  // 29.265 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f);  // 17.46 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego	
+			} else {
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (35.265f);  // 29.265 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f);  // 17.46 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego
+			}
 			float posX = screenX / PPM + distanciaX;
 			float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
+			
 
-			System.out.println("Click en " + posX + " - " + posY);
-
-			System.out.println("Player 1 pos: " + player.getX() + " - " + player.getY());
+			System.out.println("Click en: " + posX + " - " + posY);
+			
+			System.out.println("Jugador en " + player.getX() + " - " + player.getY());
 			
 			if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
 					&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
@@ -433,28 +450,6 @@ public class GameScreen implements Screen, InputProcessor {
 					player2.selectedAttack = null;
 				}
 			}
-			
-			
-//			if (this.nroJugador == 1) {
-//				if (posX > Hud.HUD_HALF_WIDTH / PPM - player.getWidth()
-//						&& posX < Hud.HUD_HALF_WIDTH / PPM + player.getWidth()
-//						&& posY > Hud.HUD_HALF_HEIGHT / PPM - player.getHeight()
-//						&& posY < Hud.HUD_HALF_HEIGHT / PPM + player.getHeight()) {
-//					Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
-//				}
-//			}
-//			
-//			if (this.nroJugador == 2) {
-//				if (posX > Hud.HUD_HALF_WIDTH / PPM - player2.getWidth()
-//						&& posX < Hud.HUD_HALF_WIDTH / PPM + player2.getWidth()
-//						&& posY > Hud.HUD_HALF_HEIGHT / PPM - player2.getHeight()
-//						&& posY < Hud.HUD_HALF_HEIGHT / PPM + player2.getHeight()) {
-//					Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
-//				}
-//			}
-			
-
-			
 
 			if ((posX > (player2.getX()) && posX < player2.getX() + player2.getWidth())
 					&& (posY > player2.getY() && posY < player2.getY() + player2.getHeight())) {

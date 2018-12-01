@@ -10,6 +10,7 @@ import com.red.Servidor;
 import com.screens.GameScreen;
 import com.screens.ScreenCharge;
 import com.screens.ScreenMenu;
+import com.services.collision.CollisionHelper;
 
 public class MainGame extends Game {
 	
