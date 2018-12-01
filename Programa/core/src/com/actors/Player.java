@@ -366,10 +366,19 @@ public class Player extends Character{
 		world.destroyBody(body);
 	}
 
-	public void attack(Character enemy, Attack attack) {
+	public void attack(Character enemy, Attack attack, boolean sendMessage) {
 		if(this.mana >= attack.mana){
 		if (this.energy > attack.energy) {
 			if (enemy.alive) {
+				if(sendMessage) {
+					if(enemy.npc) {
+						this.game.cliente.hiloCliente.enviarDatos("atacarNPC/"+enemy.enemyIndex+"/"+attack.name+"/"+this.nroJugador);	
+					} else {
+						this.game.cliente.hiloCliente.enviarDatos("atacarPlayer/"+enemy.enemyIndex+"/"+attack.name+"/"+this.nroJugador);
+					}	
+				}
+				
+				
 				enemy.attack = attack;
 				enemy.isBeingAttacked = true;
 				enemy.attackedBy = this;
@@ -397,7 +406,5 @@ public class Player extends Character{
 
 	}
 
-
-	
-
 }
+

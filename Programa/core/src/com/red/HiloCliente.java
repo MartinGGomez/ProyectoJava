@@ -7,8 +7,10 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import com.actors.Enemy;
+import com.attacks.Attack;
 import com.game.MainGame;
-import com.services.collision.CollisionHelper;
+import com.screens.GameScreen;
 
 public class HiloCliente extends Thread {
 
@@ -67,6 +69,17 @@ public class HiloCliente extends Thread {
 			}
 			manejarMovimientos(mensajeCompuesto);
 			//
+			// atacarNPC/"+enemy.enemyIndex+"/"+attack.name/nroJugador	
+
+			if(mensajeCompuesto[0].equals("atacarNPC")) {
+				int attackedBy = Integer.parseInt(mensajeCompuesto[3]);
+				int enemyIndex = Integer.parseInt(mensajeCompuesto[1]);
+				String attackName = mensajeCompuesto[2];
+				app.gameScreen.copyAttack = true;
+				app.gameScreen.attackToCopyAttackedBy = attackedBy;
+				app.gameScreen.attackToCopyEnemyIndex = enemyIndex;
+				app.gameScreen.attackToCopyName = attackName;
+			}
 			
 			
 		} else {

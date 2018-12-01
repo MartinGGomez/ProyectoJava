@@ -16,7 +16,7 @@ public class HealthAttack extends Attack{
 			this.region = new TextureRegion(texture,  0, 384, 192, 192); 
 			createAnimations();
 			setScale(1.5f);
-			super.name = "Blue";
+			super.name = "Health";
 			super.damage = 50;
 			super.mana = 100;
 			super.energy = 20;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.actors.Enemy;
 import com.actors.Player;
 import com.actors.states.PlayerStates;
+import com.attacks.Attack;
 import com.attacks.BasicAttack;
 import com.attacks.FireAttack;
 import com.badlogic.gdx.Files.FileType;
@@ -59,7 +60,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public static Player player;
 	public static Player player2;
 
-	public Array<Enemy> enemies = new Array<Enemy>();
+	public static Array<Enemy> enemies = new Array<Enemy>();
 
 	private int iteraciones = 0;
 
@@ -77,6 +78,12 @@ public class GameScreen implements Screen, InputProcessor {
 	private Sound potas;
 
 	public int nroJugador;
+	
+	// Copiar ataque de red.
+	public boolean copyAttack = false;
+	public String attackToCopyName;
+	public int attackToCopyEnemyIndex;
+	public int attackToCopyAttackedBy;
 
 	public GameScreen(MainGame game) {
 		this.game = game;
@@ -390,20 +397,36 @@ public class GameScreen implements Screen, InputProcessor {
 						Enemy enemy = enemies.get(enemyC.index);
 						if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
 							System.out.println("atacando");
-							player.attack(enemy, new BasicAttack());
+							player.attack(enemy, new BasicAttack(), true);
 						}
 					}
 
 				}
 			}
 		}
+		
+		if(this.copyAttack) {
+			Attack attack = Attack.getAttackByName(this.attackToCopyName);
+			Enemy enemy = GameScreen.getEnemyByIndex(this.attackToCopyEnemyIndex);
+			if(this.attackToCopyAttackedBy == 1) {
+				this.player.selectedAttack = attack;
+				this.player.attack(enemy, attack, false);
+				this.player.selectedAttack = null;
+			} else {
+				this.player2.selectedAttack = attack;
+				this.player2.attack(enemy, attack, false);
+				this.player2.selectedAttack = null;
+			}
+			this.copyAttack = false;
+		}
+		
 	}
 
 	private void handleAttacksToPlayer() {
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) { // Ataque del enemigo 1
 			if (!player.doingAttack) {
 				if (Combat.canAttackToEnemy(player, player2) && (!estaAtacando)) {
-					player.attack(player2, new BasicAttack());
+					player.attack(player2, new BasicAttack(), true);
 				}
 			}
 		}
@@ -411,7 +434,7 @@ public class GameScreen implements Screen, InputProcessor {
 		if (Gdx.input.isKeyJustPressed(Keys.M)) { // Ataque del enemigo 2
 			if (!player2.doingAttack) {
 				if (Combat.canAttackToEnemy(player2, player) && (!estaAtacando)) {
-					player2.attack(player, new BasicAttack());
+					player2.attack(player, new BasicAttack(), true);
 				}
 			}
 		}
@@ -428,6 +451,16 @@ public class GameScreen implements Screen, InputProcessor {
 		player2.canMoveRight = true;
 	}
 
+	public static Enemy getEnemyByIndex(int index) {
+		Enemy enemy = null;
+		for(Enemy search: enemies) {
+			if(search.enemyIndex == index) {
+				return search;
+			}
+		}
+		return enemy;
+	}
+	
 	@Override
 	public void resize(int width, int height) {
 		gameport.update(width, height);
@@ -452,6 +485,7 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(processors);
 
 	}
+
 
 	@Override
 	public void pause() {
@@ -495,7 +529,7 @@ public class GameScreen implements Screen, InputProcessor {
 				Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
 
 				if (player2.selectedAttack != null) {
-					player2.attack(player, player2.selectedAttack);
+					player2.attack(player, player2.selectedAttack, true);
 					player2.selectedAttack = null;
 				}
 			}
@@ -505,7 +539,7 @@ public class GameScreen implements Screen, InputProcessor {
 				Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
 
 				if (player.selectedAttack != null) {
-					player.attack(player2, player.selectedAttack);
+					player.attack(player2, player.selectedAttack, true);
 					player.selectedAttack = null;
 
 				}
@@ -519,12 +553,12 @@ public class GameScreen implements Screen, InputProcessor {
 						Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);
 
 						if (player.selectedAttack != null) {
-							player.attack(enemy, player.selectedAttack);
+							player.attack(enemy, player.selectedAttack, true);
 							player.selectedAttack = null;
 						}
 
 						if (player2.selectedAttack != null) {
-							player2.attack(enemy, player2.selectedAttack);
+							player2.attack(enemy, player2.selectedAttack, true);
 							player2.selectedAttack = null;
 						}
 

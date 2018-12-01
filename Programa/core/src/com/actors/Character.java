@@ -27,6 +27,7 @@ public abstract class Character extends Sprite {
 	public int energy;
 
 	public boolean alive = true;
+	public boolean npc = false;
 
 	public boolean isBeingAttacked = false;
 	public Attack attack;

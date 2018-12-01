@@ -55,6 +55,7 @@ public class Enemy extends Character {
 		super.health = 100;
 		super.mana = 0;
 		super.energy = 0;
+		super.npc = true;
 
 		this.posX = posX;
 		this.posY = posY;

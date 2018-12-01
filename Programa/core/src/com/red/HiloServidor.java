@@ -79,6 +79,17 @@ public class HiloServidor extends Thread{
 		//
 
 		if(mensajeCompuesto.length>1) {
+			// atacarNPC/"+enemy.enemyIndex+"/"+attack.name	
+
+			if(mensajeCompuesto[0].equals("atacarNPC")) {
+				int cliente = Integer.parseInt(mensajeCompuesto[3]);
+				if(cliente == 1) {
+					this.enviarDatos(mensaje, ip2, puerto2);
+				} else {
+					this.enviarDatos(mensaje, ip1, puerto1);
+				}
+			}
+			
 			if(mensajeCompuesto[0].equals("arriba")) {
 				if(mensajeCompuesto[1].equals("1")) { // Mover jugador 1
 					app.gameScreen.player.arriba = true;

@@ -113,4 +113,36 @@ public abstract class Attack extends Sprite {
 	public void getSound() {
 		this.sound.play();
 	}
+	
+	public static Attack getAttackByName(String name) {
+		Attack attack = null;
+		if(name.equals("Ataque basico")) {
+			attack = new BasicAttack();
+		}
+		if(name.equals("Blue")) {
+			attack = new BlueCircleAttack();
+		}
+		if(name.equals("Ataque de hielo")) {
+			attack = new BlueStarAttack();
+		}
+		if(name.equals("Rugido")) {
+			attack = new DogFireAttack();
+		}
+		if(name.equals("Ataque de fuego")) {
+			attack = new FireAttack();
+		}
+		if(name.equals("Health")) {
+			attack = new HealthAttack();
+		}
+		if(name.equals("Ataque de furia")) {
+			attack = new PinkAttack();
+		}
+		if(name.equals("Shot Blue")) {
+			attack = new ShotBlueAttack();
+		}
+		if(name.equals("Volcan")) {
+			attack = new VulcanAttack();
+		}
+		return attack;
+	}
 }
