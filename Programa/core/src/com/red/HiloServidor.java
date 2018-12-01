@@ -17,7 +17,7 @@ public class HiloServidor extends Thread{
 	public InetAddress ip1; public int puerto1;
 	public InetAddress ip2; public int puerto2;
 	
-	private MainGame app;
+	public MainGame app;
 	
 	public HiloServidor(MainGame app){
 		
@@ -66,13 +66,12 @@ public class HiloServidor extends Thread{
 					ip2 = ip;
 					puerto2 = puerto;
 					nroConexiones++;
+					this.app.menuScreen.esperando = true;
+					this.app.menuScreen.empiezaJuego = true;
 					this.enviarDatos("player/2", ip2, puerto2);
 					this.enviarDatos("empieza", ip1, puerto1);
 					this.enviarDatos("empieza", ip2, puerto2);
-					this.app.menuScreen.empiezaJuego = true;
 					//
-					// Crear enemigos
-					
 				}
 			}
 		}

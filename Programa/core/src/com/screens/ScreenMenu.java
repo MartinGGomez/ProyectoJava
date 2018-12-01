@@ -7,6 +7,7 @@ import java.util.Scanner;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,11 +27,16 @@ public class ScreenMenu implements Screen, InputProcessor {
 	private MainGame game;
 
 	private Texture menu;
+	private Texture wait;
+	private Sprite waiting;
+	private Texture fondo;
+	
+	Music espere;
 
 	private ProgressBar barMenu;
 
 	private int cont = 0;
-	private boolean esperando = false;
+	public boolean esperando = false;
 
 	private Sound click;
 	private Sound inicioP;
@@ -45,6 +51,13 @@ public class ScreenMenu implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(this);
 		this.game = game;
 		menu = new Texture("menuPrincipal.png");
+		
+		fondo = new Texture("VentanaSola.jpg");
+		wait = new Texture("Esperando.jpg");
+		waiting = new Sprite(wait);	
+		
+		
+		
 
 	}
 
@@ -64,15 +77,20 @@ public class ScreenMenu implements Screen, InputProcessor {
 		// }
 		//
 		game.batch.begin();
-		game.batch.draw(menu, 0, 0, 800, 600);
-		game.batch.end();
-		
-		if(empiezaJuego) {
-			System.out.println("EMPEZAR JUEGO");
-			this.game.gameScreen = new GameScreen(this.game);
-			game.setScreen(game.gameScreen);
-			game.screenCharge.start.stop();
+		if(!esperando) {
+			game.batch.draw(menu, 0, 0, 800, 600);	
+		} else {
+			game.batch.draw(fondo, 0, 0, 800, 600);
+			game.batch.draw(waiting, Gdx.graphics.getWidth()/2 - wait.getWidth()/2 , Gdx.graphics.getHeight()/2 - wait.getHeight()/2 );
+			if(empiezaJuego) {
+				System.out.println("EMPIEZA JUEGO");
+				this.game.gameScreen = new GameScreen(this.game);
+				game.setScreen(game.gameScreen);
+				game.screenCharge.start.stop();
+			}
 		}
+		
+		game.batch.end();
 
 	}
 

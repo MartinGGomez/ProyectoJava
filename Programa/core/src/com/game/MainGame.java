@@ -10,7 +10,6 @@ import com.red.Servidor;
 import com.screens.GameScreen;
 import com.screens.ScreenCharge;
 import com.screens.ScreenMenu;
-import com.services.collision.CollisionHelper;
 
 public class MainGame extends Game {
 	
@@ -32,12 +31,11 @@ public class MainGame extends Game {
 		assetManager.load("ui/uiskin.atlas", TextureAtlas.class);
 		assetManager.finishLoading();
 		batch = new SpriteBatch();
-//		gameScreen = new GameScreen(this);
 		screenCharge = new ScreenCharge(this);
+//		gameScreen = new GameScreen(this);
 		menuScreen = new ScreenMenu(this);
 		
 	setScreen(menuScreen);
-//		setScreen(gameScreen);
 	}
 
 	

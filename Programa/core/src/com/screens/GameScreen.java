@@ -25,6 +25,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
@@ -82,7 +83,9 @@ public class GameScreen implements Screen, InputProcessor {
 		this.nroJugador = this.game.nroCliente;
 		if(this.game.menuScreen.esCliente) {
 			this.game.cliente.hiloCliente.app.gameScreen = this;	
-		} 
+		} else {
+			this.game.servidor.hiloServidor.app.gameScreen = this;
+		}
 
 		gamecam = new OrthographicCamera();
 
@@ -296,7 +299,6 @@ public class GameScreen implements Screen, InputProcessor {
 
 		if (contactListener.isCollidingToPlayer()) {
 			resetMovement();
-
 			if (((player.body.getPosition().y + player.getHeight()) > player2.body.getPosition().y
 					+ player2.getHeight())
 					&& (player.body.getPosition().x < player2.body.getPosition().x + player2.getWidth()
