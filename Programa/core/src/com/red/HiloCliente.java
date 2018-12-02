@@ -27,7 +27,7 @@ public class HiloCliente extends Thread {
 		try {
 			// Buscarla automaticamente
 			this.socket = new DatagramSocket();
-			String ipServer = "192.168.0.141";
+			String ipServer = "192.168.0.4";
 			this.ip = InetAddress.getByName(ipServer); // direccion del server
 
 		} catch (SocketException e) {
