@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import com.actors.Character;
 import com.actors.Enemy;
 import com.attacks.Attack;
 import com.game.MainGame;
@@ -104,6 +105,16 @@ public class HiloCliente extends Thread {
 			if (mensajeCompuesto[0].equals("pocionMana")) {
 				int cliente = Integer.parseInt(mensajeCompuesto[1]);
 				app.gameScreen.tomarPocion(cliente, "Mana");
+			}
+			
+			// cofre/enemyIndex/pocionesVida/pocionesMana/nroCliente
+			if(mensajeCompuesto[0].equals("cofre")) {
+				int cliente = Integer.parseInt(mensajeCompuesto[4]);
+				int enemyIndex = Integer.parseInt(mensajeCompuesto[1]);
+				int pocionesVida = Integer.parseInt(mensajeCompuesto[2]);
+				int pocionesMana = Integer.parseInt(mensajeCompuesto[3]);
+				Enemy enemy = app.gameScreen.getEnemyByIndex(enemyIndex);
+				enemy.openChestFromNet(pocionesVida, pocionesMana);
 			}
 
 		} else {

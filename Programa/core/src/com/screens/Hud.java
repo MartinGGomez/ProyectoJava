@@ -117,6 +117,9 @@ public class Hud implements Disposable {
 		case REWARD:
 			color = Color.GOLDENROD;
 		break;
+		case ERROR: 
+			color = Color.SALMON;
+			break;
 		default:
 			color = Color.WHITE;
 			break;

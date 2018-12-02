@@ -140,7 +140,16 @@ public abstract class Character extends Sprite {
 					+ " pociones de mana!!!", MessageType.REWARD);	
 		}
 		
-		
+		// cofre/enemyIndex/pocionesVida/pocionesMana/nroCliente
+		this.game.cliente.hiloCliente.enviarDatos("cofre/"+this.enemyIndex+"/"+cantHealthPotions+"/"+cantManaPotions+"/"+game.nroCliente);
+			
+	}
+	
+	public void openChestFromNet(int cantHealthPotions, int cantManaPotions) {
+		Player player = (Player) this.attackedBy;
+		player.healthPotions += cantHealthPotions;
+		player.manaPotions += cantManaPotions;
+		this.open = true;
 	}
 
 	public TextureRegion getFrame(float delta) {

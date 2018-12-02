@@ -120,6 +120,17 @@ public class HiloServidor extends Thread {
 					this.enviarDatos(mensaje, ip1, puerto1);
 				}
 			}
+			
+			// cofre/enemyIndex/pocionesVida/pocionesMana/nroCliente
+			if(mensajeCompuesto[0].equals("cofre")) {
+				int cliente = Integer.parseInt(mensajeCompuesto[4]);
+				if (cliente == 1) {
+					this.enviarDatos(mensaje, ip2, puerto2);
+				} else {
+					this.enviarDatos(mensaje, ip1, puerto1);
+				}
+			}
+			
 
 			if (mensajeCompuesto[0].equals("arriba")) {
 				if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1

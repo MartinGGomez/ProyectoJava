@@ -265,13 +265,22 @@ public class GameScreen implements Screen, InputProcessor {
 
 		game.batch.begin();
 
-		for (Enemy enemy : enemies) {
-			enemy.draw(game.batch);
-			if (enemy.isBeingAttacked) {
-				enemy.attack.update(delta);
-				enemy.attack.draw(game.batch);
+//		for (Enemy enemy : enemies) {
+//			enemy.draw(game.batch);
+//			if (enemy.isBeingAttacked) {
+//				enemy.attack.update(delta);
+//				enemy.attack.draw(game.batch);
+//			}
+//		}
+		for (int i = 0; i<enemies.size; i++) {
+			enemies.get(i).draw(game.batch);
+			if (enemies.get(i).isBeingAttacked) {
+				enemies.get(i).attack.update(delta);
+				enemies.get(i).attack.draw(game.batch);
 			}
 		}
+		
+		
 
 		player.draw(game.batch);
 		player2.draw(game.batch);
@@ -582,15 +591,32 @@ public class GameScreen implements Screen, InputProcessor {
 					} else {
 						if (button == Buttons.LEFT) {
 							Hud.printMessage("Cofre de Drop", MessageType.DROP);
-
 						}
 						if (button == Buttons.RIGHT) {
 							if (enemy.open) {
 								Hud.printMessage("El cofre ya fue abierto", MessageType.DROP);
 							} else {
-								enemy.open = true;
-								enemy.openChest();
-								open.play();
+								if(game.nroCliente == 1) {
+									if(player == enemy.attackedBy) {
+										enemy.open = true;
+										enemy.openChest();
+										open.play();
+									} else {
+										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);
+									}
+								}
+								
+								if(game.nroCliente == 2) {
+									if(player2 == enemy.attackedBy) {
+										enemy.open = true;
+										enemy.openChest();
+										open.play();
+									} else {
+										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);
+									}
+								}
+								
+								
 							}
 						}
 
@@ -603,8 +629,9 @@ public class GameScreen implements Screen, InputProcessor {
 			player2.selectedAttack = null;
 		}
 		return false;
-
 	}
+	
+	
 
 	public void tomarPocion(int jugadorNro, String tipo) {
 		if(tipo.equals("Vida")) {
