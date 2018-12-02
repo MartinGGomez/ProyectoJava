@@ -64,8 +64,6 @@ public class ScreenMenu implements Screen, InputProcessor {
 		wait = new Texture("Esperando.jpg");
 		waiting = new Sprite(wait);	
 		
-		
-	
 		createProgressBar();
 	}
 

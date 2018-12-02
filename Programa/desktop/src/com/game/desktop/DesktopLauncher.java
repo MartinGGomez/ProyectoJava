@@ -1,5 +1,6 @@
 package com.game.desktop;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.game.MainGame;
@@ -13,6 +14,7 @@ public class DesktopLauncher {
 		config.resizable=false;
 		config.backgroundFPS = 60;
 		config.foregroundFPS = 60;
+		config.addIcon("logoG.png", FileType.Internal);
 		new LwjglApplication(new MainGame(), config);
 	}
 }
