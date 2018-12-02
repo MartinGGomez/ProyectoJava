@@ -17,7 +17,7 @@ public class HiloCliente extends Thread {
 	private InetAddress ip;
 	private DatagramSocket socket;
 	public MainGame app;
-	
+
 	private boolean playerStop = false;
 
 	public HiloCliente(MainGame app) {
@@ -69,24 +69,48 @@ public class HiloCliente extends Thread {
 			}
 			manejarMovimientos(mensajeCompuesto);
 			//
-			// atacarNPC/"+enemy.enemyIndex+"/"+attack.name/nroJugador	
+			// atacarNPC/"+enemy.enemyIndex+"/"+attack.name/nroJugador
 
-			if(mensajeCompuesto[0].equals("atacarNPC")) {
+			if (mensajeCompuesto[0].equals("atacarNPC")) {
 				int attackedBy = Integer.parseInt(mensajeCompuesto[3]);
 				int enemyIndex = Integer.parseInt(mensajeCompuesto[1]);
 				String attackName = mensajeCompuesto[2];
 				app.gameScreen.copyAttack = true;
+				app.gameScreen.attackPlayer = false;
 				app.gameScreen.attackToCopyAttackedBy = attackedBy;
 				app.gameScreen.attackToCopyEnemyIndex = enemyIndex;
 				app.gameScreen.attackToCopyName = attackName;
 			}
-			
-			
+
+			// atacarPlayer/"+enemy.enemyIndex+"/"+attack.name+"/"+this.nroJugador
+			if (mensajeCompuesto[0].equals("atacarPlayer")) {
+				int attackedBy = Integer.parseInt(mensajeCompuesto[3]);
+				int enemyIndex = Integer.parseInt(mensajeCompuesto[1]);
+				String attackName = mensajeCompuesto[2];
+				app.gameScreen.copyAttack = true;
+				app.gameScreen.attackPlayer = true;
+				app.gameScreen.attackToCopyAttackedBy = attackedBy;
+				app.gameScreen.attackToCopyEnemyIndex = enemyIndex;
+				app.gameScreen.attackToCopyName = attackName;
+			}
+
+			// pocionVida/"+this.nroJugador
+			if (mensajeCompuesto[0].equals("pocionVida")) {
+				int cliente = Integer.parseInt(mensajeCompuesto[1]);
+				app.gameScreen.tomarPocion(cliente, "Vida");
+			}
+
+			// pocionMana/"+this.nroJugador
+			if (mensajeCompuesto[0].equals("pocionMana")) {
+				int cliente = Integer.parseInt(mensajeCompuesto[1]);
+				app.gameScreen.tomarPocion(cliente, "Mana");
+			}
+
 		} else {
 			if (mensaje.equals("empieza")) {
 				app.menuScreen.empiezaJuego = true;
 			}
-			
+
 		}
 
 		//
@@ -169,8 +193,7 @@ public class HiloCliente extends Thread {
 				app.gameScreen.player2.stop = false;
 			}
 		}
-		
-		
+
 		if (mensajeCompuesto[0].equals("stop")) {
 			playerStop = true;
 			if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
@@ -191,7 +214,7 @@ public class HiloCliente extends Thread {
 		try {
 
 			System.out.println("Se envio: " + mensaje);
-			
+
 			socket.send(packet);
 
 		} catch (IOException e) {

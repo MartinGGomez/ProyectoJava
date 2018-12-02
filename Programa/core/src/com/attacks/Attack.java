@@ -1,16 +1,17 @@
 package com.attacks;
 
-import static com.constants.Constants.PPM;
-
 import com.actors.Character;
+import com.actors.Player;
 import com.actors.states.PlayerStates;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.game.MainGame;
+import com.screens.GameScreen;
+import static com.constants.Constants.PPM;
 
 public abstract class Attack extends Sprite {
 
@@ -36,6 +37,8 @@ public abstract class Attack extends Sprite {
 	public boolean started = false;
 	
 	public Sound sound;
+	
+	public MainGame game;
 
 	public Attack() {
 	}
@@ -63,6 +66,13 @@ public abstract class Attack extends Sprite {
 					this.attacker.energy = 0;
 				} else {
 					this.attacker.energy -= this.energy;	
+				}
+			}
+			// Actualizar HUD
+			if(!this.characterToAttack.npc) {
+				Player p = (Player) this.characterToAttack;
+				if(p.nroJugador == MainGame.nroCliente) {
+					GameScreen.hud.updateStats(p);	
 				}
 			}
 		}

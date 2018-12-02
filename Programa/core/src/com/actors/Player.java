@@ -59,7 +59,7 @@ public class Player extends Character{
 
 	private float time = 0f;
 
-	private int nroJugador = 0;
+	public int nroJugador = 0;
 
 	public float respawnTime = 4f;
 	public float deadTime = 0f;
@@ -98,6 +98,7 @@ public class Player extends Character{
 		super.region = new TextureRegion(super.texture, 0, 0, 32, 48); // En el sprite sheet empieza en x = 16 y y =
 																		// 908.
 		super.attackDamage = 50;
+		
 		super.health = 200;
 		super.mana = 400;
 		super.energy = 100;
@@ -155,8 +156,8 @@ public class Player extends Character{
 				} else {
 					this.energy += 4;	
 				}
-				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
-													// gamescreen.nroCliente
+				if (this.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador ==
+															// gamescreen.nroCliente
 					GameScreen.hud.updateStats(this);
 				}
 				time = 0f;
@@ -378,18 +379,28 @@ public class Player extends Character{
 					}	
 				}
 				
+				System.err.println("Ataque: " + attack.name + " enemigo: " + enemy.name + " hecho por: " + this.name);
 				
 				enemy.attack = attack;
 				enemy.isBeingAttacked = true;
 				enemy.attackedBy = this;
 				this.doingAttack = true;
-				Hud.printMessage(
-						"Le has causado " + enemy.attack.damage + " a " + enemy.enemyIndex + " con " + enemy.attack.name,
+				
+				if(this.nroJugador == game.nroCliente) {
+					Hud.printMessage(
+						"Le has causado " + enemy.attack.damage + " a " + enemy.name + " con " + enemy.attack.name,
 						MessageType.COMBAT);
-				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
-													// gamescreen.nroCliente
+				} 
+				if(this.nroJugador != game.nroCliente && !enemy.npc) {
+					Hud.printMessage(this.name + " te ha atacado con " + attack.name + " por " + enemy.attack.damage + " puntos.",MessageType.COMBAT);
+					GameScreen.hud.updateStats((Player) enemy);
+				}
+				
+				if (this.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
 					GameScreen.hud.updateStats(this);
 				}
+				
+				
 				if(enemy.attack.name.equals("Ataque basico")){
 					golpe.play();	
 				}else{

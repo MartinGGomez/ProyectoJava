@@ -23,7 +23,7 @@ public class MainGame extends Game {
 	public Servidor servidor;
 	public Cliente cliente;
 	
-	public int nroCliente;
+	public static int nroCliente;
 	
 	@Override
 	public void create() {

@@ -235,7 +235,7 @@ public class Enemy extends Character {
 			} else {
 				playerToAttack.health -= this.attackDamage;	
 			}
-			if(playerToAttack.name.equals("Coxne")) { // CAMBIAR CUANDO SEA EN RED POR Nº CLIENTE
+			if(playerToAttack.nroJugador == game.nroCliente) { // CAMBIAR CUANDO SEA EN RED POR Nº CLIENTE
 				Hud.printMessage(this.name + " te ha pegado por " + this.attackDamage + " puntos de vida",
 						MessageType.COMBAT);
 				GameScreen.hud.updateStats(playerToAttack);
