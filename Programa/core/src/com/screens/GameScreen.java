@@ -81,6 +81,7 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	// Copiar ataque de red.
 	public boolean copyAttack = false;
+	public boolean attackPlayer = false;
 	public String attackToCopyName;
 	public int attackToCopyEnemyIndex;
 	public int attackToCopyAttackedBy;
@@ -162,6 +163,8 @@ public class GameScreen implements Screen, InputProcessor {
 		player2.update(delta);
 
 		resolveCollisions();
+		
+		makeNetworkAttacks();
 
 		handleAttacksToEnemy(contactListener.enemiesCollidingWithPlayer, delta);
 		if (contactListener.isCollidingToPlayer()) {
@@ -201,6 +204,38 @@ public class GameScreen implements Screen, InputProcessor {
 		// inicio.play();
 	}
 
+	private void makeNetworkAttacks() {
+		if(this.copyAttack) {
+			System.out.println("COPIAR ATAQUE");
+			Attack attack = Attack.getAttackByName(this.attackToCopyName);
+			if(this.attackPlayer) {
+				if(this.attackToCopyAttackedBy == 1) { // Ataco el jugador 1
+					this.player.selectedAttack = attack;
+					this.player.attack(player2, attack, false);
+					this.player.selectedAttack = null;
+				} else { 								// Ataco el jugador 2
+					this.player2.selectedAttack = attack;
+					this.player2.attack(player, attack, false);
+					this.player2.selectedAttack = null;
+				}
+				this.attackPlayer = false;
+			} else {
+			
+			Enemy enemy = GameScreen.getEnemyByIndex(this.attackToCopyEnemyIndex);
+			if(this.attackToCopyAttackedBy == 1) {
+				this.player.selectedAttack = attack;
+				this.player.attack(enemy, attack, false);
+				this.player.selectedAttack = null;
+			} else {
+				this.player2.selectedAttack = attack;
+				this.player2.attack(enemy, attack, false);
+				this.player2.selectedAttack = null;
+			}
+			}
+			this.copyAttack = false;
+		}
+	}
+
 	@Override
 	public void render(float delta) {
 
@@ -230,13 +265,22 @@ public class GameScreen implements Screen, InputProcessor {
 
 		game.batch.begin();
 
-		for (Enemy enemy : enemies) {
-			enemy.draw(game.batch);
-			if (enemy.isBeingAttacked) {
-				enemy.attack.update(delta);
-				enemy.attack.draw(game.batch);
+//		for (Enemy enemy : enemies) {
+//			enemy.draw(game.batch);
+//			if (enemy.isBeingAttacked) {
+//				enemy.attack.update(delta);
+//				enemy.attack.draw(game.batch);
+//			}
+//		}
+		for (int i = 0; i<enemies.size; i++) {
+			enemies.get(i).draw(game.batch);
+			if (enemies.get(i).isBeingAttacked) {
+				enemies.get(i).attack.update(delta);
+				enemies.get(i).attack.draw(game.batch);
 			}
 		}
+		
+		
 
 		player.draw(game.batch);
 		player2.draw(game.batch);
@@ -396,28 +440,12 @@ public class GameScreen implements Screen, InputProcessor {
 					for (CollisionMovement enemyC : enemiesColliding) {
 						Enemy enemy = enemies.get(enemyC.index);
 						if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
-							System.out.println("atacando");
 							player.attack(enemy, new BasicAttack(), true);
 						}
 					}
 
 				}
 			}
-		}
-		
-		if(this.copyAttack) {
-			Attack attack = Attack.getAttackByName(this.attackToCopyName);
-			Enemy enemy = GameScreen.getEnemyByIndex(this.attackToCopyEnemyIndex);
-			if(this.attackToCopyAttackedBy == 1) {
-				this.player.selectedAttack = attack;
-				this.player.attack(enemy, attack, false);
-				this.player.selectedAttack = null;
-			} else {
-				this.player2.selectedAttack = attack;
-				this.player2.attack(enemy, attack, false);
-				this.player2.selectedAttack = null;
-			}
-			this.copyAttack = false;
 		}
 		
 	}
@@ -522,11 +550,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 			System.out.println("Click en: " + posX + " - " + posY);
 			
-			System.out.println("Jugador en " + player.getX() + " - " + player.getY());
-			
 			if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
 					&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
-				Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
+				Hud.printMessage(player.name + " - Vida: " + player.health + " - Mana: " + player2.mana, MessageType.PLAYER_CLICK);
 
 				if (player2.selectedAttack != null) {
 					player2.attack(player, player2.selectedAttack, true);
@@ -536,7 +562,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 			if ((posX > (player2.getX()) && posX < player2.getX() + player2.getWidth())
 					&& (posY > player2.getY() && posY < player2.getY() + player2.getHeight())) {
-				Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
+				Hud.printMessage(player2.name + " - Vida: " + player2.health + " - Mana: " + player2.mana, MessageType.PLAYER_CLICK);
 
 				if (player.selectedAttack != null) {
 					player.attack(player2, player.selectedAttack, true);
@@ -565,15 +591,32 @@ public class GameScreen implements Screen, InputProcessor {
 					} else {
 						if (button == Buttons.LEFT) {
 							Hud.printMessage("Cofre de Drop", MessageType.DROP);
-
 						}
 						if (button == Buttons.RIGHT) {
 							if (enemy.open) {
 								Hud.printMessage("El cofre ya fue abierto", MessageType.DROP);
 							} else {
-								enemy.open = true;
-								enemy.openChest();
-								open.play();
+								if(game.nroCliente == 1) {
+									if(player == enemy.attackedBy) {
+										enemy.open = true;
+										enemy.openChest();
+										open.play();
+									} else {
+										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);
+									}
+								}
+								
+								if(game.nroCliente == 2) {
+									if(player2 == enemy.attackedBy) {
+										enemy.open = true;
+										enemy.openChest();
+										open.play();
+									} else {
+										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);
+									}
+								}
+								
+								
 							}
 						}
 
@@ -586,29 +629,63 @@ public class GameScreen implements Screen, InputProcessor {
 			player2.selectedAttack = null;
 		}
 		return false;
-
 	}
+	
+	
 
+	public void tomarPocion(int jugadorNro, String tipo) {
+		if(tipo.equals("Vida")) {
+			if(jugadorNro == 1) {
+				if (player.health < player.maxHealth && player.healthPotions > 0) {
+					player.healthPotions--;
+					player.health += 10;
+					potas.play();
+				}	
+			}
+			if(jugadorNro == 2) {
+				if (player2.health < player2.maxHealth && player2.healthPotions > 0) {
+					player2.healthPotions--;
+					player2.health += 10;
+					potas.play();
+				}
+			}
+		} else {
+			
+			if(jugadorNro == 1) {
+				if (player.mana < player.maxMana && player.manaPotions > 0) {
+					player.manaPotions--;
+					player.mana += 10;
+					potas.play();
+				}	
+			}
+			if(jugadorNro == 2) {
+				if (player2.mana < player2.maxMana && player2.manaPotions > 0) {
+					player2.manaPotions--;
+					player2.mana += 10;
+					potas.play();
+				}
+			}
+			
+		}
+		if(nroJugador == this.nroJugador) {
+			if(nroJugador == 1) {
+				hud.updateStats(player);
+			} else {
+				hud.updateStats(player2);
+			}
+		}
+	}
+	
 	@Override
 	public boolean keyDown(int keycode) {
 		if (this.game.menuScreen.esCliente) {
 			if (keycode == Keys.NUM_1) {
-				if (player.health < player.maxHealth && player.healthPotions > 0) {
-					player.healthPotions--;
-					player.health += 10;
-					hud.updateStats(player);
-					potas.play();
-				}
-
+				this.tomarPocion(this.nroJugador, "Vida");
+				this.game.cliente.hiloCliente.enviarDatos("pocionVida/"+this.nroJugador);
 			}
 			if (keycode == Keys.NUM_2) {
-				if (player.mana < player.maxMana && player.manaPotions > 0) {
-					player.manaPotions--;
-					player.mana += 20;
-					hud.updateStats(player);
-					potas.play();
-				}
-
+				this.tomarPocion(this.nroJugador, "Mana");
+				this.game.cliente.hiloCliente.enviarDatos("pocionMana/"+this.nroJugador);
 			}
 			if (keycode == Keys.W) {
 				this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);

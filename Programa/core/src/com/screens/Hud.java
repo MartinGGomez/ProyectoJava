@@ -117,6 +117,9 @@ public class Hud implements Disposable {
 		case REWARD:
 			color = Color.GOLDENROD;
 		break;
+		case ERROR: 
+			color = Color.SALMON;
+			break;
 		default:
 			color = Color.WHITE;
 			break;
@@ -129,7 +132,9 @@ public class Hud implements Disposable {
 	}
 
 	public void updateStats(Player player) {
+		System.out.println("SE ACTUALIZO EL HUD con " + player.name);
 		this.player = player;
+		this.playerName.setText(player.name);
 		this.health.setText(String.format("HP: %s / %s", this.player.health, this.player.maxHealth));
 		this.mana.setText(String.format("MP: %s / %s", this.player.mana, this.player.maxMana));
 		this.energy.setText(String.format("HP: %s / %s", this.player.energy, this.player.maxEnergy));

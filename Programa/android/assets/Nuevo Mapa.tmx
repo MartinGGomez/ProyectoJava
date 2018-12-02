@@ -276,9 +276,9 @@
   <object id="218" x="3512.52" y="1207.15" width="701.939" height="323.394"/>
  </objectgroup>
  <objectgroup name="LimiteMapa">
-  <object id="271" x="1000" y="-80" width="3212" height="1294"/>
-  <object id="274" x="990" y="4425" width="3212" height="382"/>
-  <object id="275" x="-40" y="-88" width="1032" height="4904"/>
+  <object id="271" x="1000" y="-80" width="3212" height="2078"/>
+  <object id="274" x="990" y="3228.03" width="3212" height="1578.97"/>
+  <object id="275" x="-40" y="-88" width="2371.39" height="4904"/>
   <object id="276" x="4208" y="-56" width="712" height="4792"/>
  </objectgroup>
  <objectgroup name="Enemigos">

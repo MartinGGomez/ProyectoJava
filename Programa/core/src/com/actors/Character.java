@@ -103,9 +103,13 @@ public abstract class Character extends Sprite {
 					player.exp += 25f;	
 				}
 				
-				if(player.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+				if(player.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
 					GameScreen.hud.updateStats(player);
 					Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);	
+				} else {
+					if(!this.npc) {
+						GameScreen.hud.updateStats((Player) this);	
+					}
 				}
 				
 				rewarded = true;
@@ -129,13 +133,23 @@ public abstract class Character extends Sprite {
 		Player player = (Player) this.attackedBy;
 		player.healthPotions += cantHealthPotions;
 		player.manaPotions += cantManaPotions;
-		if(player.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+		if(player.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+			System.out.println("UPDATE HUD AL ABRIR COFRE CON " + player.name);
 			GameScreen.hud.updateStats(player);
 			Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y " + cantManaPotions
 					+ " pociones de mana!!!", MessageType.REWARD);	
 		}
 		
-		
+		// cofre/enemyIndex/pocionesVida/pocionesMana/nroCliente
+		this.game.cliente.hiloCliente.enviarDatos("cofre/"+this.enemyIndex+"/"+cantHealthPotions+"/"+cantManaPotions+"/"+game.nroCliente);
+			
+	}
+	
+	public void openChestFromNet(int cantHealthPotions, int cantManaPotions) {
+		Player player = (Player) this.attackedBy;
+		player.healthPotions += cantHealthPotions;
+		player.manaPotions += cantManaPotions;
+		this.open = true;
 	}
 
 	public TextureRegion getFrame(float delta) {
