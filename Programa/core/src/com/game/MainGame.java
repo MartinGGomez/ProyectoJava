@@ -32,10 +32,9 @@ public class MainGame extends Game {
 		assetManager.finishLoading();
 		batch = new SpriteBatch();
 		screenCharge = new ScreenCharge(this);
-//		gameScreen = new GameScreen(this);
 		menuScreen = new ScreenMenu(this);
 		
-	setScreen(menuScreen);
+	setScreen(screenCharge);
 	}
 
 	

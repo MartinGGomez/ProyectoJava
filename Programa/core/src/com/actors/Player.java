@@ -197,6 +197,10 @@ public class Player extends Character{
 				deadTime = 0f;
 				this.alive = true;
 				this.resetStats();
+				if (this.nroJugador == this.game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador ==
+
+					GameScreen.hud.updateStats(this);
+				}
 			} else {
 				if (this.nroJugador == this.game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador ==
 
@@ -316,7 +320,7 @@ public class Player extends Character{
 		if (alive) {
 			super.draw(batch);
 		} else {
-			System.err.println("MUERTO " + this.nroJugador);
+//			System.err.println("MUERTO " + this.nroJugador);
 		}
 
 	}

@@ -169,6 +169,7 @@ public class ScreenMenu implements Screen, InputProcessor {
 			inicioP.play();
 			
 			if(esCliente) {
+				System.out.println("conexion");
 				this.cliente.hiloCliente.enviarDatos("conexion");
 				esperando = true;
 			}
@@ -182,11 +183,13 @@ public class ScreenMenu implements Screen, InputProcessor {
 	@Override
 	public void show() {
 
-		Scanner s = new Scanner(System.in);
-		System.out.println("¿Servidor o cliente?");
-		int opc = s.nextInt();
-		if (opc == 1)
+//		Scanner s = new Scanner(System.in);
+//		System.out.println("¿Servidor o cliente?");
+//		int opc = s.nextInt();
+		int opc = 1;
+		if (opc == 1) {
 			esCliente = true;
+		}
 
 		if (!esCliente) {
 			servidor = new Servidor(this.game);

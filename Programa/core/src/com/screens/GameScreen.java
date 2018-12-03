@@ -54,7 +54,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	// Box2D
 	public World world;
-//	private Box2DDebugRenderer box2dRender;
+	// private Box2DDebugRenderer box2dRender;
 	public static MyContactListener contactListener;
 
 	public static Player player;
@@ -78,7 +78,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private Sound potas;
 
 	public int nroJugador;
-	
+
 	// Copiar ataque de red.
 	public boolean copyAttack = false;
 	public boolean attackPlayer = false;
@@ -89,8 +89,8 @@ public class GameScreen implements Screen, InputProcessor {
 	public GameScreen(MainGame game) {
 		this.game = game;
 		this.nroJugador = this.game.nroCliente;
-		if(this.game.menuScreen.esCliente) {
-			this.game.cliente.hiloCliente.app.gameScreen = this;	
+		if (this.game.menuScreen.esCliente) {
+			this.game.cliente.hiloCliente.app.gameScreen = this;
 		} else {
 			this.game.servidor.hiloServidor.app.gameScreen = this;
 		}
@@ -108,7 +108,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		// Box2D
 		world = new World(new Vector2(0, 0), true);
-//		box2dRender = new Box2DDebugRenderer();
+		// box2dRender = new Box2DDebugRenderer();
 
 		contactListener = new MyContactListener();
 		world.setContactListener(contactListener);
@@ -124,14 +124,13 @@ public class GameScreen implements Screen, InputProcessor {
 		collisionHelper = new CollisionHelper(map, world);
 		// Body Definitions
 		collisionHelper.createMapObjects();
-		if(!this.game.menuScreen.esCliente) {
+		if (!this.game.menuScreen.esCliente) {
 			enemies = collisionHelper.createEnemies(game);
-		} else  {
+		} else {
 			collisionHelper.generateEnemiesPositions(game);
 			enemies = collisionHelper.copiarEnemigos(game);
 			System.out.println("Enemigos creados : " + enemies.size);
 		}
-		
 
 		// Hud
 		if (this.nroJugador == 1) {
@@ -163,7 +162,7 @@ public class GameScreen implements Screen, InputProcessor {
 		player2.update(delta);
 
 		resolveCollisions();
-		
+
 		makeNetworkAttacks();
 
 		handleAttacksToEnemy(contactListener.enemiesCollidingWithPlayer, delta);
@@ -201,36 +200,36 @@ public class GameScreen implements Screen, InputProcessor {
 
 		renderer.setView(gamecam);
 
-		// inicio.play();
+		inicio.play();
 	}
 
 	private void makeNetworkAttacks() {
-		if(this.copyAttack) {
+		if (this.copyAttack) {
 			System.out.println("COPIAR ATAQUE");
 			Attack attack = Attack.getAttackByName(this.attackToCopyName);
-			if(this.attackPlayer) {
-				if(this.attackToCopyAttackedBy == 1) { // Ataco el jugador 1
+			if (this.attackPlayer) {
+				if (this.attackToCopyAttackedBy == 1) { // Ataco el jugador 1
 					this.player.selectedAttack = attack;
 					this.player.attack(player2, attack, false);
 					this.player.selectedAttack = null;
-				} else { 								// Ataco el jugador 2
+				} else { // Ataco el jugador 2
 					this.player2.selectedAttack = attack;
 					this.player2.attack(player, attack, false);
 					this.player2.selectedAttack = null;
 				}
 				this.attackPlayer = false;
 			} else {
-			
-			Enemy enemy = GameScreen.getEnemyByIndex(this.attackToCopyEnemyIndex);
-			if(this.attackToCopyAttackedBy == 1) {
-				this.player.selectedAttack = attack;
-				this.player.attack(enemy, attack, false);
-				this.player.selectedAttack = null;
-			} else {
-				this.player2.selectedAttack = attack;
-				this.player2.attack(enemy, attack, false);
-				this.player2.selectedAttack = null;
-			}
+
+				Enemy enemy = GameScreen.getEnemyByIndex(this.attackToCopyEnemyIndex);
+				if (this.attackToCopyAttackedBy == 1) {
+					this.player.selectedAttack = attack;
+					this.player.attack(enemy, attack, false);
+					this.player.selectedAttack = null;
+				} else {
+					this.player2.selectedAttack = attack;
+					this.player2.attack(enemy, attack, false);
+					this.player2.selectedAttack = null;
+				}
 			}
 			this.copyAttack = false;
 		}
@@ -259,86 +258,81 @@ public class GameScreen implements Screen, InputProcessor {
 
 		renderer.render(); // Tiled Map renderer.
 
-//		box2dRender.render(world, gamecam.combined); // Box2D render.
+		// box2dRender.render(world, gamecam.combined); // Box2D render.
 
 		game.batch.setProjectionMatrix(gamecam.combined);
 
 		game.batch.begin();
 
-//		for (Enemy enemy : enemies) {
-//			enemy.draw(game.batch);
-//			if (enemy.isBeingAttacked) {
-//				enemy.attack.update(delta);
-//				enemy.attack.draw(game.batch);
-//			}
-//		}
-		for (int i = 0; i<enemies.size; i++) {
-			enemies.get(i).draw(game.batch);
+		// for (Enemy enemy : enemies) {
+		// enemy.draw(game.batch);
+		// if (enemy.isBeingAttacked) {
+		// enemy.attack.update(delta);
+		// enemy.attack.draw(game.batch);
+		// }
+		// }
+		for (int i = 0; i < enemies.size; i++) {
+			 enemies.get(i).draw(game.batch);
 			if (enemies.get(i).isBeingAttacked) {
 				enemies.get(i).attack.update(delta);
-				enemies.get(i).attack.draw(game.batch);
+				 enemies.get(i).attack.draw(game.batch);
 			}
 		}
-		
-		
 
-		player.draw(game.batch);
-		player2.draw(game.batch);
+		 player.draw(game.batch);
+		 player2.draw(game.batch);
 
 		if (player.isBeingAttacked) {
 			if (player.attack.started) {
 				player.attack.update(delta);
-				player.attack.draw(game.batch);
+				 player.attack.draw(game.batch);
 			}
 		}
 		if (player2.isBeingAttacked) {
 			if (player2.attack.started) {
 				player2.attack.update(delta);
-				player2.attack.draw(game.batch);
+				 player2.attack.draw(game.batch);
 			}
 		}
 
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-		hud.stage.draw();
+		 hud.stage.draw();
 		hud.stage.act();
 
 		game.batch.end();
 
 	}
-	
+
 	private Player getCloserPlayer(Enemy enemy, float minDistancia) {
 		Player player1 = GameScreen.player;
 		Player player2 = GameScreen.player2;
-		
+
 		float difPlayer1X = enemy.body.getPosition().x - player1.body.getPosition().x;
 		float difPlayer2X = enemy.body.getPosition().x - player2.body.getPosition().x;
 		float difPlayer1Y = enemy.body.getPosition().y - player1.body.getPosition().y;
 		float difPlayer2Y = enemy.body.getPosition().y - player2.body.getPosition().y;
-		
-		
-		// Teorema de Pitagoras // RaizDe(difx^2 + dify^2) = distanciaTotal 
-		float distanciaTotalPlayer1 =(float) Math.sqrt(Math.pow(difPlayer1X, 2) + Math.pow(difPlayer1Y, 2));
-		float distanciaTotalPlayer2 =(float) Math.sqrt(Math.pow(difPlayer2X, 2) + Math.pow(difPlayer2Y, 2));
-		
-		if(distanciaTotalPlayer1>minDistancia && distanciaTotalPlayer2>minDistancia) {
+
+		// Teorema de Pitagoras // RaizDe(difx^2 + dify^2) = distanciaTotal
+		float distanciaTotalPlayer1 = (float) Math.sqrt(Math.pow(difPlayer1X, 2) + Math.pow(difPlayer1Y, 2));
+		float distanciaTotalPlayer2 = (float) Math.sqrt(Math.pow(difPlayer2X, 2) + Math.pow(difPlayer2Y, 2));
+
+		if (distanciaTotalPlayer1 > minDistancia && distanciaTotalPlayer2 > minDistancia) {
 			return null;
 		}
-		
-		
-		if(!player1.alive) {
+
+		if (!player1.alive) {
 			return player2;
 		}
-		if(!player2.alive) {
+		if (!player2.alive) {
 			return player1;
 		}
-		
-		if(distanciaTotalPlayer1 < distanciaTotalPlayer2) {
+
+		if (distanciaTotalPlayer1 < distanciaTotalPlayer2) {
 			return player1;
 		} else {
 			return player2;
 		}
 	}
-
 
 	private void resolveCollisions() {
 
@@ -348,17 +342,17 @@ public class GameScreen implements Screen, InputProcessor {
 				float activeDistance = 2f;
 				Player player = getCloserPlayer(enemy, activeDistance);
 				boolean ningunPlayerCerca = false;
-				if(player==null) {
+				if (player == null) {
 					ningunPlayerCerca = true;
 				} else {
 					ningunPlayerCerca = false;
 				}
-				if(!ningunPlayerCerca) {
-				if (enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
-					enemy.changePath = true;
-					enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
-					changePathFound = true;
-				}
+				if (!ningunPlayerCerca) {
+					if (enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
+						enemy.changePath = true;
+						enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
+						changePathFound = true;
+					}
 				}
 			}
 		}
@@ -393,7 +387,7 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 
 		if (contactListener.isCollidingToPlayer()) {
-			
+
 			if (((player.body.getPosition().y + player.getHeight()) > player2.body.getPosition().y
 					+ player2.getHeight())
 					&& (player.body.getPosition().x < player2.body.getPosition().x + player2.getWidth()
@@ -434,35 +428,57 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	private void handleAttacksToEnemy(ArrayList<CollisionMovement> enemiesColliding, float delta) {
-		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-			if (!player.doingAttack) {
-				if (contactListener.isColliding()) {
-					for (CollisionMovement enemyC : enemiesColliding) {
-						Enemy enemy = enemies.get(enemyC.index);
-						if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
-							player.attack(enemy, new BasicAttack(), true);
+		if (this.nroJugador == 1) {
+			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+				if (!player.doingAttack) {
+					if (contactListener.isColliding()) {
+						for (CollisionMovement enemyC : enemiesColliding) {
+							Enemy enemy = enemies.get(enemyC.index);
+							if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
+								player.attack(enemy, new BasicAttack(), true);
+							}
 						}
-					}
 
+					}
 				}
 			}
 		}
 		
-	}
+		if (this.nroJugador == 2) {
+			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+				if (!player2.doingAttack) {
+					if (contactListener.isColliding()) {
+						for (CollisionMovement enemyC : enemiesColliding) {
+							Enemy enemy = enemies.get(enemyC.index);
+							if (Combat.canAttackToEnemy(player2, enemy) && (!estaAtacando)) {
+								player2.attack(enemy, new BasicAttack(), true);
+							}
+						}
 
-	private void handleAttacksToPlayer() {
-		if (Gdx.input.isKeyJustPressed(Keys.SPACE)) { // Ataque del enemigo 1
-			if (!player.doingAttack) {
-				if (Combat.canAttackToEnemy(player, player2) && (!estaAtacando)) {
-					player.attack(player2, new BasicAttack(), true);
+					}
 				}
 			}
 		}
 
-		if (Gdx.input.isKeyJustPressed(Keys.M)) { // Ataque del enemigo 2
-			if (!player2.doingAttack) {
-				if (Combat.canAttackToEnemy(player2, player) && (!estaAtacando)) {
-					player2.attack(player, new BasicAttack(), true);
+	}
+
+	private void handleAttacksToPlayer() {
+		if (this.nroJugador == 1) {
+			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) { // Ataque del enemigo 1
+				if (!player.doingAttack) {
+					if (Combat.canAttackToEnemy(player, player2) && (!estaAtacando)) {
+						player.attack(player2, new BasicAttack(), true);
+					}
+				}
+			}
+		}
+
+		if (this.nroJugador == 2) {
+			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) { // Ataque del enemigo 2
+				if (!player2.doingAttack) {
+					if (Combat.canAttackToEnemy(player2, player) && (!estaAtacando)) {
+						player2.attack(player, new BasicAttack(), true);
+					}
 				}
 			}
 		}
@@ -481,14 +497,14 @@ public class GameScreen implements Screen, InputProcessor {
 
 	public static Enemy getEnemyByIndex(int index) {
 		Enemy enemy = null;
-		for(Enemy search: enemies) {
-			if(search.enemyIndex == index) {
+		for (Enemy search : enemies) {
+			if (search.enemyIndex == index) {
 				return search;
 			}
 		}
 		return enemy;
 	}
-	
+
 	@Override
 	public void resize(int width, int height) {
 		gameport.update(width, height);
@@ -500,7 +516,7 @@ public class GameScreen implements Screen, InputProcessor {
 		map.dispose();
 		renderer.dispose();
 		world.dispose();
-//		box2dRender.dispose();
+		// box2dRender.dispose();
 		hud.dispose();
 	}
 
@@ -513,7 +529,6 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(processors);
 
 	}
-
 
 	@Override
 	public void pause() {
@@ -537,22 +552,33 @@ public class GameScreen implements Screen, InputProcessor {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (this.game.menuScreen.esCliente) {
 			float distanciaX, distanciaY;
-			if(this.nroJugador == 1) {
-				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (27.265f);  // 29.265 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego
-				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f);  // 17.46 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego	
+			if (this.nroJugador == 1) {
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (27.265f); // 29.265 Es la diferencia
+																							// entre la posicion inicial
+																							// del mapa y la posicion
+																							// inicial del juego
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f); // 17.46 Es la diferencia
+																							// entre la posicion inicial
+																							// del mapa y la posicion
+																							// inicial del juego
 			} else {
-				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (35.265f);  // 29.265 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego
-				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f);  // 17.46 Es la diferencia entre la posicion inicial del mapa y la posicion inicial del juego
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (35.265f); // 29.265 Es la diferencia
+																							// entre la posicion inicial
+																							// del mapa y la posicion
+																							// inicial del juego
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f); // 17.46 Es la diferencia
+																							// entre la posicion inicial
+																							// del mapa y la posicion
+																							// inicial del juego
 			}
 			float posX = screenX / PPM + distanciaX;
 			float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
-			
 
 			System.out.println("Click en: " + posX + " - " + posY);
-			
+
 			if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
 					&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {
-				Hud.printMessage(player.name + " - Vida: " + player.health + " - Mana: " + player2.mana, MessageType.PLAYER_CLICK);
+				Hud.printMessage(player.name + " - Vida: " + player.health, MessageType.PLAYER_CLICK);
 
 				if (player2.selectedAttack != null) {
 					player2.attack(player, player2.selectedAttack, true);
@@ -562,7 +588,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 			if ((posX > (player2.getX()) && posX < player2.getX() + player2.getWidth())
 					&& (posY > player2.getY() && posY < player2.getY() + player2.getHeight())) {
-				Hud.printMessage(player2.name + " - Vida: " + player2.health + " - Mana: " + player2.mana, MessageType.PLAYER_CLICK);
+				Hud.printMessage(player2.name + " - Vida: " + player2.health, MessageType.PLAYER_CLICK);
 
 				if (player.selectedAttack != null) {
 					player.attack(player2, player.selectedAttack, true);
@@ -596,8 +622,8 @@ public class GameScreen implements Screen, InputProcessor {
 							if (enemy.open) {
 								Hud.printMessage("El cofre ya fue abierto", MessageType.DROP);
 							} else {
-								if(game.nroCliente == 1) {
-									if(player == enemy.attackedBy) {
+								if (game.nroCliente == 1) {
+									if (player == enemy.attackedBy) {
 										enemy.open = true;
 										enemy.openChest();
 										open.play();
@@ -605,9 +631,9 @@ public class GameScreen implements Screen, InputProcessor {
 										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);
 									}
 								}
-								
-								if(game.nroCliente == 2) {
-									if(player2 == enemy.attackedBy) {
+
+								if (game.nroCliente == 2) {
+									if (player2 == enemy.attackedBy) {
 										enemy.open = true;
 										enemy.openChest();
 										open.play();
@@ -615,8 +641,7 @@ public class GameScreen implements Screen, InputProcessor {
 										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);
 									}
 								}
-								
-								
+
 							}
 						}
 
@@ -628,28 +653,25 @@ public class GameScreen implements Screen, InputProcessor {
 			player.selectedAttack = null;
 			player2.selectedAttack = null;
 		}
-	
-		if(screenX > 576  && screenX < 760 && screenY > 569  && screenY < 585) {
+
+		if (screenX > 576 && screenX < 760 && screenY > 569 && screenY < 585) {
 			this.game.cliente.hiloCliente.enviarDatos("salir");
 			System.exit(0);
 		}
-		
-		
+
 		return false;
 	}
-	
-	
 
 	public void tomarPocion(int jugadorNro, String tipo) {
-		if(tipo.equals("Vida")) {
-			if(jugadorNro == 1) {
+		if (tipo.equals("Vida")) {
+			if (jugadorNro == 1) {
 				if (player.health < player.maxHealth && player.healthPotions > 0) {
 					player.healthPotions--;
 					player.health += 10;
 					potas.play();
-				}	
+				}
 			}
-			if(jugadorNro == 2) {
+			if (jugadorNro == 2) {
 				if (player2.health < player2.maxHealth && player2.healthPotions > 0) {
 					player2.healthPotions--;
 					player2.health += 10;
@@ -657,42 +679,42 @@ public class GameScreen implements Screen, InputProcessor {
 				}
 			}
 		} else {
-			
-			if(jugadorNro == 1) {
+
+			if (jugadorNro == 1) {
 				if (player.mana < player.maxMana && player.manaPotions > 0) {
 					player.manaPotions--;
 					player.mana += 10;
 					potas.play();
-				}	
+				}
 			}
-			if(jugadorNro == 2) {
+			if (jugadorNro == 2) {
 				if (player2.mana < player2.maxMana && player2.manaPotions > 0) {
 					player2.manaPotions--;
 					player2.mana += 10;
 					potas.play();
 				}
 			}
-			
+
 		}
-		if(nroJugador == this.nroJugador) {
-			if(nroJugador == 1) {
+		if (nroJugador == this.nroJugador) {
+			if (nroJugador == 1) {
 				hud.updateStats(player);
 			} else {
 				hud.updateStats(player2);
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean keyDown(int keycode) {
 		if (this.game.menuScreen.esCliente) {
 			if (keycode == Keys.NUM_1) {
 				this.tomarPocion(this.nroJugador, "Vida");
-				this.game.cliente.hiloCliente.enviarDatos("pocionVida/"+this.nroJugador);
+				this.game.cliente.hiloCliente.enviarDatos("pocionVida/" + this.nroJugador);
 			}
 			if (keycode == Keys.NUM_2) {
 				this.tomarPocion(this.nroJugador, "Mana");
-				this.game.cliente.hiloCliente.enviarDatos("pocionMana/"+this.nroJugador);
+				this.game.cliente.hiloCliente.enviarDatos("pocionMana/" + this.nroJugador);
 			}
 			if (keycode == Keys.W) {
 				this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);

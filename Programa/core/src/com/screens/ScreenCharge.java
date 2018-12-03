@@ -14,8 +14,6 @@ public class ScreenCharge implements Screen {
 
 	private MainGame game;
 	
-	private ScreenMenu menu;
-	
 	private Texture logo;
 	private Sprite sLogo;
 	
@@ -27,8 +25,7 @@ public class ScreenCharge implements Screen {
 	
 	public ScreenCharge(MainGame game  ) {
 		this.game = game;
-		menu = new ScreenMenu(game);
-		this.game.menuScreen = menu;
+//		menu = new ScreenMenu(game);
 		start = Gdx.audio.newMusic(Gdx.files.getFileHandle("mp3/101.mp3", FileType.Internal));
 		logo = new Texture("logoGame.png");
 		sLogo = new Sprite(logo);
@@ -54,7 +51,7 @@ public class ScreenCharge implements Screen {
 		start.play();
 		
 		if (alpha>3){
-			//start.stop();	
+			start.stop();	
 		}
 	}
 
@@ -73,7 +70,7 @@ public class ScreenCharge implements Screen {
 			
 			if (alpha>3){
 
-				game.setScreen(menu);
+				game.setScreen(game.menuScreen);
 				
 			}
 			

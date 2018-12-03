@@ -35,7 +35,7 @@ public abstract class Character extends Sprite {
 	public boolean doingAttack = false;
 	public Character attackedBy;
 	protected int attackDamage;
-	
+
 	public int enemyIndex;
 
 	public World world;
@@ -57,7 +57,7 @@ public abstract class Character extends Sprite {
 	protected PlayerStates currentState;
 	protected PlayerStates previousState;
 	//
-	
+
 	public boolean preventMove;
 
 	// COFRE DE DROP
@@ -69,7 +69,7 @@ public abstract class Character extends Sprite {
 	private TextureRegion regionClose;
 
 	private Random random = new Random();
-	
+
 	private boolean rewarded = false;
 
 	public Character(MainGame game, World world, String name) {
@@ -89,34 +89,37 @@ public abstract class Character extends Sprite {
 			}
 			if (health <= 0) {
 				alive = false;
-				System.out.println("Se manda muerto/" + this.game.nroCliente );
-				this.game.cliente.hiloCliente.enviarDatos("muerto/"+this.game.nroCliente);
+				if (!this.npc) {
+					System.out.println("Se manda muerto/" + this.game.nroCliente + " soy " + this.name);
+					this.game.cliente.hiloCliente.enviarDatos("muerto/" + this.game.nroCliente);
+				}
 			}
 			setRegion(getFrame(delta));
 		} else {// ES UN COFRE
-			if(this.attackedBy !=null && !rewarded) {
+			if (this.attackedBy != null && !rewarded) {
 				Player player = (Player) this.attackedBy;
 				player.money += 100;
-				if(player.exp + 25 >= 100) {
+				if (player.exp + 25 >= 100) {
 					player.exp = 0;
 					player.minAttackDamage = (int) (player.minAttackDamage + (player.minAttackDamage * 0.1f));
 					player.maxAttackDamage = (int) (player.maxAttackDamage + (player.maxAttackDamage * 0.1f));
-				}else {
-					player.exp += 25f;	
-				}
-				
-				if(player.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
-					GameScreen.hud.updateStats(player);
-					Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);	
 				} else {
-					if(!this.npc) {
-						GameScreen.hud.updateStats((Player) this);	
+					player.exp += 25f;
+				}
+
+				if (player.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador ==
+															// gamescreen.nroCliente
+					GameScreen.hud.updateStats(player);
+					Hud.printMessage("Ganaste 10% de experiencia y 100 monedas de oro", MessageType.REWARD);
+				} else {
+					if (!this.npc) {
+						GameScreen.hud.updateStats((Player) this);
 					}
 				}
-				
+
 				rewarded = true;
 			}
-			
+
 			this.isChest = true;
 			setBounds(body.getPosition().x - (this.regionClose.getRegionWidth() / 2) / PPM,
 					body.getPosition().y - (this.regionClose.getRegionWidth() / 2) / PPM, 30 / PPM, 32 / PPM);
@@ -135,18 +138,20 @@ public abstract class Character extends Sprite {
 		Player player = (Player) this.attackedBy;
 		player.healthPotions += cantHealthPotions;
 		player.manaPotions += cantManaPotions;
-		if(player.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador == gamescreen.nroCliente
+		if (player.nroJugador == game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador ==
+													// gamescreen.nroCliente
 			System.out.println("UPDATE HUD AL ABRIR COFRE CON " + player.name);
 			GameScreen.hud.updateStats(player);
-			Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y " + cantManaPotions
-					+ " pociones de mana!!!", MessageType.REWARD);	
+			Hud.printMessage("Abriste el cofre y obtuviste " + cantHealthPotions + " pociones de vida y "
+					+ cantManaPotions + " pociones de mana!!!", MessageType.REWARD);
 		}
-		
+
 		// cofre/enemyIndex/pocionesVida/pocionesMana/nroCliente
-		this.game.cliente.hiloCliente.enviarDatos("cofre/"+this.enemyIndex+"/"+cantHealthPotions+"/"+cantManaPotions+"/"+game.nroCliente);
-			
+		this.game.cliente.hiloCliente.enviarDatos(
+				"cofre/" + this.enemyIndex + "/" + cantHealthPotions + "/" + cantManaPotions + "/" + game.nroCliente);
+
 	}
-	
+
 	public void openChestFromNet(int cantHealthPotions, int cantManaPotions) {
 		Player player = (Player) this.attackedBy;
 		player.healthPotions += cantHealthPotions;
@@ -220,8 +225,7 @@ public abstract class Character extends Sprite {
 	}
 
 	public void attack(Character enemy, Attack attack) {
-		
+
 	}
-	
 
 }
