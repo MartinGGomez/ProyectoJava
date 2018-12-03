@@ -76,6 +76,15 @@ public class HiloServidor extends Thread {
 					//
 				}
 			}
+			
+			if(mensaje.equals("salir")) {
+				this.enviarDatosATodos(mensaje);
+				System.exit(0);
+			}
+			
+			if(mensaje.equals("ping")) {
+				this.enviarDatos("recibido", ip, puerto);
+			}
 		}
 
 		//
@@ -124,6 +133,16 @@ public class HiloServidor extends Thread {
 			// cofre/enemyIndex/pocionesVida/pocionesMana/nroCliente
 			if(mensajeCompuesto[0].equals("cofre")) {
 				int cliente = Integer.parseInt(mensajeCompuesto[4]);
+				if (cliente == 1) {
+					this.enviarDatos(mensaje, ip2, puerto2);
+				} else {
+					this.enviarDatos(mensaje, ip1, puerto1);
+				}
+			}
+			
+			// muerto/nroJugador
+			if(mensajeCompuesto[0].equals("muerto")) {
+				int cliente = Integer.parseInt(mensajeCompuesto[1]);
 				if (cliente == 1) {
 					this.enviarDatos(mensaje, ip2, puerto2);
 				} else {
@@ -193,33 +212,9 @@ public class HiloServidor extends Thread {
 				}
 			}
 
-			//
-			//
 
 		}
-		//
-		// if(mensajeCompuesto[0].equals("posPad2")) {
-		// this.enviarDatos(m, ip1, puerto1);
-		// app.pantallaJuego.pad2.setPos_y(Integer.valueOf(mensajeCompuesto[1]));
-		// }
-		// } else {
-		// if(m.equals("conexion")) {
-		// if(nroConexiones==0) {
-		// ip1 = ip;
-		// puerto1 = puerto;
-		// nroConexiones++;
-		// this.enviarDatos("player/1", ip1, puerto1);
-		// } else if(nroConexiones==1) {
-		// ip2 = ip;
-		// puerto2 = puerto;
-		// nroConexiones++;
-		// this.enviarDatos("player/2", ip2, puerto2);
-		// this.enviarDatos("empieza", ip1, puerto1);
-		// this.enviarDatos("empieza", ip2, puerto2);
-		// this.app.pantallaMenu.empiezaJuego = true;
-		// }
-		// }
-		// }
+	
 
 	}
 

@@ -1,9 +1,8 @@
 package com.screens;
 
-import com.badlogic.gdx.Files.FileType;
-
 import java.util.Scanner;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -12,17 +11,15 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Disposable;
 import com.game.MainGame;
 import com.red.Cliente;
 import com.red.Servidor;
@@ -52,6 +49,7 @@ public class ScreenMenu implements Screen, InputProcessor {
 	public boolean esCliente;
 	public boolean empiezaJuego = false;
 	private int cargando = 0 ;
+	private int tiempoEspera = 0;
 
 	public ScreenMenu(MainGame game) {
 		stage = new Stage();
@@ -69,37 +67,40 @@ public class ScreenMenu implements Screen, InputProcessor {
 
 	private void createProgressBar() {
 	
-		TextureRegionDrawable drawable = new TextureRegionDrawable(
-				new TextureRegion(new Texture(Gdx.files.internal("barMenu.PNG"))));
-
 		ProgressBarStyle progressBarStyle = new ProgressBarStyle();
+		
+		Pixmap pixmap = new Pixmap(0, 29, Format.RGBA8888);
+		pixmap.setColor(Color.BLACK);
+		pixmap.fill();
+		Drawable drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+		pixmap.dispose();
+		
 		progressBarStyle.background = drawable;
 
-		Pixmap pixmap = new Pixmap(0, 30, Format.RGBA8888);
-		pixmap.setColor(Color.BLACK);
+		pixmap = new Pixmap(0, 29, Format.RGBA8888);
+		pixmap.setColor(0, 0, 1, 0.4f);
 		pixmap.fill();
 		drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
 		pixmap.dispose();
 
 		progressBarStyle.knob = drawable;
-		
-		pixmap = new Pixmap(629, 10, Format.RGBA8888);
-		pixmap.setColor(Color.BLACK);
+
+		pixmap = new Pixmap(560, 29, Format.RGBA8888);
+		pixmap.setColor(0, 0, 1, 0.4f);
 		pixmap.fill();
 		drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
 		pixmap.dispose();
 
 		progressBarStyle.knobBefore = drawable;
 
-		
-		
 		barMenu = new ProgressBar(0, 100, 1f, false, progressBarStyle);
-		barMenu.setWidth(629);
-		barMenu.setHeight(30);
+		barMenu.setWidth(560);
+		barMenu.setHeight(29);
 		barMenu.setAnimateDuration(5f);
-		barMenu.setPosition(45 , 29);	
-		barMenu.setValue(50f);
+		barMenu.setPosition(115, 29);	
+		barMenu.setValue(0);
 					
+		stage.addActor(barMenu);
 	}
 
 	@Override
@@ -108,8 +109,15 @@ public class ScreenMenu implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 
 		update(delta);
-		stage.draw();
-		stage.addActor(barMenu);
+		if(!esperando) {
+			if(cont < 100) {
+				cont++;
+				barMenu.setValue(cont);
+			}
+			stage.act();
+			stage.draw();	
+		}
+		
 	}
 
 	private void update(float delta) {
@@ -133,6 +141,12 @@ public class ScreenMenu implements Screen, InputProcessor {
 				game.setScreen(game.gameScreen);
 				game.screenCharge.start.stop();
 			}
+			
+			tiempoEspera++;
+			if(tiempoEspera > 600) {
+				System.exit(0);
+			}
+			
 		}
 		
 		game.batch.end();

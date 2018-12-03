@@ -165,7 +165,7 @@ public class Hud implements Disposable {
 	public void defineHudElements() {
 		stage = this.game.stage;
 		playerName = new Label(this.player.name, skin, "white-font", Color.WHITE);
-		playerName.setPosition(image.getWidth() - 205, image.getHeight() - 80);
+		playerName.setPosition(800 - 205, 600 - 80);
 		playerName.setSize(160, 24);
 		playerName.setAlignment(Align.center);
 		//
@@ -211,7 +211,7 @@ public class Hud implements Disposable {
 		respawnLabel.setAlignment(Align.center);
 
 		powersDef = new Label("Hechizos", skin, "white-font", Color.BLUE);
-		powersDef.setPosition(image.getWidth() - 205, image.getHeight() - 160);
+		powersDef.setPosition(800 - 205, 600 - 160);
 		powersDef.setSize(160, 24);
 		powersDef.setAlignment(Align.center);
 

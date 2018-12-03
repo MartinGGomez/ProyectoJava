@@ -54,7 +54,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	// Box2D
 	public World world;
-	private Box2DDebugRenderer box2dRender;
+//	private Box2DDebugRenderer box2dRender;
 	public static MyContactListener contactListener;
 
 	public static Player player;
@@ -108,7 +108,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		// Box2D
 		world = new World(new Vector2(0, 0), true);
-		box2dRender = new Box2DDebugRenderer();
+//		box2dRender = new Box2DDebugRenderer();
 
 		contactListener = new MyContactListener();
 		world.setContactListener(contactListener);
@@ -259,7 +259,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		renderer.render(); // Tiled Map renderer.
 
-		box2dRender.render(world, gamecam.combined); // Box2D render.
+//		box2dRender.render(world, gamecam.combined); // Box2D render.
 
 		game.batch.setProjectionMatrix(gamecam.combined);
 
@@ -500,7 +500,7 @@ public class GameScreen implements Screen, InputProcessor {
 		map.dispose();
 		renderer.dispose();
 		world.dispose();
-		box2dRender.dispose();
+//		box2dRender.dispose();
 		hud.dispose();
 	}
 
@@ -628,6 +628,13 @@ public class GameScreen implements Screen, InputProcessor {
 			player.selectedAttack = null;
 			player2.selectedAttack = null;
 		}
+	
+		if(screenX > 576  && screenX < 760 && screenY > 569  && screenY < 585) {
+			this.game.cliente.hiloCliente.enviarDatos("salir");
+			System.exit(0);
+		}
+		
+		
 		return false;
 	}
 	

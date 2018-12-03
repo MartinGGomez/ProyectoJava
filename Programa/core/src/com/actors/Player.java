@@ -190,50 +190,6 @@ public class Player extends Character{
 					izquierda = false;
 					body.setLinearVelocity(0, 0);		
 				}
-//			}
-//				if (Gdx.input.isKeyPressed(Keys.W)) {
-//					this.game.cliente.hiloCliente.enviarDatos("arriba/" + this.nroJugador);
-//				}
-//				if (Gdx.input.isKeyPressed(Keys.S)) {
-//					this.game.cliente.hiloCliente.enviarDatos("abajo/" + this.nroJugador);
-//				}
-//				if (Gdx.input.isKeyPressed(Keys.A)) {
-//					this.game.cliente.hiloCliente.enviarDatos("izquierda/" + this.nroJugador);
-//				}
-//				if (Gdx.input.isKeyPressed(Keys.D)) {
-//					this.game.cliente.hiloCliente.enviarDatos("derecha/" + this.nroJugador);
-//				}
-//			} else {
-//				body.setLinearVelocity(0, 0);
-//				if (Gdx.input.isKeyPressed(Keys.UP)) {
-//					if (canMoveTop) {
-//						body.setLinearVelocity(new Vector2(0, SPEED));
-//					}
-//					states = PlayerStates.BACK;
-//					direction = PlayerStates.BACK;
-//				}
-//				if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-//					if (canMoveBot) {
-//						body.setLinearVelocity(new Vector2(0, -SPEED));
-//					}
-//					states = PlayerStates.FRONT;
-//					direction = PlayerStates.FRONT;
-//				}
-//				if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-//					if (canMoveLeft) {
-//						body.setLinearVelocity(new Vector2(-SPEED, 0));
-//					}
-//					states = PlayerStates.LEFT;
-//					direction = PlayerStates.LEFT;
-//				}
-//				if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-//					if (canMoveRight) {
-//						body.setLinearVelocity(new Vector2(SPEED, 0));
-//					}
-//					states = PlayerStates.RIGHT;
-//					direction = PlayerStates.RIGHT;
-//				}
-//			}
 
 		} else {
 			this.deadTime += delta;
@@ -242,8 +198,8 @@ public class Player extends Character{
 				this.alive = true;
 				this.resetStats();
 			} else {
-				if (this.name.equals("Coxne")) { // Reemplazar cuando sea red: if this.nroJugador ==
-													// gamescreen.nroCliente
+				if (this.nroJugador == this.game.nroCliente) { // Reemplazar cuando sea red: if this.nroJugador ==
+
 					GameScreen.hud.updateStats(this);
 				}
 
@@ -359,6 +315,8 @@ public class Player extends Character{
 	public void draw(Batch batch) {
 		if (alive) {
 			super.draw(batch);
+		} else {
+			System.err.println("MUERTO " + this.nroJugador);
 		}
 
 	}

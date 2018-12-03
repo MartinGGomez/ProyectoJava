@@ -89,6 +89,8 @@ public abstract class Character extends Sprite {
 			}
 			if (health <= 0) {
 				alive = false;
+				System.out.println("Se manda muerto/" + this.game.nroCliente );
+				this.game.cliente.hiloCliente.enviarDatos("muerto/"+this.game.nroCliente);
 			}
 			setRegion(getFrame(delta));
 		} else {// ES UN COFRE

@@ -7,11 +7,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import com.actors.Character;
 import com.actors.Enemy;
-import com.attacks.Attack;
 import com.game.MainGame;
-import com.screens.GameScreen;
 
 public class HiloCliente extends Thread {
 
@@ -19,18 +16,35 @@ public class HiloCliente extends Thread {
 	private DatagramSocket socket;
 	public MainGame app;
 
-	private boolean playerStop = false;
-
+	private String ipServer = "192.168.";
+	
+	private boolean encontrado = false;
+	
 	public HiloCliente(MainGame app) {
 
 		this.app = app;
 
 		try {
-			// Buscarla automaticamente
 			this.socket = new DatagramSocket();
-			String ipServer = "192.168.0.4";
-			this.ip = InetAddress.getByName(ipServer); // direccion del server
-
+			int subRed = 0;
+			int ultimoDigito = 0;
+//			this.ip = InetAddress.getByName("192.168.0.141"); // direccion del server
+			// Busqueda automatica
+			do {
+				this.ip = InetAddress.getByName(ipServer+subRed+"."+ultimoDigito); // direccion del server
+				System.out.println("PING A " + ipServer+subRed+"."+ultimoDigito );
+				this.enviarDatos("ping");
+				ultimoDigito++;
+				if(ultimoDigito == 255) {
+					ultimoDigito = 0;
+					subRed++;
+				}
+				if(subRed == 255 && ultimoDigito == 254) {
+					encontrado = true;
+				}
+			}while(!encontrado);
+				
+				
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
@@ -106,9 +120,9 @@ public class HiloCliente extends Thread {
 				int cliente = Integer.parseInt(mensajeCompuesto[1]);
 				app.gameScreen.tomarPocion(cliente, "Mana");
 			}
-			
+
 			// cofre/enemyIndex/pocionesVida/pocionesMana/nroCliente
-			if(mensajeCompuesto[0].equals("cofre")) {
+			if (mensajeCompuesto[0].equals("cofre")) {
 				int cliente = Integer.parseInt(mensajeCompuesto[4]);
 				int enemyIndex = Integer.parseInt(mensajeCompuesto[1]);
 				int pocionesVida = Integer.parseInt(mensajeCompuesto[2]);
@@ -117,50 +131,33 @@ public class HiloCliente extends Thread {
 				enemy.openChestFromNet(pocionesVida, pocionesMana);
 			}
 
+			// muerto/nroJugador
+			if (mensajeCompuesto[0].equals("muerto")) {
+				int cliente = Integer.parseInt(mensajeCompuesto[1]);
+				if (cliente == 1) {
+					System.out.println("Murio player 1");
+					app.gameScreen.player.alive = false;
+				} else {
+					System.out.println("Murio player 2");
+					app.gameScreen.player2.alive = false;
+				}
+			}
+
 		} else {
 			if (mensaje.equals("empieza")) {
 				app.menuScreen.empiezaJuego = true;
 			}
-
+			if (mensaje.equals("salir")) {
+				System.exit(0);
+			}
+			
+			if(mensaje.equals("recibido")) {
+				this.encontrado = true;
+				this.ip = ip;
+				System.out.println("El servidor es: " + this.ip);
+			}
+			
 		}
-
-		//
-		// if(mensajeCompuesto[0].equals("posPad1")) {
-		// app.pantallaJuego.pad1.setPos_y(Integer.valueOf(mensajeCompuesto[1]));
-		// }
-		//
-		// if(mensajeCompuesto[0].equals("posPad2")) {
-		// app.pantallaJuego.pad2.setPos_y(Integer.valueOf(mensajeCompuesto[1]));
-		// }
-		//
-		// if(mensajeCompuesto[0].equals("actualizarPelota")) {
-		// app.pantallaJuego.pelota.setPos(Integer.valueOf(mensajeCompuesto[1]),Integer.valueOf(mensajeCompuesto[2]));
-		// }
-		//
-		// if(mensajeCompuesto[0].equals("punto")) {
-		// app.pantallaJuego.pelota.fx.punto();
-		// app.pantallaJuego.pelota.excelent.play();
-		// System.out.println("Procesar punto");
-		// app.pantallaJuego.procesarPunto();
-		// if(mensajeCompuesto[1].equals("1")) {
-		// app.pantallaJuego.pelota.p1.actualizarPuntaje();
-		// }
-		// if(mensajeCompuesto[1].equals("2")) {
-		// app.pantallaJuego.pelota.p2.actualizarPuntaje();
-		// }
-		// }
-		//
-		//
-
-		//
-		// if(m.equals("ready")) {
-		// app.pantallaJuego.resto = true;
-		// app.pantallaJuego.preparados = true;
-		// app.pantallaJuego.ya = false;
-		// app.pantallaJuego.readyrep = false;
-		// app.pantallaJuego.gorep = false;
-		// }
-		// }
 	}
 
 	private void manejarMovimientos(String[] mensajeCompuesto) {
@@ -206,7 +203,6 @@ public class HiloCliente extends Thread {
 		}
 
 		if (mensajeCompuesto[0].equals("stop")) {
-			playerStop = true;
 			if (mensajeCompuesto[1].equals("1")) { // Mover jugador 1
 				app.gameScreen.player.arriba = false;
 				app.gameScreen.player.stop = true;
@@ -228,7 +224,7 @@ public class HiloCliente extends Thread {
 
 			socket.send(packet);
 
-		} catch (IOException e) {
+		} catch (IOException e) {			
 			e.printStackTrace();
 		}
 
