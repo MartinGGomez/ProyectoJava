@@ -137,7 +137,7 @@ public class HiloCliente extends Thread {
 			// muerto/nroJugador
 			if (mensajeCompuesto[0].equals("muerto")) {
 				int cliente = Integer.parseInt(mensajeCompuesto[1]);
-				if (cliente == 2) {
+				if (cliente == 1) {
 					System.out.println("Murio player 1");
 					app.gameScreen.player.alive = false;
 				} else {
@@ -266,7 +266,6 @@ public class HiloCliente extends Thread {
 			enemy.y = y;
 			enemy.currentState = direccion;
 			enemy.frameIndex = frameIndex;
-			System.out.println("prevent move " + preventMove);
 			enemy.preventMove = preventMove;
 		}
 

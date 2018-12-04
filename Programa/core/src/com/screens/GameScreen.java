@@ -112,11 +112,15 @@ public class GameScreen implements Screen, InputProcessor {
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / PPM);
 
 		// Box2D
-		world = new World(new Vector2(0, 0), true);
-		box2dRender = new Box2DDebugRenderer();
+		
 
-		contactListener = new MyContactListener();
-		world.setContactListener(contactListener);
+		if(!this.game.menuScreen.esCliente) {
+			world = new World(new Vector2(0, 0), true);
+			box2dRender = new Box2DDebugRenderer();
+			contactListener = new MyContactListener();
+			world.setContactListener(contactListener);	
+		}
+		
 
 		if (nroJugador == 1) {
 			player = new Player(this.game, world, "Coxne", 1);
@@ -128,8 +132,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 		collisionHelper = new CollisionHelper(map, world);
 		// Body Definitions
-		collisionHelper.createMapObjects();
+		
 		if (!this.game.menuScreen.esCliente) {
+			collisionHelper.createMapObjects();
 			collisionHelper.generateEnemiesPositions(game);
 			enemies = collisionHelper.copiarEnemigos(game);
 			System.out.println("Enemigos creados : " + enemies.size);
@@ -163,7 +168,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 	public void update(float delta) {
 
-		world.step(1 / 60f, 6, 2);
+		if(!this.game.menuScreen.esCliente) {
+			world.step(1 / 60f, 6, 2);	
+		}
+		
 
 		player.update(delta);
 		player2.update(delta);
@@ -177,7 +185,9 @@ public class GameScreen implements Screen, InputProcessor {
 				this.game.servidor.hiloServidor
 						.enviarDatosATodos("colisionandoEnemigo/" + contactListener.getEnemyIndex()+"/"+contactListener.getPlayerIndex());
 				handleAttacksToEnemy(contactListener.getEnemyIndex(), delta);
+				this.enemies.get(contactListener.getEnemyIndex()).preventMove = true;
 			} else {
+				this.enemies.get(contactListener.getEnemyIndex()).preventMove = false;
 				this.game.servidor.hiloServidor.enviarDatosATodos("terminoColisionEnemigo");
 			}
 		} else {
@@ -185,13 +195,13 @@ public class GameScreen implements Screen, InputProcessor {
 				handleAttacksToEnemy(this.colisionandoConEnemigoNro, delta);
 				if(this.colisionandoConPlayerNro == 1) {
 					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith = player;
-					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith.preventMove = true;
-//					System.out.println("prevent move en true");
+					this.enemies.get(this.colisionandoConEnemigoNro).preventMove = true;
 				} else {
 					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith = player2;
-					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith.preventMove = true;
-//					System.out.println("prevent move en true");
+					this.enemies.get(this.colisionandoConEnemigoNro).preventMove = true;
 				}	
+			} else {
+				this.enemies.get(this.colisionandoConEnemigoNro).preventMove = false;
 			}
 		}
 
@@ -301,7 +311,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 		renderer.render(); // Tiled Map renderer.
 
-		box2dRender.render(world, gamecam.combined); // Box2D render.
+		if(!this.game.menuScreen.esCliente) {
+			box2dRender.render(world, gamecam.combined); // Box2D render.	
+		}
+		
 
 		game.batch.setProjectionMatrix(gamecam.combined);
 
@@ -350,10 +363,10 @@ public class GameScreen implements Screen, InputProcessor {
 		Player player1 = GameScreen.player;
 		Player player2 = GameScreen.player2;
 
-		float difPlayer1X = enemy.body.getPosition().x - player1.body.getPosition().x;
-		float difPlayer2X = enemy.body.getPosition().x - player2.body.getPosition().x;
-		float difPlayer1Y = enemy.body.getPosition().y - player1.body.getPosition().y;
-		float difPlayer2Y = enemy.body.getPosition().y - player2.body.getPosition().y;
+		float difPlayer1X = enemy.getX() - player1.getX();
+		float difPlayer2X = enemy.getX() - player2.getX();
+		float difPlayer1Y = enemy.getY() - player1.getY();
+		float difPlayer2Y = enemy.getY()- player2.getY();
 
 		// Teorema de Pitagoras // RaizDe(difx^2 + dify^2) = distanciaTotal
 		float distanciaTotalPlayer1 = (float) Math.sqrt(Math.pow(difPlayer1X, 2) + Math.pow(difPlayer1Y, 2));
@@ -379,9 +392,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void resolveCollisions() {
 
+		if(!this.game.menuScreen.esCliente) {
 		boolean changePathFound = false;
 		for (int i = 0; i < contactListener.enemiesColliding.size(); i++) {
-			for (int j = 0; i < enemies.size; i++) {
+			for (int j = 0; j < enemies.size; j++) {
 				float activeDistance = 2f;
 				Player player = getCloserPlayer(enemies.get(j), activeDistance);
 				boolean ningunPlayerCerca = false;
@@ -391,15 +405,18 @@ public class GameScreen implements Screen, InputProcessor {
 					ningunPlayerCerca = false;
 				}
 				if (!ningunPlayerCerca) {
-					if (enemies.get(j).getEnemyIndex() == contactListener.enemiesColliding.get(i).index
+					if (enemies.get(j).colisionandoConMapa
 							&& !changePathFound) {
 						enemies.get(j).changePath = true;
-						enemies.get(j).collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
+						enemies.get(j).collidingTo = enemies.get(j).colisionandoContra;
+						System.out.println("cambiar direccion a " + enemies.get(j).collidingTo );
 						changePathFound = true;
 					}
 				}
 			}
 		}
+		}
+
 
 		boolean found = false;
 //		for (int i = 0; i < contactListener.enemiesCollidingWithPlayer.size(); i++) {
@@ -421,17 +438,17 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		
 
-		for (int i = 0; i < contactListener.enemiesStopCollidingWithPlayer.size(); i++) {
-			if (contactListener.enemiesStopCollidingWithPlayer.get(i) < enemies.size) {
-				enemies.get(contactListener.enemiesStopCollidingWithPlayer.get(i)).preventMove = false;
-			}
-		}
-
-		for (int i = 0; i < contactListener.enemiesStopColliding.size(); i++) {
-			if (contactListener.enemiesStopColliding.get(i) < enemies.size) {
-				enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
-			}
-		}
+//		for (int i = 0; i < contactListener.enemiesStopCollidingWithPlayer.size(); i++) {
+//			if (contactListener.enemiesStopCollidingWithPlayer.get(i) < enemies.size) {
+//				enemies.get(contactListener.enemiesStopCollidingWithPlayer.get(i)).preventMove = false;
+//			}
+//		}
+//
+//		for (int i = 0; i < contactListener.enemiesStopColliding.size(); i++) {
+//			if (contactListener.enemiesStopColliding.get(i) < enemies.size) {
+//				enemies.get(contactListener.enemiesStopColliding.get(i)).changePath = false;
+//			}
+//		}
 
 		if (!this.game.menuScreen.esCliente) {
 
@@ -595,7 +612,9 @@ public class GameScreen implements Screen, InputProcessor {
 		map.dispose();
 		renderer.dispose();
 		world.dispose();
-		// box2dRender.dispose();
+		if(!this.game.menuScreen.esCliente) {
+			box2dRender.dispose();	
+		}
 		hud.dispose();
 	}
 
@@ -656,6 +675,10 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 			float posX = (screenX / PPM + distanciaX) + 3;
 			float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
+			if(posX < 1 || posY < 1) {
+				posX = 30f;
+				posY = 20f;
+			}
 
 			System.out.println("Click en: " + posX + " - " + posY);
 			System.out.println("distancia camara: " + distanciaX);

@@ -71,8 +71,10 @@ public abstract class Character extends Sprite {
 	private Random random = new Random();
 
 	private boolean rewarded = false;
-	
+
 	public float frameIndex = 0;
+	
+	public int nroJugador;
 
 	public Character(MainGame game, World world, String name) {
 		this.world = world;
@@ -92,16 +94,23 @@ public abstract class Character extends Sprite {
 			if (health <= 0) {
 				alive = false;
 				if (!this.npc) {
-					System.out.println("Se manda muerto/" + this.game.nroCliente + " soy " + this.name);
-					this.game.cliente.hiloCliente.enviarDatos("muerto/" + this.game.nroCliente);
+					if(this.attackedBy != null && !this.attackedBy.npc) {
+						this.game.cliente.hiloCliente.enviarDatos("muerto/"+this.nroJugador);	
+					} 
+					if(this.attackedBy != null && this.attackedBy.npc) {
+						System.out.println("Se manda muerto/" + this.game.nroCliente + " soy " + this.name);
+						this.game.cliente.hiloCliente.enviarDatos("muerto/" + this.game.nroCliente);	
+					}
+					
 				}
+
 			}
-			if(this.game.menuScreen.esCliente) {
-				setRegion(getFrame(delta, true));	
+			if (this.game.menuScreen.esCliente) {
+				setRegion(getFrame(delta, true));
 			} else {
 				setRegion(getFrame(delta, false));
 			}
-			
+
 		} else {// ES UN COFRE
 			if (this.attackedBy != null && !rewarded) {
 				Player player = (Player) this.attackedBy;
@@ -128,7 +137,7 @@ public abstract class Character extends Sprite {
 			}
 
 			this.isChest = true;
-			setBounds(getX(),getY(), 30 / PPM, 32 / PPM);
+			setBounds(getX(), getY(), 30 / PPM, 32 / PPM);
 			setPosition(getX(), getY());
 			if (open) {
 				setRegion(this.regionOpen);
@@ -167,39 +176,36 @@ public abstract class Character extends Sprite {
 	}
 
 	public TextureRegion getFrame(float delta, boolean cliente) {
-		if(!cliente) {
-			currentState = getState();	
+		if (!cliente) {
+			currentState = getState();
 		} else {
 			currentState = currentState;
 
 		}
-		
 
 		TextureRegion textureRegion;
 
-		
 		switch (currentState) {
 		case FRONT:
 			frameIndex = stateTimer;
-			
-				textureRegion = movingFront.getKeyFrame(stateTimer, true);	
-			
+
+			textureRegion = movingFront.getKeyFrame(stateTimer, true);
+
 			break;
 		case BACK:
 			frameIndex = stateTimer;
-				textureRegion = movingBack.getKeyFrame(stateTimer, true);	
-			
+			textureRegion = movingBack.getKeyFrame(stateTimer, true);
+
 			break;
 		case RIGHT:
 			frameIndex = stateTimer;
-				textureRegion = movingRight.getKeyFrame(stateTimer, true);	
-		
-			
+			textureRegion = movingRight.getKeyFrame(stateTimer, true);
+
 			break;
 		case LEFT:
 			frameIndex = stateTimer;
-				textureRegion = movingLeft.getKeyFrame(stateTimer, true);	
-			
+			textureRegion = movingLeft.getKeyFrame(stateTimer, true);
+
 			break;
 		case STANDING_BACK:
 			textureRegion = standingTextures[0];
@@ -214,10 +220,10 @@ public abstract class Character extends Sprite {
 			textureRegion = standingTextures[3];
 			break;
 		default:
-				textureRegion = movingFront.getKeyFrame(stateTimer, true);	
-			
+			textureRegion = movingFront.getKeyFrame(stateTimer, true);
+
 			frameIndex = stateTimer;
-			
+
 			break;
 		}
 

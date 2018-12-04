@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.screens.GameScreen;
 import com.services.collision.userdata.CollisionMovement;
 import com.services.collision.userdata.UserData;
 
@@ -116,6 +117,8 @@ public class MyContactListener implements ContactListener {
 					CollisionMovement c = new CollisionMovement(userDataA.index, userDataB.index);
 					c.enemyCollidingTo = restitutionToDirection(fixtureA.getRestitution());
 //					System.out.println("Colliding to " + c.enemyCollidingTo);
+					GameScreen.enemies.get(userDataA.index).colisionandoConMapa = true;
+					GameScreen.enemies.get(userDataA.index).colisionandoContra = c.enemyCollidingTo;
 					enemiesColliding.add(c);
 				}
 
@@ -131,6 +134,8 @@ public class MyContactListener implements ContactListener {
 					CollisionMovement c = new CollisionMovement(userDataB.index, userDataA.index);
 					c.enemyCollidingTo = restitutionToDirection(fixtureB.getRestitution());
 //					System.out.println("Colliding to " + c.enemyCollidingTo);
+					GameScreen.enemies.get(userDataB.index).colisionandoConMapa = true;
+					GameScreen.enemies.get(userDataB.index).colisionandoContra = c.enemyCollidingTo;
 					enemiesColliding.add(c);
 				}
 			}
@@ -204,6 +209,9 @@ public class MyContactListener implements ContactListener {
 				}
 				if (remove) {
 					enemiesColliding.remove(toRemove);
+					GameScreen.enemies.get(userDataA.index).colisionandoConMapa = false;
+					GameScreen.enemies.get(userDataA.index).changePath = false;
+					GameScreen.enemies.get(userDataA.index).colisionandoContra = null;
 				}
 				enemiesStopColliding.add(userDataA.index);
 
@@ -219,6 +227,9 @@ public class MyContactListener implements ContactListener {
 				}
 				if (remove) {
 					enemiesColliding.remove(toRemove);
+					GameScreen.enemies.get(userDataB.index).colisionandoConMapa = false;
+					GameScreen.enemies.get(userDataB.index).changePath = false;
+					GameScreen.enemies.get(userDataB.index).colisionandoContra = null;
 				}
 				enemiesStopColliding.add(userDataB.index);
 

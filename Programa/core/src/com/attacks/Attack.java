@@ -78,7 +78,7 @@ public abstract class Attack extends Sprite {
 		}
 
 		
-		setBounds(characterToAttack.body.getPosition().x, characterToAttack.body.getPosition().y, 32 / PPM, 48 / PPM);
+		setBounds(characterToAttack.getX(), characterToAttack.getY(), 32 / PPM, 48 / PPM);
 		
 	}
 

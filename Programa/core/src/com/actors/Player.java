@@ -59,8 +59,6 @@ public class Player extends Character{
 
 	private float time = 0f;
 
-	public int nroJugador = 0;
-
 	public float respawnTime = 4f;
 	public float deadTime = 0f;
 
@@ -105,9 +103,9 @@ public class Player extends Character{
 		super.mana = 400;
 		super.energy = 100;
 
-//		if(!this.game.menuScreen.esCliente) {
+		if(!this.game.menuScreen.esCliente) {
 			definePlayerBody();	
-//		}
+		}
 		
 		createAnimations();
 
@@ -213,7 +211,10 @@ public class Player extends Character{
 					abajo = false;
 					derecha = false;
 					izquierda = false;
-					body.setLinearVelocity(0, 0);		
+					if(!this.game.menuScreen.esCliente) {
+						body.setLinearVelocity(0, 0);	
+					}
+							
 				}
 
 		} else {
@@ -309,7 +310,7 @@ public class Player extends Character{
 	}
 
 	private void resetStats() {
-		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
+		setBounds(getX(), getY(), 32 / PPM, 48 / PPM);
 		this.health = this.maxHealth;
 		this.mana = this.maxMana;
 		this.energy = this.maxEnergy;

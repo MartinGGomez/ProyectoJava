@@ -132,7 +132,7 @@ public class Hud implements Disposable {
 	}
 
 	public void updateStats(Player player) {
-		System.out.println("SE ACTUALIZO EL HUD con " + player.name);
+//		System.out.println("SE ACTUALIZO EL HUD con " + player.name);
 		this.player = player;
 		this.playerName.setText(player.name);
 		this.health.setText(String.format("HP: %s / %s", this.player.health, this.player.maxHealth));

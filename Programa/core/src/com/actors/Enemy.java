@@ -50,6 +50,9 @@ public class Enemy extends Character {
 	public float x = 0;
 	public float y = 0;
 	
+	public boolean colisionandoConMapa = false;
+	public String colisionandoContra;
+	
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
 		super.texture = new Texture("monster.png");
@@ -64,10 +67,13 @@ public class Enemy extends Character {
 		this.posY = posY;
 		this.enemyIndex = enemyIndex;
 
-		defineEnemyBody();
+		if(!this.game.menuScreen.esCliente) {
+			defineEnemyBody();	
+		}
+		
 		createAnimations();
 
-		setBounds(body.getPosition().x, body.getPosition().y, 29 / PPM, 55 / PPM);
+		setBounds(this.posX, this.posY, 29 / PPM, 55 / PPM);
 		setRegion(standingTextures[0]);
 		
 		golpe = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/GolpeBasico.ogg", FileType.Internal));
@@ -83,14 +89,18 @@ public class Enemy extends Character {
 		if (alive) {
 				
 			if (preventMove) {
+				if(!this.game.menuScreen.esCliente) {
 				MassData mass = new MassData();
 				mass.mass = 999999;
 				body.setMassData(mass);
-
+				}
 				handleAttackToPlayer(delta);
 
 			} else {
-				body.resetMassData();
+				if(!this.game.menuScreen.esCliente) {
+					body.resetMassData();	
+				}
+				
 			}
 
 			
@@ -148,9 +158,7 @@ public class Enemy extends Character {
 					//
 					
 					moveTo = changeDirectionTo(this.collidingTo);
-					if(this.enemyIndex == 33) {
-						System.out.println("Should change path to: " + moveTo);	
-					}
+//						System.out.println("Should change path to: " + moveTo);	
 					
 					if (moveTo.equals("Top")) {
 						body.setLinearVelocity(new Vector2(0, (float) (SPEED * 0.55)));
@@ -191,10 +199,13 @@ public class Enemy extends Character {
 			}
 			
 		} else {
-			body.setLinearVelocity(0, 0);
-			MassData mass = new MassData();
-			mass.mass = 999999;
-			body.setMassData(mass);
+			if(!this.game.menuScreen.esCliente) {
+				body.setLinearVelocity(0, 0);
+				MassData mass = new MassData();
+				mass.mass = 999999;
+				body.setMassData(mass);	
+			}
+			
 			
 		}
 		
@@ -248,6 +259,7 @@ public class Enemy extends Character {
 		}
 
 		if (!this.doingAttack) {
+			if(playerToAttack != null) {
 			if(playerToAttack.alive) {
 			this.doingAttack = true;
 			if(playerToAttack.health - this.attackDamage < 0) {
@@ -265,6 +277,7 @@ public class Enemy extends Character {
 
 			golpe.play();
 			
+			}
 			}
 		}
 
