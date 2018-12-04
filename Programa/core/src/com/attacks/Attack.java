@@ -84,13 +84,13 @@ public abstract class Attack extends Sprite {
 
 	public void update(float delta) {
 		
-		float width2 =0.20f;
-		float height2 = 0.24f;
+		float width2 =0.08f;
+		float height2 = 0.12f;
 		
 		
 		currentDuration += delta;
 		if (currentDuration < duration) {
-			setPosition(characterToAttack.body.getPosition().x - width2  , characterToAttack.body.getPosition().y - height2);
+			setPosition(characterToAttack.getX() - width2, characterToAttack.getY() - height2);
 			setRegion(getFrame(delta));
 		} else {
 			characterToAttack.isBeingAttacked = false;

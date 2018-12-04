@@ -175,7 +175,12 @@ public class Enemy extends Character {
 				states = PlayerStates.RIGHT;
 				direction = PlayerStates.RIGHT;
 			}
-			super.setRegion(getFrame(delta));
+			if(this.game.menuScreen.esCliente) {
+				super.setRegion(getFrame(delta, true));
+			} else {
+				super.setRegion(getFrame(delta, false));	
+			}
+			
 		} else {
 			body.setLinearVelocity(0, 0);
 			MassData mass = new MassData();

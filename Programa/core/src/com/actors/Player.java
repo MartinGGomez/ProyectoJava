@@ -83,6 +83,8 @@ public class Player extends Character{
 	
 	public boolean colliding = false;
 	
+	public float x, y;
+	
 	
 
 	public Player(MainGame game, World world, String name, int nroJugador) {
@@ -103,10 +105,21 @@ public class Player extends Character{
 		super.mana = 400;
 		super.energy = 100;
 
-		definePlayerBody();
+//		if(!this.game.menuScreen.esCliente) {
+			definePlayerBody();	
+//		}
+		
 		createAnimations();
 
-		setBounds(body.getPosition().x, body.getPosition().y, 32 / PPM, 48 / PPM);
+		if(this.nroJugador == 1) {
+			setBounds(29.84f, 19.88f, 32 / PPM, 48 / PPM);
+			setPosition(29.84f, 19.88f);
+		} else {
+			setBounds(37.84f, 19.88f, 32 / PPM, 48 / PPM);
+			setPosition(37.84f, 19.88f);
+		}
+		
+		
 		setRegion(standingTextures[0]);
 		
 		golpe = Gdx.audio.newSound(Gdx.files.getFileHandle("wav/GolpePlayer.ogg", FileType.Internal));
@@ -141,10 +154,15 @@ public class Player extends Character{
 
 		super.body.setLinearDamping(0);
 		stop = false;
+		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
+				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);	
 	}
 
 	public void update(float delta) {
 		super.update(delta);
+		if(this.nroJugador == game.nroCliente) {
+//			System.out.println("Posicion BODY: " + this.body.getPosition().x + " - " + this.body.getPosition().y);	
+		}	
 		
 		deltaTime = delta;
 		
@@ -164,13 +182,20 @@ public class Player extends Character{
 			}
 
 		}
-
-		setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
-				body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
+		
+		if(!this.game.menuScreen.esCliente) {
+			setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
+					body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);	
+		} else {
+			setPosition(this.x, this.y);
+		}
+		
+		
+		
 		if (this.alive) {
 			
 //			if (this.nroJugador == game.nroCliente) {
-				if(!stop) {
+				if(!stop && !this.game.menuScreen.esCliente) {
 					if(arriba) {
 						this.moverArriba();
 					}
@@ -209,7 +234,21 @@ public class Player extends Character{
 
 			}
 		}
-		super.setRegion(getFrame(delta));
+		
+		if(!this.game.menuScreen.esCliente) {
+			super.setRegion(getFrame(delta, false));	
+		} else {
+			super.setRegion(getFrame(delta, true));
+		}
+		
+		
+		// pos/x/y/nroJugador/direccion/frame
+		if(!this.game.menuScreen.esCliente) {
+				System.out.println("Se envia: " + "pos/"+this.getX()+"/"+this.getY()+"/"+this.nroJugador+"/"+currentState+"/"+this.frameIndex );	
+			
+			this.game.servidor.hiloServidor.enviarDatosATodos("pos/"+this.getX()+"/"+this.getY()+"/"+this.nroJugador+"/"+currentState+"/"+this.frameIndex);
+		}
+		
 	}
 
 	public void moverDerecha() {
@@ -318,6 +357,9 @@ public class Player extends Character{
 	@Override
 	public void draw(Batch batch) {
 		if (alive) {
+			if(this.nroJugador == this.game.nroCliente) {
+//				System.out.println("dibuja en " + super.getX() + " - " + super.getY());	
+			}
 			super.draw(batch);
 		} else {
 //			System.err.println("MUERTO " + this.nroJugador);

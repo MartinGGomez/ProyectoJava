@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.actors.Enemy;
+import com.actors.states.PlayerStates;
 import com.game.MainGame;
 
 public class HiloCliente extends Thread {
@@ -30,19 +31,20 @@ public class HiloCliente extends Thread {
 			int ultimoDigito = 0;
 //			this.ip = InetAddress.getByName("192.168.0.141"); // direccion del server
 			// Busqueda automatica
-			do {
-				this.ip = InetAddress.getByName(ipServer+subRed+"."+ultimoDigito); // direccion del server
-				System.out.println("PING A " + ipServer+subRed+"."+ultimoDigito );
-				this.enviarDatos("ping");
-				ultimoDigito++;
-				if(ultimoDigito == 255) {
-					ultimoDigito = 0;
-					subRed++;
-				}
-				if(subRed == 255 && ultimoDigito == 254) {
-					encontrado = true;
-				}
-			}while(!encontrado);
+			this.ip = InetAddress.getByName("192.168.0.141");
+//			do {
+//				this.ip = InetAddress.getByName(ipServer+subRed+"."+ultimoDigito); // direccion del server
+//				System.out.println("PING A " + ipServer+subRed+"."+ultimoDigito );
+//				this.enviarDatos("ping");
+//				ultimoDigito++;
+//				if(ultimoDigito == 255) {
+//					ultimoDigito = 0;
+//					subRed++;
+//				}
+//				if(subRed == 255 && ultimoDigito == 254) {
+//					encontrado = true;
+//				}
+//			}while(!encontrado);
 				
 				
 		} catch (SocketException e) {
@@ -70,7 +72,7 @@ public class HiloCliente extends Thread {
 	private void procesarMensaje(DatagramPacket packet) {
 		String mensaje = new String(packet.getData()).trim();
 
-		System.out.println("Cliente recibe: " + mensaje);
+//		System.out.println("Cliente recibe: " + mensaje);
 
 		int puerto = packet.getPort();
 		InetAddress ip = packet.getAddress();
@@ -212,6 +214,27 @@ public class HiloCliente extends Thread {
 				app.gameScreen.player2.stop = true;
 			}
 		}
+		
+		// pos/x/y/nroJugador/direccion/keyframe
+		if(mensajeCompuesto[0].equals("pos")) {
+			int cliente = Integer.parseInt(mensajeCompuesto[3]);
+			float x = Float.parseFloat(mensajeCompuesto[1]);
+			float y = Float.parseFloat(mensajeCompuesto[2]);
+			PlayerStates direccion = PlayerStates.valueOf(mensajeCompuesto[4]);
+			float frameIndex = Float.parseFloat(mensajeCompuesto[5]);
+			if(cliente == 1) {
+				app.gameScreen.player.x = x;
+				app.gameScreen.player.y = y;
+				app.gameScreen.player.currentState = direccion;
+				app.gameScreen.player.frameIndex = frameIndex;
+			} else {
+				app.gameScreen.player2.x = x;
+				app.gameScreen.player2.y = y;
+				app.gameScreen.player2.currentState = direccion;
+				app.gameScreen.player2.frameIndex = frameIndex;
+			}
+		}
+		
 	}
 
 	public void enviarDatos(String mensaje) {

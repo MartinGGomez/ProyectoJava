@@ -183,10 +183,10 @@ public class ScreenMenu implements Screen, InputProcessor {
 	@Override
 	public void show() {
 
-//		Scanner s = new Scanner(System.in);
-//		System.out.println("¿Servidor o cliente?");
-//		int opc = s.nextInt();
-		int opc = 1;
+		Scanner s = new Scanner(System.in);
+		System.out.println("¿Servidor o cliente?");
+		int opc = s.nextInt();
+//		int opc = 1;
 		if (opc == 1) {
 			esCliente = true;
 		}

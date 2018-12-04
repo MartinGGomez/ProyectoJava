@@ -158,6 +158,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		world.step(1 / 60f, 6, 2);
 
+		
 		player.update(delta);
 		player2.update(delta);
 
@@ -178,16 +179,20 @@ public class GameScreen implements Screen, InputProcessor {
 			if (iteraciones == 1) {
 				System.out.println("Siguiendo a player");
 			}
+			gamecam.position.x = player.x + 1.23f;
+			gamecam.position.y = player.y + 0.5f;
 
-			gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
-			gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
+//			gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
+//			gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
 		} else {
 			if (iteraciones == 1) {
 				System.out.println("Siguiendo a player2");
 			}
 
-			gamecam.position.x = player2.body.getPosition().x + 1.23f; // Sumar diferencia de camara
-			gamecam.position.y = player2.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
+			gamecam.position.x = player2.x + 1.23f;
+			gamecam.position.y = player2.y + 0.5f;
+//			gamecam.position.x = player2.body.getPosition().x + 1.23f; // Sumar diferencia de camara
+//			gamecam.position.y = player2.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
 		}
 
 		if (iteraciones == 0) {
@@ -261,7 +266,7 @@ public class GameScreen implements Screen, InputProcessor {
 		// box2dRender.render(world, gamecam.combined); // Box2D render.
 
 		game.batch.setProjectionMatrix(gamecam.combined);
-
+		
 		game.batch.begin();
 
 		// for (Enemy enemy : enemies) {
@@ -306,7 +311,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private Player getCloserPlayer(Enemy enemy, float minDistancia) {
 		Player player1 = GameScreen.player;
 		Player player2 = GameScreen.player2;
-
+			
 		float difPlayer1X = enemy.body.getPosition().x - player1.body.getPosition().x;
 		float difPlayer2X = enemy.body.getPosition().x - player2.body.getPosition().x;
 		float difPlayer1Y = enemy.body.getPosition().y - player1.body.getPosition().y;
@@ -553,28 +558,32 @@ public class GameScreen implements Screen, InputProcessor {
 		if (this.game.menuScreen.esCliente) {
 			float distanciaX, distanciaY;
 			if (this.nroJugador == 1) {
-				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (27.265f); // 29.265 Es la diferencia
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (27.265f) - (33.07f); // 29.265 Es la diferencia
 																							// entre la posicion inicial
 																							// del mapa y la posicion
 																							// inicial del juego
-				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f); // 17.46 Es la diferencia
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f) - (20f); // 17.46 Es la diferencia
 																							// entre la posicion inicial
 																							// del mapa y la posicion
 																							// inicial del juego
 			} else {
-				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (35.265f); // 29.265 Es la diferencia
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (35.265f) - (41.09f); // 29.265 Es la diferencia
 																							// entre la posicion inicial
 																							// del mapa y la posicion
 																							// inicial del juego
-				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f); // 17.46 Es la diferencia
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f) - (20f); // 17.46 Es la diferencia
 																							// entre la posicion inicial
 																							// del mapa y la posicion
 																							// inicial del juego
 			}
-			float posX = screenX / PPM + distanciaX;
+			float posX = (screenX / PPM + distanciaX) + 3;
 			float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
 
 			System.out.println("Click en: " + posX + " - " + posY);
+			System.out.println("distancia camara: " + distanciaX);
+			
+			System.out.println("Player en " + player.getX() + " - " + player.getY());
+			System.out.println("Player en " + player2.getX() + " - " + player2.getY());
 
 			if ((posX > (player.getX()) && posX < player.getX() + player.getWidth())
 					&& (posY > player.getY() && posY < player.getY() + player.getHeight())) {

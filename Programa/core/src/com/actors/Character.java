@@ -54,7 +54,7 @@ public abstract class Character extends Sprite {
 	protected Animation<TextureRegion> movingFront;
 	protected TextureRegion[] standingTextures;
 	protected float stateTimer;
-	protected PlayerStates currentState;
+	public PlayerStates currentState;
 	protected PlayerStates previousState;
 	//
 
@@ -71,6 +71,8 @@ public abstract class Character extends Sprite {
 	private Random random = new Random();
 
 	private boolean rewarded = false;
+	
+	public float frameIndex = 0;
 
 	public Character(MainGame game, World world, String name) {
 		this.world = world;
@@ -94,7 +96,12 @@ public abstract class Character extends Sprite {
 					this.game.cliente.hiloCliente.enviarDatos("muerto/" + this.game.nroCliente);
 				}
 			}
-			setRegion(getFrame(delta));
+			if(this.game.menuScreen.esCliente) {
+				setRegion(getFrame(delta, true));	
+			} else {
+				setRegion(getFrame(delta, false));
+			}
+			
 		} else {// ES UN COFRE
 			if (this.attackedBy != null && !rewarded) {
 				Player player = (Player) this.attackedBy;
@@ -159,23 +166,40 @@ public abstract class Character extends Sprite {
 		this.open = true;
 	}
 
-	public TextureRegion getFrame(float delta) {
-		currentState = getState();
+	public TextureRegion getFrame(float delta, boolean cliente) {
+		if(!cliente) {
+			currentState = getState();	
+		} else {
+			currentState = currentState;
+
+		}
+		
 
 		TextureRegion textureRegion;
 
+		
 		switch (currentState) {
 		case FRONT:
-			textureRegion = movingFront.getKeyFrame(stateTimer, true);
+			frameIndex = stateTimer;
+			
+				textureRegion = movingFront.getKeyFrame(stateTimer, true);	
+			
 			break;
 		case BACK:
-			textureRegion = movingBack.getKeyFrame(stateTimer, true);
+			frameIndex = stateTimer;
+				textureRegion = movingBack.getKeyFrame(stateTimer, true);	
+			
 			break;
 		case RIGHT:
-			textureRegion = movingRight.getKeyFrame(stateTimer, true);
+			frameIndex = stateTimer;
+				textureRegion = movingRight.getKeyFrame(stateTimer, true);	
+		
+			
 			break;
 		case LEFT:
-			textureRegion = movingLeft.getKeyFrame(stateTimer, true);
+			frameIndex = stateTimer;
+				textureRegion = movingLeft.getKeyFrame(stateTimer, true);	
+			
 			break;
 		case STANDING_BACK:
 			textureRegion = standingTextures[0];
@@ -190,7 +214,10 @@ public abstract class Character extends Sprite {
 			textureRegion = standingTextures[3];
 			break;
 		default:
-			textureRegion = movingFront.getKeyFrame(stateTimer, true);
+				textureRegion = movingFront.getKeyFrame(stateTimer, true);	
+			
+			frameIndex = stateTimer;
+			
 			break;
 		}
 
