@@ -94,6 +94,14 @@ public class HiloServidor extends Thread {
 			// atacarNPC/"+enemy.enemyIndex+"/"+attack.name+"/"+nroJugador
 			if (mensajeCompuesto[0].equals("atacarNPC")) {
 				int cliente = Integer.parseInt(mensajeCompuesto[3]);
+				int attackedBy = Integer.parseInt(mensajeCompuesto[3]);
+				int enemyIndex = Integer.parseInt(mensajeCompuesto[1]);
+				String attackName = mensajeCompuesto[2];
+				app.gameScreen.copyAttack = true;
+				app.gameScreen.attackPlayer = false;
+				app.gameScreen.attackToCopyAttackedBy = attackedBy;
+				app.gameScreen.attackToCopyEnemyIndex = enemyIndex;
+				app.gameScreen.attackToCopyName = attackName;
 				if (cliente == 1) {
 					this.enviarDatos(mensaje, ip2, puerto2);
 				} else {

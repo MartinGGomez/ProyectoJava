@@ -128,8 +128,8 @@ public abstract class Character extends Sprite {
 			}
 
 			this.isChest = true;
-			setBounds(body.getPosition().x - (this.regionClose.getRegionWidth() / 2) / PPM,
-					body.getPosition().y - (this.regionClose.getRegionWidth() / 2) / PPM, 30 / PPM, 32 / PPM);
+			setBounds(getX(),getY(), 30 / PPM, 32 / PPM);
+			setPosition(getX(), getY());
 			if (open) {
 				setRegion(this.regionOpen);
 			} else {

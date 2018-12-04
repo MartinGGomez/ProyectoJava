@@ -140,9 +140,9 @@ public class CollisionHelper {
 				float posX = rect.getX() / PPM;
 				float posY = rect.getY() / PPM;
 				
-				if(game.menuScreen.esCliente) {
+//				if(game.menuScreen.esCliente) {
 					enemiesPositions.add(new Vector2(posX, posY));
-				}
+//				}
 			
 			}
 
@@ -157,7 +157,7 @@ public class CollisionHelper {
 	public Array<Enemy> copiarEnemigos(MainGame game){
 		Array<Enemy> enemies = new Array<Enemy>();
 		for(int i = 0; i < enemiesPositions.size; i++ ) {
-			enemies.add(new Enemy(game, world, enemiesPositions.get(i).x, enemiesPositions.get(i).x, i));
+			enemies.add(new Enemy(game, world, enemiesPositions.get(i).x, enemiesPositions.get(i).y, i));
 		}
 		return enemies;
 	}

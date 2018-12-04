@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import com.actors.Enemy;
 import com.actors.states.PlayerStates;
 import com.game.MainGame;
+import com.screens.GameScreen;
 
 public class HiloCliente extends Thread {
 
@@ -18,9 +19,9 @@ public class HiloCliente extends Thread {
 	public MainGame app;
 
 	private String ipServer = "192.168.";
-	
+
 	private boolean encontrado = false;
-	
+
 	public HiloCliente(MainGame app) {
 
 		this.app = app;
@@ -29,24 +30,24 @@ public class HiloCliente extends Thread {
 			this.socket = new DatagramSocket();
 			int subRed = 0;
 			int ultimoDigito = 0;
-//			this.ip = InetAddress.getByName("192.168.0.141"); // direccion del server
+			// this.ip = InetAddress.getByName("192.168.0.141"); // direccion del server
 			// Busqueda automatica
 			this.ip = InetAddress.getByName("192.168.0.141");
-//			do {
-//				this.ip = InetAddress.getByName(ipServer+subRed+"."+ultimoDigito); // direccion del server
-//				System.out.println("PING A " + ipServer+subRed+"."+ultimoDigito );
-//				this.enviarDatos("ping");
-//				ultimoDigito++;
-//				if(ultimoDigito == 255) {
-//					ultimoDigito = 0;
-//					subRed++;
-//				}
-//				if(subRed == 255 && ultimoDigito == 254) {
-//					encontrado = true;
-//				}
-//			}while(!encontrado);
-				
-				
+			// do {
+			// this.ip = InetAddress.getByName(ipServer+subRed+"."+ultimoDigito); //
+			// direccion del server
+			// System.out.println("PING A " + ipServer+subRed+"."+ultimoDigito );
+			// this.enviarDatos("ping");
+			// ultimoDigito++;
+			// if(ultimoDigito == 255) {
+			// ultimoDigito = 0;
+			// subRed++;
+			// }
+			// if(subRed == 255 && ultimoDigito == 254) {
+			// encontrado = true;
+			// }
+			// }while(!encontrado);
+
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
@@ -72,7 +73,7 @@ public class HiloCliente extends Thread {
 	private void procesarMensaje(DatagramPacket packet) {
 		String mensaje = new String(packet.getData()).trim();
 
-//		System.out.println("Cliente recibe: " + mensaje);
+		// System.out.println("Cliente recibe: " + mensaje);
 
 		int puerto = packet.getPort();
 		InetAddress ip = packet.getAddress();
@@ -144,6 +145,12 @@ public class HiloCliente extends Thread {
 					app.gameScreen.player2.alive = false;
 				}
 			}
+			
+			if (mensajeCompuesto[0].equals("colisionandoEnemigo")) {
+				app.gameScreen.colisionandoEnemigo = true;
+				app.gameScreen.colisionandoConEnemigoNro = Integer.parseInt(mensajeCompuesto[1]);
+				app.gameScreen.colisionandoConPlayerNro = Integer.parseInt(mensajeCompuesto[2]);
+			}
 
 		} else {
 			if (mensaje.equals("empieza")) {
@@ -152,13 +159,24 @@ public class HiloCliente extends Thread {
 			if (mensaje.equals("salir")) {
 				System.exit(0);
 			}
-			
-			if(mensaje.equals("recibido")) {
+
+			if (mensaje.equals("recibido")) {
 				this.encontrado = true;
 				this.ip = ip;
 				System.out.println("El servidor es: " + this.ip);
 			}
 			
+			if (mensaje.equals("colisionandoJugador")) {
+				app.gameScreen.colisionandoJugador = true;
+			}
+			if (mensaje.equals("colisionTerminada")) {
+				app.gameScreen.colisionandoJugador = false;
+			}
+	
+			if (mensaje.equals("terminoColisionEnemigo")) {
+				app.gameScreen.colisionandoEnemigo = false;
+			}
+
 		}
 	}
 
@@ -214,15 +232,15 @@ public class HiloCliente extends Thread {
 				app.gameScreen.player2.stop = true;
 			}
 		}
-		
+
 		// pos/x/y/nroJugador/direccion/keyframe
-		if(mensajeCompuesto[0].equals("pos")) {
+		if (mensajeCompuesto[0].equals("pos")) {
 			int cliente = Integer.parseInt(mensajeCompuesto[3]);
 			float x = Float.parseFloat(mensajeCompuesto[1]);
 			float y = Float.parseFloat(mensajeCompuesto[2]);
 			PlayerStates direccion = PlayerStates.valueOf(mensajeCompuesto[4]);
 			float frameIndex = Float.parseFloat(mensajeCompuesto[5]);
-			if(cliente == 1) {
+			if (cliente == 1) {
 				app.gameScreen.player.x = x;
 				app.gameScreen.player.y = y;
 				app.gameScreen.player.currentState = direccion;
@@ -234,7 +252,24 @@ public class HiloCliente extends Thread {
 				app.gameScreen.player2.frameIndex = frameIndex;
 			}
 		}
-		
+
+		// posEnemy/x/y/enemyIndex/direccion/keyframe
+		if (mensajeCompuesto[0].equals("posEnemy")) {
+			int enemyIndex = Integer.parseInt(mensajeCompuesto[3]);
+			float x = Float.parseFloat(mensajeCompuesto[1]);
+			float y = Float.parseFloat(mensajeCompuesto[2]);
+			PlayerStates direccion = PlayerStates.valueOf(mensajeCompuesto[4]);
+			float frameIndex = Float.parseFloat(mensajeCompuesto[5]);
+			boolean preventMove = Boolean.parseBoolean(mensajeCompuesto[6]);
+			Enemy enemy = GameScreen.getEnemyByIndex(enemyIndex);
+			enemy.x = x;
+			enemy.y = y;
+			enemy.currentState = direccion;
+			enemy.frameIndex = frameIndex;
+			System.out.println("prevent move " + preventMove);
+			enemy.preventMove = preventMove;
+		}
+
 	}
 
 	public void enviarDatos(String mensaje) {
@@ -247,7 +282,7 @@ public class HiloCliente extends Thread {
 
 			socket.send(packet);
 
-		} catch (IOException e) {			
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 

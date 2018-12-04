@@ -54,7 +54,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	// Box2D
 	public World world;
-	// private Box2DDebugRenderer box2dRender;
+	private Box2DDebugRenderer box2dRender;
 	public static MyContactListener contactListener;
 
 	public static Player player;
@@ -86,6 +86,11 @@ public class GameScreen implements Screen, InputProcessor {
 	public int attackToCopyEnemyIndex;
 	public int attackToCopyAttackedBy;
 
+	public boolean colisionandoJugador = false;
+	public boolean colisionandoEnemigo = false;
+	public int colisionandoConEnemigoNro;
+	public int colisionandoConPlayerNro;
+
 	public GameScreen(MainGame game) {
 		this.game = game;
 		this.nroJugador = this.game.nroCliente;
@@ -108,7 +113,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		// Box2D
 		world = new World(new Vector2(0, 0), true);
-		// box2dRender = new Box2DDebugRenderer();
+		box2dRender = new Box2DDebugRenderer();
 
 		contactListener = new MyContactListener();
 		world.setContactListener(contactListener);
@@ -125,7 +130,9 @@ public class GameScreen implements Screen, InputProcessor {
 		// Body Definitions
 		collisionHelper.createMapObjects();
 		if (!this.game.menuScreen.esCliente) {
-			enemies = collisionHelper.createEnemies(game);
+			collisionHelper.generateEnemiesPositions(game);
+			enemies = collisionHelper.copiarEnemigos(game);
+			System.out.println("Enemigos creados : " + enemies.size);
 		} else {
 			collisionHelper.generateEnemiesPositions(game);
 			enemies = collisionHelper.copiarEnemigos(game);
@@ -158,7 +165,6 @@ public class GameScreen implements Screen, InputProcessor {
 
 		world.step(1 / 60f, 6, 2);
 
-		
 		player.update(delta);
 		player2.update(delta);
 
@@ -166,13 +172,41 @@ public class GameScreen implements Screen, InputProcessor {
 
 		makeNetworkAttacks();
 
-		handleAttacksToEnemy(contactListener.enemiesCollidingWithPlayer, delta);
-		if (contactListener.isCollidingToPlayer()) {
-			handleAttacksToPlayer();
+		if (!this.game.menuScreen.esCliente) {
+			if (contactListener.isColliding()) {
+				this.game.servidor.hiloServidor
+						.enviarDatosATodos("colisionandoEnemigo/" + contactListener.getEnemyIndex()+"/"+contactListener.getPlayerIndex());
+				handleAttacksToEnemy(contactListener.getEnemyIndex(), delta);
+			} else {
+				this.game.servidor.hiloServidor.enviarDatosATodos("terminoColisionEnemigo");
+			}
+		} else {
+			if (this.colisionandoEnemigo) {
+				handleAttacksToEnemy(this.colisionandoConEnemigoNro, delta);
+				if(this.colisionandoConPlayerNro == 1) {
+					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith = player;
+					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith.preventMove = true;
+//					System.out.println("prevent move en true");
+				} else {
+					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith = player2;
+					this.enemies.get(this.colisionandoConEnemigoNro).collidingWith.preventMove = true;
+//					System.out.println("prevent move en true");
+				}	
+			}
 		}
 
-		for (Enemy enemy : enemies) {
-			enemy.update(delta);
+		if (!this.game.menuScreen.esCliente) {
+			if (contactListener.isCollidingToPlayer()) {
+				handleAttacksToPlayer();
+			}
+		} else {
+			if (this.colisionandoJugador) {
+				handleAttacksToPlayer();
+			}
+		}
+
+		for (int i = 0; i < enemies.size; i++) {
+			enemies.get(i).update(delta);
 		}
 
 		if (this.nroJugador == 1) {
@@ -182,8 +216,10 @@ public class GameScreen implements Screen, InputProcessor {
 			gamecam.position.x = player.x + 1.23f;
 			gamecam.position.y = player.y + 0.5f;
 
-//			gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia de camara
-//			gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
+			// gamecam.position.x = player.body.getPosition().x + 1.23f; // Sumar diferencia
+			// de camara
+			// gamecam.position.y = player.body.getPosition().y + 0.5f; // Porque esta
+			// centrado con respecto al HUD
 		} else {
 			if (iteraciones == 1) {
 				System.out.println("Siguiendo a player2");
@@ -191,8 +227,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 			gamecam.position.x = player2.x + 1.23f;
 			gamecam.position.y = player2.y + 0.5f;
-//			gamecam.position.x = player2.body.getPosition().x + 1.23f; // Sumar diferencia de camara
-//			gamecam.position.y = player2.body.getPosition().y + 0.5f; // Porque esta centrado con respecto al HUD
+			// gamecam.position.x = player2.body.getPosition().x + 1.23f; // Sumar
+			// diferencia de camara
+			// gamecam.position.y = player2.body.getPosition().y + 0.5f; // Porque esta
+			// centrado con respecto al HUD
 		}
 
 		if (iteraciones == 0) {
@@ -263,10 +301,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 		renderer.render(); // Tiled Map renderer.
 
-		// box2dRender.render(world, gamecam.combined); // Box2D render.
+		box2dRender.render(world, gamecam.combined); // Box2D render.
 
 		game.batch.setProjectionMatrix(gamecam.combined);
-		
+
 		game.batch.begin();
 
 		// for (Enemy enemy : enemies) {
@@ -277,31 +315,31 @@ public class GameScreen implements Screen, InputProcessor {
 		// }
 		// }
 		for (int i = 0; i < enemies.size; i++) {
-			 enemies.get(i).draw(game.batch);
+			enemies.get(i).draw(game.batch);
 			if (enemies.get(i).isBeingAttacked) {
 				enemies.get(i).attack.update(delta);
-				 enemies.get(i).attack.draw(game.batch);
+				enemies.get(i).attack.draw(game.batch);
 			}
 		}
 
-		 player.draw(game.batch);
-		 player2.draw(game.batch);
+		player.draw(game.batch);
+		player2.draw(game.batch);
 
 		if (player.isBeingAttacked) {
 			if (player.attack.started) {
 				player.attack.update(delta);
-				 player.attack.draw(game.batch);
+				player.attack.draw(game.batch);
 			}
 		}
 		if (player2.isBeingAttacked) {
 			if (player2.attack.started) {
 				player2.attack.update(delta);
-				 player2.attack.draw(game.batch);
+				player2.attack.draw(game.batch);
 			}
 		}
 
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-		 hud.stage.draw();
+		hud.stage.draw();
 		hud.stage.act();
 
 		game.batch.end();
@@ -311,7 +349,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private Player getCloserPlayer(Enemy enemy, float minDistancia) {
 		Player player1 = GameScreen.player;
 		Player player2 = GameScreen.player2;
-			
+
 		float difPlayer1X = enemy.body.getPosition().x - player1.body.getPosition().x;
 		float difPlayer2X = enemy.body.getPosition().x - player2.body.getPosition().x;
 		float difPlayer1Y = enemy.body.getPosition().y - player1.body.getPosition().y;
@@ -343,9 +381,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 		boolean changePathFound = false;
 		for (int i = 0; i < contactListener.enemiesColliding.size(); i++) {
-			for (Enemy enemy : enemies) {
+			for (int j = 0; i < enemies.size; i++) {
 				float activeDistance = 2f;
-				Player player = getCloserPlayer(enemy, activeDistance);
+				Player player = getCloserPlayer(enemies.get(j), activeDistance);
 				boolean ningunPlayerCerca = false;
 				if (player == null) {
 					ningunPlayerCerca = true;
@@ -353,9 +391,10 @@ public class GameScreen implements Screen, InputProcessor {
 					ningunPlayerCerca = false;
 				}
 				if (!ningunPlayerCerca) {
-					if (enemy.getEnemyIndex() == contactListener.enemiesColliding.get(i).index && !changePathFound) {
-						enemy.changePath = true;
-						enemy.collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
+					if (enemies.get(j).getEnemyIndex() == contactListener.enemiesColliding.get(i).index
+							&& !changePathFound) {
+						enemies.get(j).changePath = true;
+						enemies.get(j).collidingTo = contactListener.enemiesColliding.get(i).enemyCollidingTo;
 						changePathFound = true;
 					}
 				}
@@ -363,21 +402,24 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 
 		boolean found = false;
-		for (int i = 0; i < contactListener.enemiesCollidingWithPlayer.size(); i++) {
-			found = false;
-			for (Enemy enemy : enemies) {
-				if (enemy.getEnemyIndex() == contactListener.enemiesCollidingWithPlayer.get(i).index && !found) {
-					enemy.preventMove = true;
-					if (contactListener.enemiesCollidingWithPlayer.get(i).playerIndex == 1) {
-						enemy.collidingWith = this.player;
-					} else {
-						enemy.collidingWith = this.player2;
-					}
-					found = true;
-				}
-			}
-
-		}
+//		for (int i = 0; i < contactListener.enemiesCollidingWithPlayer.size(); i++) {
+//			found = false;
+//			for (int j = 0; j < enemies.size; j++) {
+//				if (enemies.get(j).getEnemyIndex() == contactListener.enemiesCollidingWithPlayer.get(i).index
+//						&& !found) {
+//					enemies.get(j).preventMove = true;
+//					if (contactListener.enemiesCollidingWithPlayer.get(i).playerIndex == 1) {
+//						enemies.get(j).collidingWith = this.player;
+//					} else {
+//						enemies.get(j).collidingWith = this.player2;
+//					}
+//					found = true;
+//				}
+//			}
+//
+//		}
+		
+		
 
 		for (int i = 0; i < contactListener.enemiesStopCollidingWithPlayer.size(); i++) {
 			if (contactListener.enemiesStopCollidingWithPlayer.get(i) < enemies.size) {
@@ -391,79 +433,110 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 		}
 
-		if (contactListener.isCollidingToPlayer()) {
+		if (!this.game.menuScreen.esCliente) {
 
-			if (((player.body.getPosition().y + player.getHeight()) > player2.body.getPosition().y
-					+ player2.getHeight())
-					&& (player.body.getPosition().x < player2.body.getPosition().x + player2.getWidth()
-							&& player.body.getPosition().x + player.getWidth() > player2.body.getPosition().x)) {
-				// Player 1 arriba player 2 abajo
+			if (contactListener.isCollidingToPlayer()) {
+				this.game.servidor.hiloServidor.enviarDatosATodos("colisionandoJugador");
+
+				if (((player.body.getPosition().y + player.getHeight()) > player2.body.getPosition().y
+						+ player2.getHeight())
+						&& (player.body.getPosition().x < player2.body.getPosition().x + player2.getWidth()
+								&& player.body.getPosition().x + player.getWidth() > player2.body.getPosition().x)) {
+					// Player 1 arriba player 2 abajo
+					resetMovement();
+					player.canMoveBot = false;
+					player2.canMoveTop = false;
+				} else if (((player2.body.getPosition().y + player2.getHeight()) > player.body.getPosition().y
+						+ player.getHeight())
+						&& (player2.body.getPosition().x < player.body.getPosition().x + player.getWidth()
+								&& player2.body.getPosition().x + player2.getWidth() > player.body.getPosition().x)) {
+					// Player 2 arriba player 1 abajo
+					resetMovement();
+					player.canMoveTop = false;
+					player2.canMoveBot = false;
+				} else if (((player2.body.getPosition().x + player2.getWidth()) > player.body.getPosition().x
+						+ player.getWidth())
+						&& (player2.body.getPosition().y < player.body.getPosition().y + player.getHeight()
+								&& player2.body.getPosition().y + player2.getHeight() > player.body.getPosition().y)) {
+					// Player 1 izquierda player 2 derecha
+					resetMovement();
+					player.canMoveRight = false;
+					player2.canMoveLeft = false;
+				} else if (((player.body.getPosition().x + player.getWidth()) > player2.body.getPosition().x
+						+ player2.getWidth())
+						&& (player.body.getPosition().y < player2.body.getPosition().y + player2.getHeight()
+								&& player.body.getPosition().y + player.getHeight() > player2.body.getPosition().y)) {
+					// Player 2 izquierda player 1 derecha
+					resetMovement();
+					player.canMoveLeft = false;
+					player2.canMoveRight = false;
+				}
+			} else {
 				resetMovement();
-				player.canMoveBot = false;
-				player2.canMoveTop = false;
-			} else if (((player2.body.getPosition().y + player2.getHeight()) > player.body.getPosition().y
-					+ player.getHeight())
-					&& (player2.body.getPosition().x < player.body.getPosition().x + player.getWidth()
-							&& player2.body.getPosition().x + player2.getWidth() > player.body.getPosition().x)) {
-				// Player 2 arriba player 1 abajo
-				resetMovement();
-				player.canMoveTop = false;
-				player2.canMoveBot = false;
-			} else if (((player2.body.getPosition().x + player2.getWidth()) > player.body.getPosition().x
-					+ player.getWidth())
-					&& (player2.body.getPosition().y < player.body.getPosition().y + player.getHeight()
-							&& player2.body.getPosition().y + player2.getHeight() > player.body.getPosition().y)) {
-				// Player 1 izquierda player 2 derecha
-				resetMovement();
-				player.canMoveRight = false;
-				player2.canMoveLeft = false;
-			} else if (((player.body.getPosition().x + player.getWidth()) > player2.body.getPosition().x
-					+ player2.getWidth())
-					&& (player.body.getPosition().y < player2.body.getPosition().y + player2.getHeight()
-							&& player.body.getPosition().y + player.getHeight() > player2.body.getPosition().y)) {
-				// Player 2 izquierda player 1 derecha
-				resetMovement();
-				player.canMoveLeft = false;
-				player2.canMoveRight = false;
+				this.game.servidor.hiloServidor.enviarDatosATodos("colisionTerminada");
 			}
+
 		} else {
-			resetMovement();
+			if (colisionandoJugador) {
+				if (((player.getY() + player.getHeight()) > player2.getY() + player2.getHeight())
+						&& (player.getX() < player2.getX() + player2.getWidth()
+								&& player.getX() + player.getWidth() > player2.getX())) {
+					// Player 1 arriba player 2 abajo
+					resetMovement();
+					player.canMoveBot = false;
+					player2.canMoveTop = false;
+				} else if (((player2.getY() + player2.getHeight()) > player.getY() + player.getHeight())
+						&& (player2.getX() < player.getX() + player.getWidth()
+								&& player2.getX() + player2.getWidth() > player.getX())) {
+					// Player 2 arriba player 1 abajo
+					resetMovement();
+					player.canMoveTop = false;
+					player2.canMoveBot = false;
+				} else if (((player2.getX() + player2.getWidth()) > player.getX() + player.getWidth())
+						&& (player2.getY() < player.getY() + player.getHeight()
+								&& player2.getY() + player2.getHeight() > player.getY())) {
+					// Player 1 izquierda player 2 derecha
+					resetMovement();
+					player.canMoveRight = false;
+					player2.canMoveLeft = false;
+				} else if (((player.getX() + player.getWidth()) > player2.getX() + player2.getWidth())
+						&& (player.getY() < player2.getY() + player2.getHeight()
+								&& player.getY() + player.getHeight() > player2.getY())) {
+					// Player 2 izquierda player 1 derecha
+					resetMovement();
+					player.canMoveLeft = false;
+					player2.canMoveRight = false;
+				}
+			} else {
+				resetMovement();
+			}
 		}
 
 	}
 
-	private void handleAttacksToEnemy(ArrayList<CollisionMovement> enemiesColliding, float delta) {
+	private void handleAttacksToEnemy(int enemyIndex, float delta) {
+		Enemy enemy = this.getEnemyByIndex(enemyIndex);
 		if (this.nroJugador == 1) {
 			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
 				if (!player.doingAttack) {
-					if (contactListener.isColliding()) {
-						for (CollisionMovement enemyC : enemiesColliding) {
-							Enemy enemy = enemies.get(enemyC.index);
-							if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
-								player.attack(enemy, new BasicAttack(), true);
-							}
-						}
-
+					if (Combat.canAttackToEnemy(player, enemy) && (!estaAtacando)) {
+						player.attack(enemy, new BasicAttack(), true);
 					}
 				}
+
 			}
 		}
-		
-		if (this.nroJugador == 2) {
+
+		if (this.nroJugador == 2)
+
 			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
 				if (!player2.doingAttack) {
-					if (contactListener.isColliding()) {
-						for (CollisionMovement enemyC : enemiesColliding) {
-							Enemy enemy = enemies.get(enemyC.index);
-							if (Combat.canAttackToEnemy(player2, enemy) && (!estaAtacando)) {
-								player2.attack(enemy, new BasicAttack(), true);
-							}
-						}
-
+					if (Combat.canAttackToEnemy(player2, enemy) && (!estaAtacando)) {
+						player2.attack(enemy, new BasicAttack(), true);
 					}
 				}
+
 			}
-		}
 
 	}
 
@@ -471,7 +544,8 @@ public class GameScreen implements Screen, InputProcessor {
 		if (this.nroJugador == 1) {
 			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) { // Ataque del enemigo 1
 				if (!player.doingAttack) {
-					if (Combat.canAttackToEnemy(player, player2) && (!estaAtacando)) {
+					System.out.println(Combat.canAttackToEnemy(player, player2));
+					if (Combat.canAttackToEnemy(player, player2)) {
 						player.attack(player2, new BasicAttack(), true);
 					}
 				}
@@ -481,7 +555,7 @@ public class GameScreen implements Screen, InputProcessor {
 		if (this.nroJugador == 2) {
 			if (Gdx.input.isKeyJustPressed(Keys.SPACE)) { // Ataque del enemigo 2
 				if (!player2.doingAttack) {
-					if (Combat.canAttackToEnemy(player2, player) && (!estaAtacando)) {
+					if (Combat.canAttackToEnemy(player2, player)) {
 						player2.attack(player, new BasicAttack(), true);
 					}
 				}
@@ -558,30 +632,34 @@ public class GameScreen implements Screen, InputProcessor {
 		if (this.game.menuScreen.esCliente) {
 			float distanciaX, distanciaY;
 			if (this.nroJugador == 1) {
-				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (27.265f) - (33.07f); // 29.265 Es la diferencia
-																							// entre la posicion inicial
-																							// del mapa y la posicion
-																							// inicial del juego
-				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f) - (20f); // 17.46 Es la diferencia
-																							// entre la posicion inicial
-																							// del mapa y la posicion
-																							// inicial del juego
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (27.265f) - (33.07f); // 29.265 Es la
+																										// diferencia
+				// entre la posicion inicial
+				// del mapa y la posicion
+				// inicial del juego
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f) - (20f); // 17.46 Es la
+																									// diferencia
+				// entre la posicion inicial
+				// del mapa y la posicion
+				// inicial del juego
 			} else {
-				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (35.265f) - (41.09f); // 29.265 Es la diferencia
-																							// entre la posicion inicial
-																							// del mapa y la posicion
-																							// inicial del juego
-				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f) - (20f); // 17.46 Es la diferencia
-																							// entre la posicion inicial
-																							// del mapa y la posicion
-																							// inicial del juego
+				distanciaX = gamecam.position.x - this.cameraInitialPositionX + (35.265f) - (41.09f); // 29.265 Es la
+																										// diferencia
+				// entre la posicion inicial
+				// del mapa y la posicion
+				// inicial del juego
+				distanciaY = gamecam.position.y - this.cameraInitialPositionY + (17.46f) - (20f); // 17.46 Es la
+																									// diferencia
+				// entre la posicion inicial
+				// del mapa y la posicion
+				// inicial del juego
 			}
 			float posX = (screenX / PPM + distanciaX) + 3;
 			float posY = (Gdx.graphics.getHeight() / PPM - screenY / PPM) + distanciaY;
 
 			System.out.println("Click en: " + posX + " - " + posY);
 			System.out.println("distancia camara: " + distanciaX);
-			
+
 			System.out.println("Player en " + player.getX() + " - " + player.getY());
 			System.out.println("Player en " + player2.getX() + " - " + player2.getY());
 
@@ -607,19 +685,21 @@ public class GameScreen implements Screen, InputProcessor {
 
 			}
 
-			for (Enemy enemy : enemies) {
-				if ((posX > (enemy.getX()) && posX < enemy.getX() + enemy.getWidth())
-						&& (posY > enemy.getY() && posY < enemy.getY() + enemy.getHeight())) {
-					if (!enemy.isChest) {
-						Hud.printMessage(enemy.name + " - Vida: " + enemy.health, MessageType.ENEMY_CLICK);
+			for (int i = 0; i < enemies.size; i++) {
+				if ((posX > (enemies.get(i).getX()) && posX < enemies.get(i).getX() + enemies.get(i).getWidth())
+						&& (posY > enemies.get(i).getY()
+								&& posY < enemies.get(i).getY() + enemies.get(i).getHeight())) {
+					if (!enemies.get(i).isChest) {
+						Hud.printMessage(enemies.get(i).name + " - Vida: " + enemies.get(i).health,
+								MessageType.ENEMY_CLICK);
 
 						if (player.selectedAttack != null) {
-							player.attack(enemy, player.selectedAttack, true);
+							player.attack(enemies.get(i), player.selectedAttack, true);
 							player.selectedAttack = null;
 						}
 
 						if (player2.selectedAttack != null) {
-							player2.attack(enemy, player2.selectedAttack, true);
+							player2.attack(enemies.get(i), player2.selectedAttack, true);
 							player2.selectedAttack = null;
 						}
 
@@ -628,13 +708,13 @@ public class GameScreen implements Screen, InputProcessor {
 							Hud.printMessage("Cofre de Drop", MessageType.DROP);
 						}
 						if (button == Buttons.RIGHT) {
-							if (enemy.open) {
+							if (enemies.get(i).open) {
 								Hud.printMessage("El cofre ya fue abierto", MessageType.DROP);
 							} else {
 								if (game.nroCliente == 1) {
-									if (player == enemy.attackedBy) {
-										enemy.open = true;
-										enemy.openChest();
+									if (player == enemies.get(i).attackedBy) {
+										enemies.get(i).open = true;
+										enemies.get(i).openChest();
 										open.play();
 									} else {
 										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);
@@ -642,9 +722,9 @@ public class GameScreen implements Screen, InputProcessor {
 								}
 
 								if (game.nroCliente == 2) {
-									if (player2 == enemy.attackedBy) {
-										enemy.open = true;
-										enemy.openChest();
+									if (player2 == enemies.get(i).attackedBy) {
+										enemies.get(i).open = true;
+										enemies.get(i).openChest();
 										open.play();
 									} else {
 										Hud.printMessage("No podes abrir este cofre", MessageType.ERROR);

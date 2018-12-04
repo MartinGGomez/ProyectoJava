@@ -16,6 +16,7 @@ public class MyContactListener implements ContactListener {
 	private int  enemyIndex;
 	private boolean enemyColliding;
 	private String enemyCollidingTo;
+	private int playerIndex;
 	private boolean isCollidingToChest;
 	private int chestIndex;
 	private boolean isCollidingToPlayer;
@@ -44,6 +45,8 @@ public class MyContactListener implements ContactListener {
 		if (userDataA.type.equals("Player") && userDataB.type.equals("Enemy")) {
 			isColliding = true;
 			enemyColliding = true;
+			enemyIndex = userDataB.index;
+			playerIndex = userDataA.index;
 			boolean existe = false;
 			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
 				if (enemiesCollidingWithPlayer.get(i).index == userDataB.index) {
@@ -65,6 +68,8 @@ public class MyContactListener implements ContactListener {
 		if (userDataB.type.equals("Player") && userDataA.type.equals("Enemy")) {
 			isColliding = true;
 			enemyColliding = true;
+			enemyIndex = userDataA.index;
+			playerIndex = userDataB.index;
 			boolean existe = false;
 			for (int i = 0; i < enemiesCollidingWithPlayer.size(); i++) {
 				if (enemiesCollidingWithPlayer.get(i).index == userDataA.index) {
@@ -263,6 +268,10 @@ public class MyContactListener implements ContactListener {
 	
 	public boolean isCollidingToPlayer() {
 		return isCollidingToPlayer;
+	}
+	
+	public int getPlayerIndex() {
+		return playerIndex;
 	}
 
 

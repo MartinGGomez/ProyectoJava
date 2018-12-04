@@ -244,8 +244,6 @@ public class Player extends Character{
 		
 		// pos/x/y/nroJugador/direccion/frame
 		if(!this.game.menuScreen.esCliente) {
-				System.out.println("Se envia: " + "pos/"+this.getX()+"/"+this.getY()+"/"+this.nroJugador+"/"+currentState+"/"+this.frameIndex );	
-			
 			this.game.servidor.hiloServidor.enviarDatosATodos("pos/"+this.getX()+"/"+this.getY()+"/"+this.nroJugador+"/"+currentState+"/"+this.frameIndex);
 		}
 		

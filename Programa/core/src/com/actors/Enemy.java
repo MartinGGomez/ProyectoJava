@@ -47,6 +47,9 @@ public class Enemy extends Character {
 	
 	private Sound golpe;
 
+	public float x = 0;
+	public float y = 0;
+	
 	public Enemy(MainGame game, World world, float posX, float posY, int enemyIndex) {
 		super(game, world, name);
 		super.texture = new Texture("monster.png");
@@ -78,6 +81,7 @@ public class Enemy extends Character {
 	public void update(float delta) {
 		super.update(delta);
 		if (alive) {
+				
 			if (preventMove) {
 				MassData mass = new MassData();
 				mass.mass = 999999;
@@ -89,9 +93,15 @@ public class Enemy extends Character {
 				body.resetMassData();
 			}
 
-			setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
-					body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);
 			
+			if(!this.game.menuScreen.esCliente) {
+				setPosition(body.getPosition().x - (this.region.getRegionWidth() / 2) / PPM,
+						body.getPosition().y - (this.region.getRegionHeight() / 4) / PPM);	
+			} else {
+				setPosition(x, y);
+			}
+			
+			if(!this.game.menuScreen.esCliente) {
 			
 			body.setLinearVelocity(0, 0);
 
@@ -109,8 +119,6 @@ public class Enemy extends Character {
 
 				if(!ningunPlayerCerca) {
 					
-				
-				
 				if (((super.body.getPosition().x - player.body.getPosition().x) < activeDistance) // SIGUE A LA
 																									// IZQUIERDA
 						&& super.body.getPosition().x > player.body.getPosition().x) {
@@ -175,6 +183,7 @@ public class Enemy extends Character {
 				states = PlayerStates.RIGHT;
 				direction = PlayerStates.RIGHT;
 			}
+			}
 			if(this.game.menuScreen.esCliente) {
 				super.setRegion(getFrame(delta, true));
 			} else {
@@ -188,6 +197,12 @@ public class Enemy extends Character {
 			body.setMassData(mass);
 			
 		}
+		
+		// pos/x/y/nroJugador/direccion/frame
+		if(!this.game.menuScreen.esCliente){
+			this.game.servidor.hiloServidor.enviarDatosATodos("posEnemy/"+this.getX()+"/"+this.getY()+"/"+this.enemyIndex+"/"+currentState+"/"+this.frameIndex+"/"+this.preventMove);
+		}
+		
 	}
 
 	private Player getCloserPlayer(float minDistancia) {
